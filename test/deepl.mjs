@@ -12,6 +12,8 @@ import { default as DeepLTranslator } from "../src/deepl.mjs";
     should(dlt).properties({
       srcLang: 'EN',
       dstLang: 'pt-PT',
+      glossaryName: 'en_pt-pt.kv',
+      glossary: 'desire\tanseio\n',
     });
   });
   it("TESTTESTcustom ctor", () => {
