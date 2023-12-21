@@ -10,9 +10,53 @@ import * as deepl from 'deepl-node';
 export default class DeepLTranslator {
   constructor(opts={}) {
     let {
+      authFile,
+      dstLang,
+      glossary,
+      glossaryName,
+      initialized,
+      srcLang,
+      translateOpts,
+      translator,
+    } = opts;
+
+    let emsg = 'use DeepLTranslator.create()';
+    let check = 1;
+    if (null == authFile) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == dstLang) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == glossary) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == glossaryName) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == initialized) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == srcLang) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == translateOpts) throw new Error(`${emsg} ${check}`);
+    check++;
+    if (null == translator) throw new Error(`${emsg} ${check}`);
+    check++;
+
+    Object.assign(this, {
+      authFile,
+      dstLang,
+      glossary,
+      glossaryName,
+      initialized,
+      srcLang,
+      translateOpts,
+      translator,
+    });
+  }
+
+  static create(opts={}) {
+    let {
       authFile=path.join(cwd,'local/deepl.auth'),
       srcLang='EN',
       dstLang='pt-PT',
+      translateOpts={formality:'more'},
     } = opts;
 
     let authKey = fs.readFileSync(authFile).toString().trim();
@@ -23,20 +67,47 @@ export default class DeepLTranslator {
       ? fs.readFileSync(glossaryPath).toString()
       : '';
     glossary = glossary.replaceAll(/ *: */g, '\t');
+    let initialized = true;
 
-    Object.assign(this, {
-      srcLang,
+    return new DeepLTranslator({
+      authFile,
       dstLang,
-      translator,
-      glossaryName,
       glossary,
+      glossaryName,
+      initialized,
+      srcLang,
+      translateOpts,
+      translator,
+      translator, 
     });
   }
 
-  async translate(text) {
-    let { translator, srcLang, dstLang, } = this;
+  assertInitialized() {
+    if (!this.initialized) {
+      throw new Error("initialize() is required");
+    }
+    return this;
+  }
 
-    const result = await translator.translateText(text, null, dstLang);
+  async initialize() {
+    this.initialized = true;
+    return this;
+  }
+
+  async glossaries() {
+    let { translator } = this.assertInitialized();
+    
+    let glossaries = await translator.listGlossaries();
+    return glossaries;
+  }
+
+  async translate(text) {
+    let { 
+      translator, srcLang, dstLang, translateOpts
+    } = this.assertInitialized();
+
+    const result = await translator
+      .translateText(text, srcLang, dstLang, translateOpts);
     return result;
   }
 }
