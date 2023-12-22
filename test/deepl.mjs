@@ -30,7 +30,7 @@ const ID_PT = 'ebt_en_pt-pt';
       dstLang,
     });
   });
-  it("uploadGlossary()", async()=>{
+  it("uploadGlossary() EN", async()=>{
     let authKey = DeepLTranslator.authKey();
     let translator = new deepl.Translator(authKey);
     let srcLang = 'en';
@@ -51,14 +51,14 @@ const ID_PT = 'ebt_en_pt-pt';
       targetLang: 'pt',
     })
   });
-  it("TESTTESTtranslate()", async () => {
+  it("translate() EN", async () => {
     let srcLang = 'en';
     let dstLang = 'pt-PT';
-    let dlt = await DeepLTranslator.create();
+    let dlt = await DeepLTranslator.create({srcLang, dstLang});
 
     // sujato
     let res = await dlt.translate([
-      "the dart of desire",
+      "the dart of craving",
       "“Mendicant, you seek alms before you eat;",
     ]);
 
@@ -70,6 +70,47 @@ const ID_PT = 'ebt_en_pt-pt';
     should(res[1].text).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
     should(res[1].detectedSourceLang).equal('en');
+  });
+  it("TESTTESTuploadGlossary() DE", async()=>{
+    let authKey = DeepLTranslator.authKey();
+    let translator = new deepl.Translator(authKey);
+    let srcLang = 'de';
+    let dstLang = 'pt-PT';
+    let translateOpts = {};
+    let glossaryName = DeepLTranslator.glossaryName({srcLang,dstLang});
+    let glossary = await DeepLTranslator.uploadGlossary({
+      srcLang,
+      dstLang,
+      translator,
+      translator,
+      translateOpts,
+    });
+    should(glossary).properties({
+      name: 'ebt_de_pt-pt',
+      ready: true,
+      sourceLang: 'de',
+      targetLang: 'pt',
+    })
+  });
+  it("TESTTESTtranslate() DE", async () => {
+    let srcLang = 'de';
+    let dstLang = 'pt-PT';
+    let dlt = await DeepLTranslator.create({srcLang, dstLang});
+
+    // sujato
+    let res = await dlt.translate([
+      "Der Pfeil des Verlangens",
+      "„Mönch, du sammelst Almosen, bevor du isst;",
+    ]);
+
+    should(res[0].detectedSourceLang).equal('de');
+    should(res[0].text).equal('O dardo do anseio');
+
+    // Compare with laera-quaresma:
+    // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
+    should(res[1].detectedSourceLang).equal('de');
+    should(res[1].text).equal(
+      '"Bhikkhu, você esmola comida antes de comer;');
   });
   it("glossaries()", async() =>{
     let dlt = await DeepLTranslator.create();

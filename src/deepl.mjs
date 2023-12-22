@@ -6,7 +6,7 @@ const __dirname = path.dirname(__filename);
 const cwd = process.cwd();
 
 import {
-  DBG_GLOSSARY,
+  DBG_GLOSSARY, DBG_CREATE,
 } from './defines.mjs'
 import * as deepl from 'deepl-node';
 
@@ -70,7 +70,7 @@ export default class DeepLTranslator {
 
   static async create(opts={}) {
     const msg = 'DeepLTranslator.create()';
-    const dbg = 0;
+    const dbg = DBG_CREATE;
     let {
       authFile=path.join(cwd,'local/deepl.auth'),
       srcLang='en',
@@ -85,24 +85,25 @@ export default class DeepLTranslator {
     let glossaries = await translator.listGlossaries();
     let glossary = glossaries.reduce((a,g)=>{
       return g.name === glossaryName ? g : a;
-    }, [])
+    }, null)
     if (glossary) {
-      dbg && console.log(msg, '[4]using glossary', glossary.name, 
-        glossary.glossaryId.substring(0,8));
+      let { glossaryId, name } = glossary;
+      dbg && console.log(msg, '[4]using glossary', name, 
+        glossaryId && glossaryId.substring(0,8));
     } else {
       dbg && console.log(msg, "[5]creating glossary");
       glossary = await DeepLTranslator.uploadGlossary({
-        srgLang, dstLang, translator, 
+        srcLang, dstLang, translator, 
         glossaries,
       });
     }
     translateOpts = translateOpts
       ? JSON.parse(JSON.stringify(translateOpts))
       : {formality};
-    translateOpts.glossary = glossary;
+    glossary && (translateOpts.glossary = glossary);
     let initialized = true;
 
-    return new DeepLTranslator({
+    let ctorOpts = {
       authFile,
       dstLang,
       glossary,
@@ -111,7 +112,9 @@ export default class DeepLTranslator {
       srcLang,
       translateOpts,
       translator, 
-    });
+    }
+    dbg && console.log(msg, '[6]ctor', ctorOpts);
+    return new DeepLTranslator(ctorOpts);
   }
 
   static async uploadGlossary(opts={}) {
