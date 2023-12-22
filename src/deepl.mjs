@@ -5,6 +5,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const cwd = process.cwd();
 
+import {
+  DBG_GLOSSARY,
+} from './defines.mjs'
 import * as deepl from 'deepl-node';
 
 export default class DeepLTranslator {
@@ -113,7 +116,7 @@ export default class DeepLTranslator {
 
   static async uploadGlossary(opts={}) {
     const msg = 'DeepLTranslator.uploadGlossary()';
-    const dbg = 0;
+    const dbg = DBG_GLOSSARY;
     let {
       srcLang,
       dstLang,
@@ -146,7 +149,7 @@ export default class DeepLTranslator {
       : '';
     let nEntries = 0;
     let entries = rawGlossary.split('\n').reduce((a,kv)=>{
-      let [key,value] = kv.split(/ ?: ?/);
+      let [key,value] = kv.split(/\|/);
       if (key && !value) {
         throw new Error(`${msg} [3]no value for key:${key}`);
       } else if (!key && value) {
@@ -154,7 +157,10 @@ export default class DeepLTranslator {
       } else if (!key && !value) {
         // ignore
       } else {
+        key = key.trim();
+        value = value.trim();
         a[key] = value;
+        dbg && console.log(msg, {key,value});
         nEntries++;
       }
       return a;
