@@ -134,7 +134,7 @@ export default class DeepLTranslator {
       }
     }
 
-    let fName = `${glossaryName}.kv`.toLowerCase();
+    let fName = `${glossaryName}.kvg`.toLowerCase();
     let glossaryPath = path.join(__dirname, 'glossary', fName);
     if (!fs.statSync(glossaryPath, {throwIfNoEntry:false})) {
       dbg && console.log(msg, `[2]no glossary found: ${glossaryPath}`);
