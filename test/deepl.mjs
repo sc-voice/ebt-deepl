@@ -71,7 +71,7 @@ const ID_PT = 'ebt_en_pt-pt';
       '"Bhikkhu, você esmola comida antes de comer;');
     should(res[1].detectedSourceLang).equal('en');
   });
-  it("TESTTESTuploadGlossary() DE", async()=>{
+  it("uploadGlossary() DE", async()=>{
     let authKey = DeepLTranslator.authKey();
     let translator = new deepl.Translator(authKey);
     let srcLang = 'de';
@@ -92,7 +92,7 @@ const ID_PT = 'ebt_en_pt-pt';
       targetLang: 'pt',
     })
   });
-  it("TESTTESTtranslate() DE", async () => {
+  it("translate() DE", async () => {
     let srcLang = 'de';
     let dstLang = 'pt-PT';
     let dlt = await DeepLTranslator.create({srcLang, dstLang});
