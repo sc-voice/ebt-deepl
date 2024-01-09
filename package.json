@@ -7,6 +7,7 @@
   "directories": {},
   "dependencies": {
     "deepl-node": "^1.11.0",
+    "eslint": "^8.56.0",
     "log-instance": "^1.5.0",
     "merkle-json": "^2.6.0",
     "scv-bilara": "^3.107.41"

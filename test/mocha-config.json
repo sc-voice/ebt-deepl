@@ -1,7 +1,7 @@
 {
   "reporter": "min",
   "inline-diffs": true,
-  "glob": [ "TEST" ],
+  "glob": [ "TESTTEST" ],
   "watch": true,
   "parallel": true,
   "watch-ignore": [

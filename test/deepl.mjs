@@ -1,25 +1,26 @@
 import should from "should";
-import { execSync } from "child_process";
-import { logger } from "log-instance/index.mjs";
 import { default as DeepLTranslator } from "../src/deepl.mjs";
 import * as deepl from 'deepl-node';
-
-const ID_PT = 'ebt_en_pt-pt';
+import {
+  DBG_VERBOSE,
+} from '../src/defines.mjs';
+const dbgv = DBG_VERBOSE;
 
 (typeof describe === 'function') && describe("deepl", function() {
-  this.timeout(10*1000);
-  var logLevel = false;
+  this.timeout(30*1000);
 
-  it("create() default", async() => {
+  it("TESTTESTcreate() default", async() => {
     let dlt = await DeepLTranslator.create();
     should(dlt).properties({
-      srcLang: 'en',
-      dstLang: 'pt-PT',
-      glossaryName: ID_PT,
+      srcLang: 'de',
+      dstLang: 'pt',
+      sourceLang: 'de',
+      targetLang: 'pt-PT',
+      glossaryName: 'ebt_de_pt',
     });
   });
-  it("() custom", async() => {
-    let srcLang = 'pt-PT';
+  it("create() custom", async() => {
+    let srcLang = 'pt';
     let dstLang = 'en';
     let dlt = await DeepLTranslator.create({
       srcLang,
@@ -28,24 +29,25 @@ const ID_PT = 'ebt_en_pt-pt';
     should(dlt).properties({
       srcLang,
       dstLang,
+      sourceLang: 'pt-PT',
+      targetLang: 'en',
     });
   });
   it("uploadGlossary() EN", async()=>{
     let authKey = DeepLTranslator.authKey();
     let translator = new deepl.Translator(authKey);
     let srcLang = 'en';
-    let dstLang = 'pt-PT';
+    let dstLang = 'pt';
     let translateOpts = {};
     let glossaryName = DeepLTranslator.glossaryName({srcLang,dstLang});
     let glossary = await DeepLTranslator.uploadGlossary({
       srcLang,
       dstLang,
       translator,
-      translator,
       translateOpts,
     });
     should(glossary).properties({
-      name: 'ebt_en_pt-pt',
+      name: 'ebt_en_pt',
       ready: true,
       sourceLang: 'en',
       targetLang: 'pt',
@@ -53,7 +55,7 @@ const ID_PT = 'ebt_en_pt-pt';
   });
   it("translate() EN", async () => {
     let srcLang = 'en';
-    let dstLang = 'pt-PT';
+    let dstLang = 'pt';
     let dlt = await DeepLTranslator.create({srcLang, dstLang});
 
     // sujato
@@ -75,18 +77,17 @@ const ID_PT = 'ebt_en_pt-pt';
     let authKey = DeepLTranslator.authKey();
     let translator = new deepl.Translator(authKey);
     let srcLang = 'de';
-    let dstLang = 'pt-PT';
+    let dstLang = 'pt';
     let translateOpts = {};
     let glossaryName = DeepLTranslator.glossaryName({srcLang,dstLang});
     let glossary = await DeepLTranslator.uploadGlossary({
       srcLang,
       dstLang,
       translator,
-      translator,
       translateOpts,
     });
     should(glossary).properties({
-      name: 'ebt_de_pt-pt',
+      name: 'ebt_de_pt',
       ready: true,
       sourceLang: 'de',
       targetLang: 'pt',
@@ -94,7 +95,7 @@ const ID_PT = 'ebt_en_pt-pt';
   });
   it("translate() DE", async () => {
     let srcLang = 'de';
-    let dstLang = 'pt-PT';
+    let dstLang = 'pt';
     let dlt = await DeepLTranslator.create({srcLang, dstLang});
 
     // sujato
@@ -115,7 +116,8 @@ const ID_PT = 'ebt_en_pt-pt';
   it("glossaries()", async() =>{
     let dlt = await DeepLTranslator.create();
     let glossaries = await dlt.glossaries();
-    let gpt = glossaries.reduce((a,g)=>{
+    let gpt = glossaries.reduce((a,g,i)=>{
+      dbgv && console.log(`test/deepl glossary ${i}`, g);
     }, null);
     should(glossaries).instanceOf(Array);
     should(glossaries.length).above(0);
