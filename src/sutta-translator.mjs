@@ -19,7 +19,7 @@ const {
 } = pkgScvEsm;
 
 import {
-  DBG_CREATE, DBG_FIND,
+  DBG_CREATE, DBG_FIND, DBG_LOAD_SUTTA, DBG_TRANSLATE,
 } from './defines.mjs'
 
 var creating = false;
@@ -81,18 +81,44 @@ export default class SuttaTranslator {
     return st;
   }
 
-  async translate(suttaRef) {
+  async loadSutta(suttaRef) {
+    const msg = 'SuttaTranslator.loadSutta()';
+    const dbg = DBG_LOAD_SUTTA;
+    let sref = SuttaRef.create(suttaRef);
+    let { sutta_uid, lang='pli', author='ms' } = sref;
+    let { root, bilaraPathMap:bpm } = this.bilaraData;
+    let bilaraPath = bpm.suidPath(`${sutta_uid}/${lang}/${author}`);
+    try {
+      var filePath = path.join(root, bilaraPath);
+      var segments = JSON.parse(await fs.promises.readFile(filePath));
+    } catch(e) {
+      dbg && console.log(msg, '[1]not found:', sref, bilaraPath);
+    }
+
+    return {
+      sutta_uid,
+      lang, 
+      author,
+      bilaraPath,
+      filePath,
+      segments, 
+    }
+  }
+
+  async translate(sutta_uid) {
     const msg = 'SuttaTranslator.translate()';
+    const dbg = DBG_TRANSLATE;
     let { 
       seeker, srcLang, srcAuthor, dstLang, dstAuthor, 
       bilaraData, xltDeepL,
     } = this;
     let { root, bilaraPathMap:bpm } = bilaraData;
-    let srcRef = SuttaRef.create(suttaRef, srcLang);
-    let { sutta_uid, lang=srcLang, author=srcAuthor } = srcRef;
-    let srcPath = bpm.suidPath(`${sutta_uid}/${lang}/${author}`);
-    srcPath = path.join(root, srcPath);
-    let srcSegs = JSON.parse(await fs.promises.readFile(srcPath));
+    let srcRef = SuttaRef.create({
+      sutta_uid, lang: srcLang, author: srcAuthor});
+    let {
+      segments: srcSegs,
+      filePath: srcPath,
+    } = await this.loadSutta(srcRef);
     let scids = Object.keys(srcSegs);
     let srcTexts = scids.map(scid=>srcSegs[scid]);
 

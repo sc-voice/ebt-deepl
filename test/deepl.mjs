@@ -9,7 +9,7 @@ const dbgv = DBG_VERBOSE;
 (typeof describe === 'function') && describe("deepl", function() {
   this.timeout(30*1000);
 
-  it("TESTTESTcreate() default", async() => {
+  it("create() default", async() => {
     let dlt = await DeepLTranslator.create();
     should(dlt).properties({
       srcLang: 'de',

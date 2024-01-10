@@ -5,13 +5,17 @@ import { default as SuttaTranslator } from "../src/sutta-translator.mjs";
 
 const SUTTA_SML = "sn2.16";
 const SUTTA_MED = "sn1.20";
+const DEEPL = "deepl";
 (typeof describe === 'function') && 
   describe("sutta-translator", function() 
 {
   var _stDefault;
   async function stDefault() {
     if (!_stDefault) {
-      _stDefault = await SuttaTranslator.create();
+      _stDefault = await SuttaTranslator.create({
+        dstLang: 'pt',
+        dstAuthor: DEEPL,
+      });
     }
     return _stDefault;
   }
@@ -30,30 +34,26 @@ const SUTTA_MED = "sn1.20";
     let srcLang = 'de';
     let dstLang = 'pt';
     let srcAuthor = 'sabbamitta';
-    let dstAuthor = 'edited-ml';
+    let dstAuthor = DEEPL;
     let st = await stDefault();
     should(st).properties({ srcLang, dstLang, srcAuthor, dstAuthor});
     should(st.xltDeepL).instanceOf(DeepLTranslator);
   });
-  { const msg = "translate() SUTTA_SML"; it(msg, async() => {
-    let sutta_uid = SUTTA_SML;
-    let st = await stDefault();
-    let res = await st.translate(sutta_uid);
-    console.log(msg, {res});
-  })}; 
-  { const msg = "TESTTESTtranslate() an3.49"; it(msg, async()=>{
+  it("TESTTESTtranslate() an3.49", async()=>{
     let sutta_uid = 'an3.49';
     let srcLang = 'de';
     let dstLang = 'pt';
     let srcAuthor = 'sabbamitta';
-    let dstAuthor = 'edited-ml';
+    let dstAuthor = DEEPL;
     let st = await stDefault();
-    should(st).properties({ srcLang, dstLang, srcAuthor, dstAuthor});
     let res = await st.translate(sutta_uid);
     let { 
       srcRef, srcPath, srcSegs, dstRef, dstPath, dstSegs 
     } = res;
-    console.log(msg, 'src', srcRef, srcSegs, srcPath);
-    console.log(msg, 'dst', dstRef, dstSegs, dstPath);
-  })}
+    should(srcRef).properties({ 
+      sutta_uid, lang: 'de', author: 'sabbamitta' });
+    should(dstRef).properties({ 
+      sutta_uid, lang: 'pt', author: DEEPL });
+    should(dstSegs['an3.49:1.2']).match(/Quais são os três?/);
+  });
 })
