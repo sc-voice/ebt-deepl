@@ -81,8 +81,8 @@ that mathematicians discuss endlessly.
 Can the four Noble Truths be extended in the same
 way? Well, the EBTs do claim so:
 
-> [MN80:16.5](https://suttacentral.net/mn80/en/sujato#mn80:16.5): Let a sensible person come—neither devious nor deceitful, a person of integrity. I teach and instruct them.
- > [MN80:16.6](https://suttacentral.net/mn80/en/sujato#mn80:16.6): Practicing as instructed they will soon know and see for themselves,
+> [MN80:16.5](https://suttacentral.net/mn80/en/sujato#mn80:16.5): Let a sensible person come—neither devious nor deceitful, a person of integrity. I teach and instruct them.  
+> [MN80:16.6](https://suttacentral.net/mn80/en/sujato#mn80:16.6): Practicing as instructed they will soon know and see for themselves,
 
 It would appear then that the Early Buddhist Texts
 might prove to be a consistent, reliable, and verifiable 
