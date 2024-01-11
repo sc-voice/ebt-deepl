@@ -27,11 +27,23 @@ SYNOPSIS
     translate [OPTIONS] sutta_uid
 
 DESCRIPTION
-    Translates sutta from source language (srcLang) to destination
+    Translate sutta from source language (srcLang) to destination
     language (dstLang).
+    EBT-DeepL translates from two sources having consistent and extensive Pali EBT coverage.
+    The first source by default is Bhante Sujato's EN translations.
+    The second source by default is Ayya Sabbamitta's DE translations.
+    DeepL translations will be provided for both translation sources.
+    Ideally, one should also designate a reference based on
+    consistent, segmented EBT source authored in Bilara.
+    For example, the default reference for PT is laera-quaresma 
+    and the default reference for FR is noeismet.
+    References are not translated by DeepL--they are simply shown
+    in the output to aid in verification.
+    The Pali MS segmented text is also shown in the output
+    for an absolute reference of comparison.
 
     -da, --dst-author
-        Destination author. 
+        Destination author. Default is 'ebt-deepl'
 
     -dl, --dst-lang
         Destination language. Default is 'pt'.
@@ -54,11 +66,11 @@ DESCRIPTION
     -sl2, --src-lang2
         Source language #2. Default is 'en'.
 `);
+  process.exit(0);
 }
 
 if (args.length < 1) {
   help();
-  process.exit(0);
 }
 for (var i = 0; i < args.length; i++) {
   var arg = args[i];

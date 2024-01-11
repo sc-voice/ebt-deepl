@@ -174,3 +174,33 @@ echo YOUR_AUTHENTICATION_KEY > local/deepl.auth
 npm run test
 ```
 
+
+### Translate a sutta
+
+EBT-DeepL translates from two sources having consistent and extensive Pali EBT coverage.
+The first source by default is Bhante Sujato's EN translations.
+The second source by default is Ayya Sabbamitta's DE translations.
+DeepL translations will be provided for both translation sources.
+Ideally, one should also designate a reference for based on
+concsistent, segmented EBT source authored in Bilara.
+For example, the reference for PT is laera-quaresma 
+and the reference for FR is noeismet.
+References are not translated by DeepL--they are simply shown
+in the output to aid in verification.
+The Pali MS segmented text is also shown in the output
+for an absolute reference of comparison.
+
+To translate a sutta try this:
+
+```
+scripts/translate.mjs -sl2 de -dl pt -rl pt an3.49
+
+```
+
+For a description of the options to translate.mjs:
+
+```
+scripts/translate.mjs --help
+```
+
+
