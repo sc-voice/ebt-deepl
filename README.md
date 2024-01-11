@@ -123,24 +123,24 @@ a reliable translation basis using the EBTs.
 In particular, we have found it quite useful to 
 rely on the semantic web of meaning 
 discovered in 
-[curated examples](https://github.com/ebt-site/ebt-data/tree/published/examples)
-for guiding EBT readers through
+[curated EBT examples](https://github.com/ebt-site/ebt-data/tree/published/examples).
+The EBT examples guide EBT readers through
 modern translations of the Pali Early Buddhist Texts
 found on [SuttaCental](https://suttacentral.net).
 
-The curated EBT examples reveal remarkable attention to
-consistency within the prose EBTs.  
+What the EBT examples reveal is the remarkable attention to
+consistency in the authoring of the prose EBTs.  
 Terms are repeated throughout the EBTs
 and used quite consistently with remarkable nuance,
 in contexts both broad and deep.
-Searching for curated examples reveals
+Searching for EBT examples reveals
 an amazingly rich semantic web that has
-assisted ongoing human translation efforts
+assisted and guided ongoing human translation efforts
 over the ages. 
 Indeed, the process of translation itself
 fosters additional discussions which
 reveal deeper connections within the EBTs.
-Because of this, we rely on the curated EBT examples 
+Because of this, we rely on the EBT examples 
 to guide our efforts in building
 the EBT-DeepL glossaries.
 
