@@ -94,7 +94,8 @@ Well, if we take a consistent,
 reliable, and verifiable basis for contemporary translation
 and feed it to a machine translator,
 we might be able to understand each other better
-and talk about finding solutions meaningful things...
+and talk about finding meaningful solutions 
+to meaningful things...
 
 ### DeepL
 [DeepL](https://deepl.com) is a state-of-the-art
