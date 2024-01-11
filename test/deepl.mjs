@@ -93,7 +93,7 @@ const dbgv = DBG_VERBOSE;
       targetLang: 'pt',
     })
   });
-  it("translate() DE", async () => {
+  it("TESTTESTtranslate() DE", async () => {
     let srcLang = 'de';
     let dstLang = 'pt';
     let dlt = await DeepLTranslator.create({srcLang, dstLang});
@@ -101,7 +101,7 @@ const dbgv = DBG_VERBOSE;
     // sujato
     let res = await dlt.translate([
       "Der Pfeil des Verlangens",
-      "„Mönch, du sammelst Almosen, bevor du isst;",
+      "„Moench, du sammelst Almosen, bevor du isst;",
     ]);
 
     should(res[0].detectedSourceLang).equal('de');
