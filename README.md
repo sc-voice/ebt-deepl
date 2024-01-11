@@ -30,13 +30,14 @@ verifiable truths. The security of the internet
 itself relies on shared verifiable truths.
 For the internet, those truths are SSL certificates.
 But to understand each other meaningfully,
-we need to talk about meaningful truths.
+we need to talk about _meaningful_ truths.
 
 What is meaningful?
 
 Well, judging from the internet, there appears to
-be a lot of drama in the world. There is a lot of
-suffering. And if suffering is a problem,
+be a lot of meaningless drama in the world. 
+There is a lot of suffering. 
+And if suffering is a problem,
 then if there was an end to suffering, perhaps
 that might be something good to talk about.
 Indeed, the internet devotes a lot of bandwidth
