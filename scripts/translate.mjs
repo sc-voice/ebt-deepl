@@ -13,7 +13,7 @@ let srcLang2 = 'de';
 let srcAuthor2;
 let dstLang = 'pt';
 let dstAuthor = 'deepl';
-let refLang = 'pt';
+let refLang;
 let refAuthor;
 let [nodePath, scriptPath, ...args] = process.argv;
 let bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
@@ -52,7 +52,7 @@ DESCRIPTION
         Reference author. Default is determined from reference language.
 
     -rl, --ref-lang
-        Reference language. Default is 'de'.
+        Reference language. Default is destination language.
 
     -sa1, --src-author1
         Source author #1. Default is determined from source language.
@@ -99,6 +99,7 @@ for (var i = 0; i < args.length; i++) {
 }
 srcAuthor1 = srcAuthor1 || AuthorsV2.langAuthor(srcLang1);
 srcAuthor2 = srcAuthor2 || AuthorsV2.langAuthor(srcLang2);
+refLang = refLang || dstLang;
 refAuthor = refAuthor || AuthorsV2.langAuthor(refLang);
 
 console.log(`Sutta    : ${sutta_uid}`);

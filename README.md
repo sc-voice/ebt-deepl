@@ -190,10 +190,10 @@ in the output to aid in verification.
 The Pali MS segmented text is also shown in the output
 for an absolute reference of comparison.
 
-To translate a sutta try this:
+To translate a sutta to portuguese, try this:
 
 ```
-scripts/translate.mjs -sl2 de -dl pt -rl pt an3.49
+scripts/translate.mjs -dl pt an3.49
 
 ```
 
