@@ -39,7 +39,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     }
     should(eCaught?.message).match(/use SuttaTranslator.create()/);
   });
-  it("TESTTESTcreate() default", async() => {
+  it("create() default", async() => {
     let srcLang = 'de';
     let dstLang = 'pt';
     let srcAuthor = 'sabbamitta';
@@ -57,7 +57,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     } = res;
     should(segments['an3.49:0.3']).match(/Ātappakaraṇīyasutta/);
   });
-  it("loadSutta() an3.49/de/sabbamitta", async()=>{
+  it("TESTTESTloadSutta() an3.49/de/sabbamitta", async()=>{
     let sutta_uid = 'an3.49/de/sabbamitta';
     let st = await stDefault();
     let res = await st.loadSutta(sutta_uid, DE_TRANSFORM);

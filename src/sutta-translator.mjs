@@ -58,27 +58,38 @@ export default class SuttaTranslator {
       }).initialize(),
     } = opts;
 
+    if (srcTransform == null || typeof srcTransform === 'string') {
+      let xfmName = srcTransform || `transform_${srcLang}.json`;
+      let xfmPath = path.join(__dirname, 'glossary', xfmName);
+      let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
+      if (xfmBuf) {
+        dbg && console.log(msg, '[1]srcTransform', xfmName);
+        let xfm = JSON.parse(xfmBuf);
+        let xfmKeys = Object.keys(xfm);
+        srcTransform = xfmKeys.reduce((a,key)=>{
+          a.push({
+            rex: new RegExp(`\\b${key}`, 'ig'),
+            rep: xfm[key],
+          });
+          return a;
+        }, []);
+      }
+    }
+
     if (xltDeepL == null) {
       let optsDeepL = { 
         srcLang,
         dstLang,
       }
-      dbg && console.log(msg, '[1]DeepLTranslator.create', optsDeepL);
+      dbg && console.log(msg, '[2]DeepLTranslator.create', optsDeepL);
       xltDeepL = await DeepLTranslator.create(optsDeepL);
-    }
-
-    if (srcTransform == null) {
-      if (1 && srcLang === 'de') {
-        srcTransform = [{
-          rex: /Mönch oder eine Nonne/g,
-          rep: "Moench",
-        }]
-      }
     }
 
     let st;
     try {
       creating = true;
+      dbg && console.log(msg, '[3]SuttaTranslator', 
+        `${srcLang}/${srcAuthor} => ${dstLang}/${dstAuthor}`);
       st = new SuttaTranslator({
         xltDeepL,
         srcLang,
@@ -114,8 +125,8 @@ export default class SuttaTranslator {
     }
     let sref = SuttaRef.create(suttaRef);
     let { sutta_uid, lang='pli', author='ms' } = sref;
-    let { root, bilaraPathMap:bpm } = bilaraData;
-    let bilaraPath = lang==='pli'
+      let { root, bilaraPathMap:bpm } = bilaraData;
+      let bilaraPath = lang==='pli'
       ? bpm.suidPath(sutta_uid)
       : bpm.suidPath(`${sutta_uid}/${lang}/${author}`);
     try {

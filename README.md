@@ -203,4 +203,44 @@ For a description of the options to translate.mjs:
 scripts/translate.mjs --help
 ```
 
+### Glossaries and Transforms
+
+Glossaries and transforms are located in <kbd>src/glossary</kbd>:
+
+* Glossary files have the form <kbd>ebt_SRCLANG_DSTLANG.kvg</kbd>
+* Transform files have the form <kbd>transform_SRCLANG.json</kbd>
+
+#### Glossary
+
+Glossary files are turned into 
+[DeepL Glossaries](https://support.deepl.com/hc/en-us/articles/360021634540-About-the-glossary-feature) 
+using the DeepLAPI.
+An uploaded glossaries will always replace the previous version.
+You'll always have a current glossary for your translations.
+
+#### Transform files
+Transform files are handled only by EBT-DeepL. 
+Transform files are written in JSON:
+
+```
+{
+  "Mönch oder eine Nonne": "Moench",
+  "SRC_PATTERN": "REPLACEMENT"
+}
+```
+Each entry in a transform file consists of a key/value pair.
+The key will be converted into a 
+[Javascript regular expression pattern](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions).
+The value is the replacement.
+
+If a transform file exists for a source language,
+all source text read by EBT-DeepL will be 
+transformed by replacing text matching 
+the regular expressions with their corresponding replacements.
+
+A transform is useful when DeepL glossaries fail. 
+For example, DeepL ignores "Mönch" glossary entries,
+but happily accepts and converts "Moench" glossary entries.
+
+A transform is a useful hack that can steer DeepL when it feels stubborn.
 
