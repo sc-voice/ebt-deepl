@@ -129,7 +129,7 @@ modern translations of the Pali Early Buddhist Texts
 found on [SuttaCental](https://suttacentral.net).
 
 What the EBT examples reveal is the remarkable attention to
-consistency in the authoring of the prose EBTs.  
+consistency in the authoring of the prose EBTs.
 Terms are repeated throughout the EBTs
 and used quite consistently with remarkable nuance,
 in contexts both broad and deep.
@@ -181,8 +181,9 @@ EBT-DeepL translates from two sources having consistent and extensive Pali EBT c
 The first source by default is Bhante Sujato's EN translations.
 The second source by default is Ayya Sabbamitta's DE translations.
 DeepL translations will be provided for both translation sources.
-Ideally, one should also designate a reference for based on
-concsistent, segmented EBT source authored in Bilara.
+A human reference is also useful--by default the reference
+author will be a Bilara author having
+existing consistent, segmented EBT translations.
 For example, the reference for PT is laera-quaresma 
 and the reference for FR is noeismet.
 References are not translated by DeepL--they are simply shown
