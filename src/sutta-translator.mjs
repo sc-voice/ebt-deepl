@@ -174,8 +174,9 @@ export default class SuttaTranslator {
     let scids = Object.keys(srcSegs);
     let srcTexts = scids.map(scid=>srcSegs[scid]);
 
-    let resXlt = await xltDeepL.translate(srcTexts);
-    let dstTexts = resXlt.map(r=>r.text);
+    dbg && console.log(msg, '[1]translate', 
+      srcRef.toString(), scids.length);
+    let dstTexts = await xltDeepL.translate(srcTexts);
     let dstSegs = scids.reduce((a,scid,i)=>{
       a[scid] = dstTexts[i];
       return a;

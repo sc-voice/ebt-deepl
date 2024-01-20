@@ -64,14 +64,12 @@ const dbgv = DBG_VERBOSE;
       "“Mendicant, you seek alms before you eat;",
     ]);
 
-    should(res[0].text).equal('o dardo do anseio');
-    should(res[0].detectedSourceLang).equal('en');
+    should(res[0]).equal('o dardo do anseio');
 
     // Compare with laera-quaresma:
     // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
-    should(res[1].text).equal(
+    should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
-    should(res[1].detectedSourceLang).equal('en');
   });
   it("uploadGlossary() DE", async()=>{
     let authKey = DeepLTranslator.authKey();
@@ -104,13 +102,11 @@ const dbgv = DBG_VERBOSE;
       "„Moench, du sammelst Almosen, bevor du isst;",
     ]);
 
-    should(res[0].detectedSourceLang).equal('de');
-    should(res[0].text).equal('O dardo do anseio');
+    should(res[0]).equal('O dardo do anseio');
 
     // Compare with laera-quaresma:
     // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
-    should(res[1].detectedSourceLang).equal('de');
-    should(res[1].text).equal(
+    should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
   it("glossaries()", async() =>{

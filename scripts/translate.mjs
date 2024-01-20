@@ -159,7 +159,7 @@ for (let i=0; i<scids.length; i++) {
   console.log(`pli:\t`, pliSegs[scid]);
   console.log(`${srcLang1}:\t`, srcSegs1[scid]);
   console.log(`${srcLang2}:\t`, srcSegs2[scid]);
-  console.log(`ref:\t`, refSegs[scid]);
+  console.log(`ref:\t`, refSegs && refSegs[scid]);
   console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[scid]);
   console.log(`${srcLang2}-${dstLang}:\t`, xltsOut[1].dstSegs[scid]);
 }

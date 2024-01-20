@@ -6,9 +6,11 @@ const __dirname = path.dirname(__filename);
 const cwd = process.cwd();
 
 import {
-  DBG_GLOSSARY, DBG_CREATE, DBG_VERBOSE,
+  DBG_GLOSSARY, DBG_CREATE, DBG_VERBOSE, DBG_TRANSLATE,
 } from './defines.mjs'
 import * as deepl from 'deepl-node';
+
+const EMPTY_TEXT = "911911911";
 
 export default class DeepLTranslator {
   constructor(opts={}) {
@@ -218,16 +220,20 @@ export default class DeepLTranslator {
     return glossaries;
   }
 
-  async translate(text) {
+  async translate(texts) {
+    const msg = "DeeplTranslator.translate()";
+    const dbg = DBG_TRANSLATE;
     let { 
       translator, srcLang, dstLang, translateOpts
     } = this;
 
-    const result = await translator
-      .translateText(text, 
-        DeepLTranslator.deeplLang(srcLang), 
-        DeepLTranslator.deeplLang(dstLang), 
-        translateOpts);
+    let sourceLang = DeepLTranslator.deeplLang(srcLang); 
+    let targetLang = DeepLTranslator.deeplLang(dstLang);
+    texts = texts.map(t=> t || EMPTY_TEXT);
+    var result = await translator
+      .translateText(texts, sourceLang, targetLang, translateOpts);
+    result = result.map(r=>r.text === EMPTY_TEXT ? '' : r.text);
+
     return result;
   }
 }
