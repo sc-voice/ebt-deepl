@@ -1,22 +1,32 @@
 #!/usr/bin/env node
+import fs from "fs";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { logger } from 'log-instance';
 logger.logLevel = 'warn';
 import { BilaraData } from 'scv-bilara'
 import { default as SuttaTranslator } from "../src/sutta-translator.mjs"
 import pkgScvEsm  from "scv-esm";
-const { AuthorsV2 } = pkgScvEsm;
+const { SuttaRef, AuthorsV2 } = pkgScvEsm;
+const cwd = process.cwd();
 
+const EBT_DEEPL = 'ebt-deepl';
+
+let out = "all";
 let sutta_uid;
 let srcLang1 = 'en';
 let srcAuthor1;
 let srcLang2 = 'de';
 let srcAuthor2;
 let dstLang = 'pt';
-let dstAuthor = 'deepl';
+let dstAuthor = EBT_DEEPL;
 let refLang;
 let refAuthor;
 let [nodePath, scriptPath, ...args] = process.argv;
 let bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
+let category = 'sutta';
 
 function help() {
   console.log(`
@@ -28,8 +38,8 @@ SYNOPSIS
 
 DESCRIPTION
     Translate sutta from source language (srcLang) to destination
-    language (dstLang).
-    EBT-DeepL translates from two sources having consistent and extensive Pali EBT coverage.
+    language (dstLang). EBT-DeepL translates from two sources 
+    having consistent and extensive Pali EBT coverage.
     The first source by default is Bhante Sujato's EN translations.
     The second source by default is Ayya Sabbamitta's DE translations.
     DeepL translations will be provided for both translation sources.
@@ -65,6 +75,24 @@ DESCRIPTION
 
     -sl2, --src-lang2
         Source language #2. Default is 'en'.
+
+    -oe1, --out-ebt-data1
+        Output JSON translation from source1 to local/ebt-data
+        using ebt-deepl author.
+
+    -oe2, --out-ebt-data2
+        Output JSON translation from source1 to local/ebt-data
+        using ebt-deepl author.
+
+    -oj1, --out-json1
+        Output JSON to stdout from source 1
+
+    -oj2, --out-json2
+        Output JSON to stdout from source 2
+
+    -oa, --out-all
+        Output Pali, source1, source2, reference, translation1,
+        translation2 texts. This is the default
 `);
   process.exit(0);
 }
@@ -93,27 +121,25 @@ for (var i = 0; i < args.length; i++) {
     refLang = args[++i];
   } else if (arg === '-ra' || arg === '--ref-author') {
     refAuthor = args[++i];
+  } else if (arg === '-oa' || arg === '--out-all') {
+    out = 'all';
+  } else if (arg === '-oj1' || arg === '--out-json1') {
+    out = 'oj1';
+  } else if (arg === '-oj2' || arg === '--out-json2') {
+    out = 'oj2';
+  } else if (arg === '-oe1' || arg === '--out-ebt-data1') {
+    out = 'oe1';
+  } else if (arg === '-oe2' || arg === '--out-ebt-data2') {
+    out = 'oe2';
   } else {
     sutta_uid = args[i];
   }
 }
+
 srcAuthor1 = srcAuthor1 || AuthorsV2.langAuthor(srcLang1);
 srcAuthor2 = srcAuthor2 || AuthorsV2.langAuthor(srcLang2);
 refLang = refLang || dstLang;
 refAuthor = refAuthor || AuthorsV2.langAuthor(refLang);
-
-console.log(`Sutta    : ${sutta_uid}`);
-console.log(`Source1  : ${srcLang1}/${srcAuthor1}`);
-console.log(`Source2  : ${srcLang2}/${srcAuthor2}`);
-console.log(`Reference: ${refLang}/${refAuthor}`);
-console.log(`Target   : ${dstLang}/${dstAuthor}`);
-
-let de_pt = await SuttaTranslator.create({
-  srcLang: srcLang1, 
-  srcAuthor: srcAuthor1,
-  dstLang,
-  dstAuthor,
-});
 
 let xlts = [
   await SuttaTranslator.create({
@@ -152,15 +178,70 @@ for (let i=0; i<xlts.length; i++) {
 
 let scids = Object.keys(pliSegs);
 
-for (let i=0; i<scids.length; i++) {
-  let scid = scids[i];
+function outAll() {
+  console.log(`Sutta    : ${sutta_uid}`);
+  console.log(`Source1  : ${srcLang1}/${srcAuthor1}`);
+  console.log(`Source2  : ${srcLang2}/${srcAuthor2}`);
+  console.log(`Reference: ${refLang}/${refAuthor}`);
+  console.log(`Target   : ${dstLang}/${dstAuthor}`);
 
-  console.log('-----', scid, '-----');
-  console.log(`pli:\t`, pliSegs[scid]);
-  console.log(`${srcLang1}:\t`, srcSegs1[scid]);
-  console.log(`${srcLang2}:\t`, srcSegs2[scid]);
-  console.log(`ref:\t`, refSegs && refSegs[scid]);
-  console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[scid]);
-  console.log(`${srcLang2}-${dstLang}:\t`, xltsOut[1].dstSegs[scid]);
+  for (let i=0; i<scids.length; i++) {
+    let scid = scids[i];
+
+    console.log('-----', scid, '-----');
+    console.log(`pli:\t`, pliSegs[scid]);
+    console.log(`${srcLang1}:\t`, srcSegs1[scid]);
+    console.log(`${srcLang2}:\t`, srcSegs2[scid]);
+    console.log(`ref:\t`, refSegs && refSegs[scid]);
+    console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[scid]);
+    console.log(`${srcLang2}-${dstLang}:\t`, xltsOut[1].dstSegs[scid]);
+  }
 }
 
+function outJson(xltOut) {
+  console.log(JSON.stringify(xltOut.dstSegs, null, 2));
+}
+
+async function outEbtData(xltOut) {
+  const msg = 'translate.outEbtData()';
+  let outDir = path.join(__dirname, 
+    '../local/ebt-data/translation',
+    dstLang,
+    EBT_DEEPL,
+    category,
+    );
+  let sref = SuttaRef.create(sutta_uid);
+  let pliPath  = bilaraData.docPaths(sref)[0];
+  let dstPath = pliPath
+    .replace('root/pli/ms', 
+      ['translation', dstLang, dstAuthor].join('/'))
+    .replace('root-pli-ms',
+      ['translation', dstLang, dstAuthor].join('-'));
+  let dstDir = path.dirname(dstPath);
+
+  console.log(msg, 'creating:', dstDir.replace(cwd,'').substring(1));
+  await fs.promises.mkdir(dstDir, { recursive: true })
+  let json = JSON.stringify(xltOut.dstSegs, null, 2);
+  let dstBase = path.basename(dstPath);
+  console.log(msg, 'writing:', dstBase, `${json.length}B`);
+  await fs.promises.writeFile(dstPath, json);
+  console.log(msg, `translated ${dstBase}`);
+}
+
+switch (out) {
+  case 'all': 
+    outAll();
+    break;
+  case 'oe1':
+    outEbtData(xltsOut[0]);
+    break;
+  case 'oe2':
+    outEbtData(xltsOut[1]);
+    break;
+  case 'oj1':
+    outJson(xltsOut[0]);
+    break;
+  case 'oj2':
+    outJson(xltsOut[1]);
+    break;
+}
