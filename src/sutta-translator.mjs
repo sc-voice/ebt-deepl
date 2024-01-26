@@ -177,6 +177,10 @@ export default class SuttaTranslator {
       segments: srcSegs,
       filePath: srcPath,
     } = await this.loadSutta(srcRef);
+    if (srcSegs == null) {
+      let emsg = new Error(`${msg} cannot load: ${srcRef}`);
+      throw new Error(emsg);
+    }
     let scids = Object.keys(srcSegs);
     let srcTexts = scids.map(scid=>srcSegs[scid]);
 
