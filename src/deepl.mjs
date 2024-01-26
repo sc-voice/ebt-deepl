@@ -82,11 +82,15 @@ export default class DeepLTranslator {
   }
 
   static glossaryName(opts={}) {
+    const msg = 'DeepLTranslator.glossaryName()';
+    const dbg = DBG_GLOSSARY;
     let {
       srcLang,
       dstLang,
     } = opts;
-    return `ebt_${srcLang}_${dstLang}`.toLowerCase();
+    let name = `ebt_${srcLang}_${dstLang}`.toLowerCase();
+    dbg && console.log(msg, name);
+    return name;
   }
 
   static async create(opts={}) {
@@ -119,6 +123,7 @@ export default class DeepLTranslator {
       return g.name === glossaryName ? g : a;
     }, null)
     if (updateGlossary) {
+      let dbg = DBG_GLOSSARY;
       if (glossary) {
         let { glossaryId, name } = glossary;
         dbg && console.log(msg, '[4]using glossary', name, 
@@ -129,6 +134,7 @@ export default class DeepLTranslator {
           srcLang, dstLang, translator, glossaries, });
       }
     } else {
+      let dbg = DBG_GLOSSARY;
       dbg && console.log(msg, "[6]no glossary");
     }
     translateOpts = translateOpts

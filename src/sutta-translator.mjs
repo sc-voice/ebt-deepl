@@ -56,6 +56,7 @@ export default class SuttaTranslator {
       bilaraData = await new BilaraData({
         name: 'ebt-data',
       }).initialize(),
+      updateGlossary,
     } = opts;
 
     if (srcTransform == null || typeof srcTransform === 'string') {
@@ -80,6 +81,7 @@ export default class SuttaTranslator {
       let optsDeepL = { 
         srcLang,
         dstLang,
+        updateGlossary,
       }
       dbg && console.log(msg, '[2]DeepLTranslator.create', optsDeepL);
       xltDeepL = await DeepLTranslator.create(optsDeepL);
@@ -163,9 +165,11 @@ export default class SuttaTranslator {
     });
   }
 
-  async translate(sutta_uid) {
+  async translate(suid) {
     const msg = 'SuttaTranslator.translate()';
     const dbg = DBG_TRANSLATE;
+    const sref = SuttaRef.create(suid);
+    const { sutta_uid, lang, author, segnum } = sref;
     let { 
       seeker, srcLang, srcAuthor, dstLang, dstAuthor, 
       bilaraData, xltDeepL,
@@ -182,10 +186,13 @@ export default class SuttaTranslator {
       throw new Error(emsg);
     }
     let scids = Object.keys(srcSegs);
+    if (segnum) {
+      scids = [ `${sutta_uid}:${segnum}` ]
+    }
     let srcTexts = scids.map(scid=>srcSegs[scid]);
 
     dbg && console.log(msg, '[1]translate', 
-      srcRef.toString(), scids.length);
+      srcRef.toString(), `segs:${scids.length}`);
     let dstTexts = await xltDeepL.translate(srcTexts);
     let dstSegs = scids.reduce((a,scid,i)=>{
       a[scid] = dstTexts[i];

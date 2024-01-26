@@ -15,11 +15,12 @@ const cwd = process.cwd();
 const EBT_DEEPL = 'ebt-deepl';
 
 let out = "all";
-let sutta_uid;
+let suid;
 let srcLang1 = 'en';
 let srcAuthor1;
 let srcLang2;
 let srcAuthor2;
+let updateGlossary = false;
 let dstLang = 'pt';
 let dstAuthor = EBT_DEEPL;
 let dstReplace = false;
@@ -62,6 +63,8 @@ DESCRIPTION
     in the output to aid in verification.
     The Pali MS segmented text is also shown in the output
     for an absolute reference of comparison.
+    If the sutta_uid includes a segment number (e.g., "an3.49:1.1"),
+    only that segment is translated.
 
     -da, --dst-author
         Destination author. Default is 'ebt-deepl'
@@ -72,23 +75,9 @@ DESCRIPTION
     -dr, --dst-replace
         Replace existing destination file. Default is false.
 
-    -ra, --ref-author
-        Reference author. Default is determined from reference language.
-
-    -rl, --ref-lang
-        Reference language. Default is destination language.
-
-    -sa1, --src-author1
-        Source author #1. Default is determined from source language.
-
-    -sa2, --src-author2
-        Source author #2. Default is determined from source language.
-
-    -sl1, --src-lang1
-        Source language #1. Default is 'de'.
-
-    -sl2, --src-lang2
-        Source language #2. Default is 'en'.
+    -oa, --out-all
+        Output Pali, source1, source2, reference, translation1,
+        translation2 texts. This is the default
 
     -ob1, --out-bilara-data-deepl1
         Output JSON translation from source1 to local/bilara-data-deepl
@@ -112,9 +101,26 @@ DESCRIPTION
     -oj2, --out-json2
         Output JSON to stdout from source 2
 
-    -oa, --out-all
-        Output Pali, source1, source2, reference, translation1,
-        translation2 texts. This is the default
+    -ra, --ref-author
+        Reference author. Default is determined from reference language.
+
+    -rl, --ref-lang
+        Reference language. Default is destination language.
+
+    -sa1, --src-author1
+        Source author #1. Default is determined from source language.
+
+    -sa2, --src-author2
+        Source author #2. Default is determined from source language.
+
+    -sl1, --src-lang1
+        Source language #1. Default is 'de'.
+
+    -sl2, --src-lang2
+        Source language #2. Default is 'en'.
+
+    -ug, --update-glossary
+        Update glossary file(s) before translating
 `);
   process.exit(0);
 }
@@ -159,8 +165,10 @@ for (var i = 0; i < args.length; i++) {
     out = 'oe1';
   } else if (arg === '-oe2' || arg === '--out-ebt-data2') {
     out = 'oe2';
+  } else if (arg === '-ug' || arg === '--update-glossary') {
+    updateGlossary = true;
   } else {
-    sutta_uid = args[i];
+    suid = args[i];
   }
 }
 
@@ -176,6 +184,7 @@ let xlts = [
     dstLang,
     dstAuthor,
     bilaraData: ebtData,
+    updateGlossary,
   }),
 ];
 if (srcAuthor2) {
@@ -185,8 +194,11 @@ if (srcAuthor2) {
     dstLang,
     dstAuthor,
     bilaraData: ebtData,
+    updateGlossary,
   })
 }
+
+let { sutta_uid, lang, author, segnum } = SuttaRef.create(suid);
 
 let srcRef1 = {sutta_uid, lang:srcLang1, author:srcAuthor1}
 let srcRef2 = srcAuthor2 && {sutta_uid, lang:srcLang2, author:srcAuthor2}
@@ -206,10 +218,14 @@ if (srcRef2) {
 let xltsOut = [];
 for (let i=0; i<xlts.length; i++) {
   let xlt = xlts[i];
-  xltsOut[i] = await xlt.translate(sutta_uid);
+  xltsOut[i] = await xlt.translate(suid);
 }
 
 let scids = Object.keys(pliSegs);
+if (segnum) {
+  let scid = `${sutta_uid}:${segnum}`;
+  scids = scids.filter(s => s===scid);
+}
 
 function outAll() {
   console.log(`Sutta    : ${sutta_uid}`);
