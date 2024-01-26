@@ -18,7 +18,7 @@ let out = "all";
 let sutta_uid;
 let srcLang1 = 'en';
 let srcAuthor1;
-let srcLang2 = 'de';
+let srcLang2;
 let srcAuthor2;
 let dstLang = 'pt';
 let dstAuthor = EBT_DEEPL;
@@ -165,7 +165,7 @@ for (var i = 0; i < args.length; i++) {
 }
 
 srcAuthor1 = srcAuthor1 || AuthorsV2.langAuthor(srcLang1);
-srcAuthor2 = srcAuthor2 || AuthorsV2.langAuthor(srcLang2);
+srcAuthor2 = srcAuthor2 || srcLang2 && AuthorsV2.langAuthor(srcLang2);
 refLang = refLang || dstLang;
 refAuthor = refAuthor || AuthorsV2.langAuthor(refLang);
 
@@ -177,17 +177,19 @@ let xlts = [
     dstAuthor,
     bilaraData: ebtData,
   }),
+];
+if (srcAuthor2) {
   await SuttaTranslator.create({
     srcLang: srcLang2, 
     srcAuthor: srcAuthor2,
     dstLang,
     dstAuthor,
     bilaraData: ebtData,
-  }),
-];
+  })
+}
 
 let srcRef1 = {sutta_uid, lang:srcLang1, author:srcAuthor1}
-let srcRef2 = {sutta_uid, lang:srcLang2, author:srcAuthor2}
+let srcRef2 = srcAuthor2 && {sutta_uid, lang:srcLang2, author:srcAuthor2}
 let refRef = {sutta_uid, lang:dstLang, author:refAuthor}
 let pliRef = {sutta_uid, lang:'pli', author: 'ms'}
 let { segments: pliSegs, } = await xlts[0].loadSutta(pliRef);
@@ -196,8 +198,10 @@ let { segments: refSegs } =
   await SuttaTranslator.loadSutta(refRef, xltOpts);
 let { segments: srcSegs1 } = 
   await SuttaTranslator.loadSutta(srcRef1, xltOpts);
-let { segments: srcSegs2 } = 
-  await SuttaTranslator.loadSutta(srcRef2, xltOpts);
+if (srcRef2) {
+  var { segments: srcSegs2 } = srcRef2 && 
+    await SuttaTranslator.loadSutta(srcRef2, xltOpts);
+}
 
 let xltsOut = [];
 for (let i=0; i<xlts.length; i++) {
@@ -210,7 +214,7 @@ let scids = Object.keys(pliSegs);
 function outAll() {
   console.log(`Sutta    : ${sutta_uid}`);
   console.log(`Source1  : ${srcLang1}/${srcAuthor1}`);
-  console.log(`Source2  : ${srcLang2}/${srcAuthor2}`);
+  srcAuthor2 && console.log(`Source2  : ${srcLang2}/${srcAuthor2}`);
   console.log(`Reference: ${refLang}/${refAuthor}`);
   console.log(`Target   : ${dstLang}/${dstAuthor}`);
 
@@ -220,10 +224,11 @@ function outAll() {
     console.log('-----', scid, '-----');
     console.log(`pli:\t`, pliSegs[scid]);
     console.log(`${srcLang1}:\t`, srcSegs1[scid]);
-    console.log(`${srcLang2}:\t`, srcSegs2[scid]);
+    srcAuthor2 && console.log(`${srcLang2}:\t`, srcSegs2[scid]);
     console.log(`ref:\t`, refSegs && refSegs[scid]);
     console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[scid]);
-    console.log(`${srcLang2}-${dstLang}:\t`, xltsOut[1].dstSegs[scid]);
+    srcAuthor2 && console.log(`${srcLang2}-${dstLang}:\t`, 
+      xltsOut[1].dstSegs[scid]);
   }
 }
 
@@ -278,18 +283,27 @@ switch (out) {
     outBilaraData(xltsOut[0], bdDeepL);
     break;
   case 'ob2':
+    if (!srcAuthor2) {
+      throw new Error(`${out} requires srcAuthor2`);
+    }
     outBilaraData(xltsOut[1], bdDeepL);
     break;
   case 'oe1':
     outBilaraData(xltsOut[0], ebtData);
     break;
   case 'oe2':
+    if (!srcAuthor2) {
+      throw new Error(`${out} requires srcAuthor2`);
+    }
     outBilaraData(xltsOut[1], ebtData);
     break;
   case 'oj1':
     outJson(xltsOut[0]);
     break;
   case 'oj2':
+    if (!srcAuthor2) {
+      throw new Error(`${out} requires srcAuthor2`);
+    }
     outJson(xltsOut[1]);
     break;
 }
