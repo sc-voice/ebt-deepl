@@ -25,7 +25,7 @@ let dstAuthor = EBT_DEEPL;
 let refLang;
 let refAuthor;
 let [nodePath, scriptPath, ...args] = process.argv;
-let bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
+let ebtData = await new BilaraData({name:'ebt-data'}).initialize();
 let category = 'sutta';
 
 function help() {
@@ -147,14 +147,14 @@ let xlts = [
     srcAuthor: srcAuthor1,
     dstLang,
     dstAuthor,
-    bilaraData,
+    bilaraData: ebtData,
   }),
   await SuttaTranslator.create({
     srcLang: srcLang2, 
     srcAuthor: srcAuthor2,
     dstLang,
     dstAuthor,
-    bilaraData,
+    bilaraData: ebtData,
   }),
 ];
 
@@ -163,12 +163,13 @@ let srcRef2 = {sutta_uid, lang:srcLang2, author:srcAuthor2}
 let refRef = {sutta_uid, lang:dstLang, author:refAuthor}
 let pliRef = {sutta_uid, lang:'pli', author: 'ms'}
 let { segments: pliSegs, } = await xlts[0].loadSutta(pliRef);
+let xltOpts = {bilaraData: ebtData}
 let { segments: refSegs } = 
-  await SuttaTranslator.loadSutta(refRef, {bilaraData});
+  await SuttaTranslator.loadSutta(refRef, xltOpts);
 let { segments: srcSegs1 } = 
-  await SuttaTranslator.loadSutta(srcRef1, {bilaraData});
+  await SuttaTranslator.loadSutta(srcRef1, xltOpts);
 let { segments: srcSegs2 } = 
-  await SuttaTranslator.loadSutta(srcRef2, {bilaraData});
+  await SuttaTranslator.loadSutta(srcRef2, xltOpts);
 
 let xltsOut = [];
 for (let i=0; i<xlts.length; i++) {
@@ -211,7 +212,7 @@ async function outEbtData(xltOut) {
     category,
     );
   let sref = SuttaRef.create(sutta_uid);
-  let pliPath  = bilaraData.docPaths(sref)[0];
+  let pliPath  = ebtData.docPaths(sref)[0];
   let dstPath = pliPath
     .replace('root/pli/ms', 
       ['translation', dstLang, dstAuthor].join('/'))
