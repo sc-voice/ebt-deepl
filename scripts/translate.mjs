@@ -22,11 +22,22 @@ let srcLang2 = 'de';
 let srcAuthor2;
 let dstLang = 'pt';
 let dstAuthor = EBT_DEEPL;
+let dstReplace = false;
 let refLang;
 let refAuthor;
 let [nodePath, scriptPath, ...args] = process.argv;
-let ebtData = await new BilaraData({name:'ebt-data'}).initialize();
 let category = 'sutta';
+
+// For SC-Voice.net
+let ebtData = await new BilaraData({
+  name:'ebt-data',
+}).initialize();
+
+// For bilara-data pre-translation pull requests
+let bdDeepL = await new BilaraData({
+  name: 'bilara-data-deepl',
+  branch: 'unpublished'
+}).initialize();
 
 function help() {
   console.log(`
@@ -58,6 +69,9 @@ DESCRIPTION
     -dl, --dst-lang
         Destination language. Default is 'pt'.
 
+    -dr, --dst-replace
+        Replace existing destination file. Default is false.
+
     -ra, --ref-author
         Reference author. Default is determined from reference language.
 
@@ -76,12 +90,20 @@ DESCRIPTION
     -sl2, --src-lang2
         Source language #2. Default is 'en'.
 
+    -ob1, --out-bilara-data-deepl1
+        Output JSON translation from source1 to local/bilara-data-deepl
+        using ebt-deepl author.
+
+    -ob2, --out-bilara-data-deepl2
+        Output JSON translation from source2 to local/bilara-data-deepl
+        using ebt-deepl author.
+
     -oe1, --out-ebt-data1
         Output JSON translation from source1 to local/ebt-data
         using ebt-deepl author.
 
     -oe2, --out-ebt-data2
-        Output JSON translation from source1 to local/ebt-data
+        Output JSON translation from source2 to local/ebt-data
         using ebt-deepl author.
 
     -oj1, --out-json1
@@ -109,6 +131,8 @@ for (var i = 0; i < args.length; i++) {
     dstLang = args[++i];
   } else if (arg === '-da' || arg === '--dst-author') {
     dstAuthor = args[++i];
+  } else if (arg === '-dr' || arg === '--dst-replace') {
+    dstReplace = true;
   } else if (arg === '-sl1' || arg === '--src-lang1') {
     srcLang1 = args[++i];
   } else if (arg === '-sl2' || arg === '--src-lang2') {
@@ -127,6 +151,10 @@ for (var i = 0; i < args.length; i++) {
     out = 'oj1';
   } else if (arg === '-oj2' || arg === '--out-json2') {
     out = 'oj2';
+  } else if (arg === '-ob1' || arg === '--out-bilara-data-deepl1') {
+    out = 'ob1';
+  } else if (arg === '-ob2' || arg === '--out-bilara-data-deepl2') {
+    out = 'ob2';
   } else if (arg === '-oe1' || arg === '--out-ebt-data1') {
     out = 'oe1';
   } else if (arg === '-oe2' || arg === '--out-ebt-data2') {
@@ -203,16 +231,18 @@ function outJson(xltOut) {
   console.log(JSON.stringify(xltOut.dstSegs, null, 2));
 }
 
-async function outEbtData(xltOut) {
-  const msg = 'translate.outEbtData()';
+async function outBilaraData(xltOut, bd) {
+  const msg = 'translate.outBilaraData()';
+  const dbg = 1;
+  const { name } = bd;
   let outDir = path.join(__dirname, 
-    '../local/ebt-data/translation',
+    `../local/${name}/translation`,
     dstLang,
     EBT_DEEPL,
     category,
     );
   let sref = SuttaRef.create(sutta_uid);
-  let pliPath  = ebtData.docPaths(sref)[0];
+  let pliPath  = bd.docPaths(sref)[0];
   let dstPath = pliPath
     .replace('root/pli/ms', 
       ['translation', dstLang, dstAuthor].join('/'))
@@ -220,11 +250,22 @@ async function outEbtData(xltOut) {
       ['translation', dstLang, dstAuthor].join('-'));
   let dstDir = path.dirname(dstPath);
 
-  console.log(msg, 'creating:', dstDir.replace(cwd,'').substring(1));
+  console.log(msg, 'mkdir:', dstDir.replace(cwd,'').substring(1));
   await fs.promises.mkdir(dstDir, { recursive: true })
   let json = JSON.stringify(xltOut.dstSegs, null, 2);
   let dstBase = path.basename(dstPath);
-  console.log(msg, 'writing:', dstBase, `${json.length}B`);
+  try {
+    let res = await fs.promises.stat(dstPath);
+    if (!dstReplace) {
+      console.log(msg, 'CANCELLED (file exists)', dstBase);
+      console.log(msg, 'override with "--dst-replace"');
+      return;
+    }
+    console.log(msg, 'overwriting:', dstBase, `${json.length}B`);
+  } catch(e) { // file does not exist
+    console.log(msg, 'writing:', dstBase, `${json.length}B`);
+  }
+
   await fs.promises.writeFile(dstPath, json);
   console.log(msg, `translated ${dstBase}`);
 }
@@ -233,11 +274,17 @@ switch (out) {
   case 'all': 
     outAll();
     break;
+  case 'ob1':
+    outBilaraData(xltsOut[0], bdDeepL);
+    break;
+  case 'ob2':
+    outBilaraData(xltsOut[1], bdDeepL);
+    break;
   case 'oe1':
-    outEbtData(xltsOut[0]);
+    outBilaraData(xltsOut[0], ebtData);
     break;
   case 'oe2':
-    outEbtData(xltsOut[1]);
+    outBilaraData(xltsOut[1], ebtData);
     break;
   case 'oj1':
     outJson(xltsOut[0]);
