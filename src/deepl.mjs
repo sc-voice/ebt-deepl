@@ -7,10 +7,14 @@ const cwd = process.cwd();
 
 import {
   DBG_GLOSSARY, DBG_CREATE, DBG_VERBOSE, DBG_TRANSLATE,
+  DBG_MOCK_API, 
 } from './defines.mjs'
 import * as deepl from 'deepl-node';
+import { default as MockDeepL } from './mock-deepl.mjs';
 
 const EMPTY_TEXT = "911911911";
+
+var mockApi = DBG_MOCK_API;
 
 export default class DeepLTranslator {
   constructor(opts={}) {
@@ -90,13 +94,13 @@ export default class DeepLTranslator {
     const dbg = DBG_CREATE;
     let {
       authFile=path.join(cwd,'local/deepl.auth'),
-      srcLang='de',
+      srcLang='en',
       dstLang='pt',
       sourceLang,
       targetLang,
       formality='more',
       translateOpts,
-      updateGlossary = true,
+      updateGlossary = false,
       translator,
     } = opts;
     sourceLang = sourceLang || DeepLTranslator.deeplLang(srcLang);
@@ -104,7 +108,9 @@ export default class DeepLTranslator {
     if (translator == null) {
       let authKey = DeepLTranslator.authKey({authFile});
       dbg && console.log(msg, '[1]new deepl.Translator()');
-      translator = new deepl.Translator(authKey);
+      translator = mockApi
+        ? new MockDeepL.Translator(authKey)
+        : new deepl.Translator(authKey);
     }
 
     let glossaryName = DeepLTranslator.glossaryName({srcLang, dstLang});
@@ -112,14 +118,18 @@ export default class DeepLTranslator {
     let glossary = glossaries.reduce((a,g)=>{
       return g.name === glossaryName ? g : a;
     }, null)
-    if (glossary && !updateGlossary) {
-      let { glossaryId, name } = glossary;
-      dbg && console.log(msg, '[4]using glossary', name, 
-        glossaryId && glossaryId.substring(0,8));
+    if (updateGlossary) {
+      if (glossary) {
+        let { glossaryId, name } = glossary;
+        dbg && console.log(msg, '[4]using glossary', name, 
+          glossaryId && glossaryId.substring(0,8));
+      } else {
+        dbg && console.log(msg, "[5]uploadGlossary");
+        glossary = await DeepLTranslator.uploadGlossary({
+          srcLang, dstLang, translator, glossaries, });
+      }
     } else {
-      dbg && console.log(msg, "[5]creating glossary");
-      glossary = await DeepLTranslator.uploadGlossary({
-        srcLang, dstLang, translator, glossaries, });
+      dbg && console.log(msg, "[6]no glossary");
     }
     translateOpts = translateOpts
       ? JSON.parse(JSON.stringify(translateOpts))
@@ -139,9 +149,13 @@ export default class DeepLTranslator {
       translateOpts,
       translator, 
     }
-    dbg && console.log(msg, '[6]ctor', {
+    dbg && console.log(msg, '[7]ctor', {
       sourceLang, targetLang, glossaryName});
     return new DeepLTranslator(ctorOpts);
+  }
+
+  static setMockApi(value) {
+    mockApi = value;
   }
 
   static async uploadGlossary(opts={}) {
@@ -203,11 +217,7 @@ export default class DeepLTranslator {
       dbg && console.log(msg, "[6]create", {
         glossaryName, sourceLang, targetLang, nEntries});
       glossary = await translator.createGlossary(
-        glossaryName,
-        sourceLang,
-        targetLang,
-        glossaryEntries,
-      );
+        glossaryName, sourceLang, targetLang, glossaryEntries);
     }
 
     return glossary;

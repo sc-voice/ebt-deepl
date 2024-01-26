@@ -2,9 +2,12 @@ import should from "should";
 import { logger } from 'log-instance';
 logger.logLevel = 'warn';
 
+import { BilaraData } from 'scv-bilara';
 import { default as DeepLTranslator } from "../src/deepl.mjs";
 import { default as SuttaTranslator } from "../src/sutta-translator.mjs";
-import { BilaraData } from 'scv-bilara';
+import { 
+  DBG_TEST_API,
+} from '../src/defines.mjs';
 
 const SUTTA_SML = "sn2.16";
 const SUTTA_MED = "sn1.20";
@@ -17,6 +20,9 @@ const DE_TRANSFORM = [{
 const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
 
 (typeof describe==='function') && describe(MODULE, function() {
+  before(()=>{
+    DeepLTranslator.setMockApi(!DBG_TEST_API);
+  });
   var _stDefault;
   async function stDefault() {
     if (!_stDefault) {
@@ -90,7 +96,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu /);
     should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu /);
   });
-  it("TESTTESTtranslate() an5.44", async()=>{
+  it("translate() an5.44", async()=>{
     let sutta_uid = 'an5.44';
     let srcLang = 'de';
     let dstLang = 'pt';

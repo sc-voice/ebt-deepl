@@ -2,26 +2,30 @@ import should from "should";
 import { default as DeepLTranslator } from "../src/deepl.mjs";
 import * as deepl from 'deepl-node';
 import {
-  DBG_VERBOSE,
+  DBG_VERBOSE, DBG_TEST_API
 } from '../src/defines.mjs';
 const dbgv = DBG_VERBOSE;
 
 (typeof describe === 'function') && describe("deepl", function() {
   this.timeout(30*1000);
 
+  before(()=>{
+    DeepLTranslator.setMockApi(!DBG_TEST_API);
+  });
+
   it("create() default", async() => {
     let dlt = await DeepLTranslator.create();
     should(dlt).properties({
-      srcLang: 'de',
+      srcLang: 'en',
       dstLang: 'pt',
-      sourceLang: 'de',
+      sourceLang: 'en',
       targetLang: 'pt-PT',
-      glossaryName: 'ebt_de_pt',
+      glossaryName: 'ebt_en_pt',
     });
   });
   it("create() custom", async() => {
     let srcLang = 'pt';
-    let dstLang = 'en';
+    let dstLang = 'de';
     let dlt = await DeepLTranslator.create({
       srcLang,
       dstLang,
@@ -30,12 +34,12 @@ const dbgv = DBG_VERBOSE;
       srcLang,
       dstLang,
       sourceLang: 'pt-PT',
-      targetLang: 'en',
+      targetLang: 'de',
     });
   });
   it("uploadGlossary() EN", async()=>{
-    let authKey = DeepLTranslator.authKey();
-    let translator = new deepl.Translator(authKey);
+    let dlt = await DeepLTranslator.create();
+    let { translator } = dlt;
     let srcLang = 'en';
     let dstLang = 'pt';
     let translateOpts = {};
@@ -72,8 +76,8 @@ const dbgv = DBG_VERBOSE;
       '"Bhikkhu, você esmola comida antes de comer;');
   });
   it("uploadGlossary() DE", async()=>{
-    let authKey = DeepLTranslator.authKey();
-    let translator = new deepl.Translator(authKey);
+    let dlt = await DeepLTranslator.create();
+    let { translator } = dlt;
     let srcLang = 'de';
     let dstLang = 'pt';
     let translateOpts = {};
@@ -109,13 +113,13 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
-  it("glossaries()", async() =>{
+  it("TESTTESTglossaries()", async() =>{
     let dlt = await DeepLTranslator.create();
     let glossaries = await dlt.glossaries();
     let gpt = glossaries.reduce((a,g,i)=>{
       dbgv && console.log(`test/deepl glossary ${i}`, g);
     }, null);
     should(glossaries).instanceOf(Array);
-    should(glossaries.length).above(0);
+    DBG_TEST_API && should(glossaries.length).above(0);
   });
 })
