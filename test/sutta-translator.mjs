@@ -11,7 +11,7 @@ const SUTTA_MED = "sn1.20";
 const DEEPL = "deepl";
 const MODULE = 'sutta-translator';
 const DE_TRANSFORM = [{
-  reg: /Mönch oder eine Nonne/g,
+  rex: /Mönch( oder eine Nonne)?/ig,
   rep: "Moench",
 }];
 const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
@@ -57,16 +57,20 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     } = res;
     should(segments['an3.49:0.3']).match(/Ātappakaraṇīyasutta/);
   });
-  it("TESTTESTloadSutta() an3.49/de/sabbamitta", async()=>{
+  it("loadSutta() an3.49/de/sabbamitta", async()=>{
     let sutta_uid = 'an3.49/de/sabbamitta';
     let st = await stDefault();
-    let res = await st.loadSutta(sutta_uid, DE_TRANSFORM);
+    let txt = '"an3.49:2.1": "Das ist ein Mönch, der eifrig ist, '
+    let res = await st.loadSutta(sutta_uid, {
+      srcTransform: DE_TRANSFORM,
+      bilaraData,
+    });
     let {
       segments,
     } = res;
-    should(segments['an3.49:2.1']).match(/ein Moench:/);
+    should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("translate() an3.49", async()=>{
+  it("TESTTESTtranslate() an3.49", async()=>{
     let sutta_uid = 'an3.49';
     let srcLang = 'de';
     let dstLang = 'pt';
@@ -81,8 +85,27 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
       sutta_uid, lang: 'de', author: 'sabbamitta' });
     should(dstRef).properties({ 
       sutta_uid, lang: 'pt', author: DEEPL });
+    should(dstSegs['an3.49:1.1']).match(/bhikkhus,/);
     should(dstSegs['an3.49:1.2']).match(/Quais são os três?/);
-    should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu:/);
-    should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu,/);
+    should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu /);
+    should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu /);
+  });
+  it("TESTTESTtranslate() an5.44", async()=>{
+    let sutta_uid = 'an5.44';
+    let srcLang = 'de';
+    let dstLang = 'pt';
+    let srcAuthor = 'sabbamitta';
+    let dstAuthor = DEEPL;
+    let st = await stDefault();
+    let res = await st.translate(sutta_uid);
+    let { 
+      srcRef, srcPath, srcSegs, dstRef, dstPath, dstSegs 
+    } = res;
+    should(srcRef).properties({ 
+      sutta_uid, lang: 'de', author: 'sabbamitta' });
+    should(dstRef).properties({ 
+      sutta_uid, lang: 'pt', author: DEEPL });
+
+    should(dstSegs[`${sutta_uid}:2.5`]).match(/por compaixão./);
   });
 })

@@ -107,18 +107,19 @@ export default class SuttaTranslator {
   }
 
   static transformSource(text, srcTransform) {
+    let xfmText = text;
     if (srcTransform) {
       srcTransform.forEach(xfm=>{
-        text = text.replaceAll(xfm.rex, xfm.rep)
+        xfmText = xfmText.replaceAll(xfm.rex, xfm.rep)
       });
     }
-    return text;
+    return xfmText;
   }
 
   static async loadSutta(suttaRef, opts={}) {
-    const { srcTransform, bilaraData, } = opts;
     const msg = 'SuttaTranslator.loadSutta()';
     const dbg = DBG_LOAD_SUTTA;
+    const { srcTransform, bilaraData, } = opts;
     if ( bilaraData == null) {
       let emsg = `${msg} bilaraData is required`;
       throw new Error(emsg);
@@ -132,9 +133,10 @@ export default class SuttaTranslator {
     try {
       var filePath = path.join(root, bilaraPath);
       var rawText = (await fs.promises.readFile(filePath)).toString();
-      rawText = SuttaTranslator.transformSource(rawText, srcTransform);
-      dbg && console.log('rawtext', rawText);
-      var segments = JSON.parse(rawText);
+      var xfmText = SuttaTranslator
+        .transformSource(rawText, srcTransform);
+      dbg && console.log(msg, {rawText,xfmText});
+      var segments = JSON.parse(xfmText);
     } catch(e) {
       dbg && console.log(msg, '[1]not found:', sref, bilaraPath, e);
     }
@@ -150,7 +152,11 @@ export default class SuttaTranslator {
   }
 
   async loadSutta(suttaRef, opts={}) {
-    let { srcTransform, bilaraData } = this;
+    let { 
+      srcTransform = this.srcTransform, 
+      bilaraData = this.bilaraData,
+    } = opts;
+
     return SuttaTranslator.loadSutta(suttaRef, {
       srcTransform,
       bilaraData,

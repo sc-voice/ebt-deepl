@@ -91,7 +91,7 @@ const dbgv = DBG_VERBOSE;
       targetLang: 'pt',
     })
   });
-  it("TESTTESTtranslate() DE", async () => {
+  it("translate() DE", async () => {
     let srcLang = 'de';
     let dstLang = 'pt';
     let dlt = await DeepLTranslator.create({srcLang, dstLang});
