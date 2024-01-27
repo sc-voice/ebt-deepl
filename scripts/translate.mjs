@@ -167,6 +167,10 @@ for (var i = 0; i < args.length; i++) {
     out = 'oe2';
   } else if (arg === '-ug' || arg === '--update-glossary') {
     updateGlossary = true;
+  } else if (arg.startsWith('-')) {
+    console.warn(`Invalid argument: "${arg}". Try:`);
+    console.warn('  scripts/translate.mjs --help');
+    process.exit(-1);
   } else {
     suid = args[i];
   }
@@ -198,7 +202,11 @@ if (srcAuthor2) {
   })
 }
 
-let { sutta_uid, lang, author, segnum } = SuttaRef.create(suid);
+let sref = SuttaRef.create(suid);
+if (sref == null) {
+  throw new Error('Invalid SuttaRef', suid);
+}
+let { sutta_uid, lang, author, segnum, scid } = sref;
 
 let srcRef1 = {sutta_uid, lang:srcLang1, author:srcAuthor1}
 let srcRef2 = srcAuthor2 && {sutta_uid, lang:srcLang2, author:srcAuthor2}
@@ -223,7 +231,6 @@ for (let i=0; i<xlts.length; i++) {
 
 let scids = Object.keys(pliSegs);
 if (segnum) {
-  let scid = `${sutta_uid}:${segnum}`;
   scids = scids.filter(s => s===scid);
 }
 
@@ -235,21 +242,28 @@ function outAll() {
   console.log(`Target   : ${dstLang}/${dstAuthor}`);
 
   for (let i=0; i<scids.length; i++) {
-    let scid = scids[i];
+    let si = scids[i];
 
-    console.log('-----', scid, '-----');
-    console.log(`pli:\t`, pliSegs[scid]);
-    console.log(`${srcLang1}:\t`, srcSegs1[scid]);
-    srcAuthor2 && console.log(`${srcLang2}:\t`, srcSegs2[scid]);
-    console.log(`ref:\t`, refSegs && refSegs[scid]);
-    console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[scid]);
+    console.log('-----', si, '-----');
+    console.log(`pli:\t`, pliSegs[si]);
+    console.log(`${srcLang1}:\t`, srcSegs1[si]);
+    srcAuthor2 && console.log(`${srcLang2}:\t`, srcSegs2[si]);
+    console.log(`ref:\t`, refSegs && refSegs[si]);
+    console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[si]);
     srcAuthor2 && console.log(`${srcLang2}-${dstLang}:\t`, 
-      xltsOut[1].dstSegs[scid]);
+      xltsOut[1].dstSegs[si]);
   }
 }
 
 function outJson(xltOut) {
-  console.log(JSON.stringify(xltOut.dstSegs, null, 2));
+  let { dstSegs } = xltOut;
+  if (segnum) {
+    console.log({
+      [scid]: dstSegs[scid],
+    });
+  } else {
+    console.log(JSON.stringify(xltOut.dstSegs, null, 2));
+  }
 }
 
 async function outBilaraData(xltOut, bd) {
@@ -262,7 +276,6 @@ async function outBilaraData(xltOut, bd) {
     EBT_DEEPL,
     category,
     );
-  let sref = SuttaRef.create(sutta_uid);
   let pliPath  = bd.docPaths(sref)[0];
   let dstPath = pliPath
     .replace('root/pli/ms', 
@@ -270,25 +283,52 @@ async function outBilaraData(xltOut, bd) {
     .replace('root-pli-ms',
       ['translation', dstLang, dstAuthor].join('-'));
   let dstDir = path.dirname(dstPath);
-
-  console.log(msg, 'mkdir:', dstDir.replace(cwd,'').substring(1));
-  await fs.promises.mkdir(dstDir, { recursive: true })
-  let json = JSON.stringify(xltOut.dstSegs, null, 2);
   let dstBase = path.basename(dstPath);
+
+  dbg && console.warn(msg, 'mkdir:', dstDir.replace(cwd,'').substring(1));
+  await fs.promises.mkdir(dstDir, { recursive: true })
+  let dstSegs;
+  if (segnum) {
+    try {
+      dstSegs = JSON.parse(await fs.promises.readFile(dstPath));
+    } catch(e) {
+      console.warn(msg, 'Cannot update non-existent translation:\n  ', 
+        dstBase);
+      let json = JSON.stringify(xltOut.dstSegs, null, 2);
+      console.log(json);
+      process.exit(-1);
+    }
+
+    dstSegs[scid] = xltOut.dstSegs[scid];
+  } else {
+    dstSegs = xltOut.dstSegs;
+  }
+  let json = JSON.stringify(dstSegs, null, 2);
+
+  let dstExists;
   try {
     let res = await fs.promises.stat(dstPath);
+    dstExists = true;
+  } catch(e) { // file does not exist
+    dstExists = false;
+  }
+  if (dstExists) {
     if (!dstReplace) {
-      console.log(msg, 'CANCELLED (file exists)', dstBase);
-      console.log(msg, 'override with "--dst-replace"');
+      console.log(msg, json);
+      console.warn(msg, 'CANCELLED (file exists)', dstBase);
+      console.warn(msg, 'override with "--dst-replace"');
       return;
     }
-    console.log(msg, 'overwriting:', dstBase, `${json.length}B`);
-  } catch(e) { // file does not exist
-    console.log(msg, 'writing:', dstBase, `${json.length}B`);
+    dbg && console.warn(msg, 'overwriting:', dstBase, `${json.length}B`);
+  } else {
+    dbg && console.warn(msg, 'writing:', dstBase, `${json.length}B`);
   }
 
+  dbg && console.warn(msg, json);
+  return;
+
   await fs.promises.writeFile(dstPath, json);
-  console.log(msg, `translated ${dstBase}`);
+  dbg && console.log(msg, `translated ${dstBase}`);
 }
 
 switch (out) {

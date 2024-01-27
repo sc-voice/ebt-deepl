@@ -49,14 +49,12 @@ class MockTranslator {
         .replace(/\bBei welchen drei\? /g, 'Quais são os três? ')
         .replace(/\bDas ist ein Moench, /g, 'Este é um bhikkhu ')
         .replace(/\bman einen Moench, /g, 'chama um bhikkhu ')
-        .replace(/, Moenche, /, 'bhikkhus,');
+        .replace(/, Moenche, /, 'bhikkhus,')
+        .replace(/\bthe dart of craving/g, 'o dardo do anseio')
+        .replace(/\bDer Pfeil des Verlangens/g, 'O dardo do anseio')
+        .replace(/\bUpaka/g, 'UPAKA')
+        ;
       switch (text) {
-        case 'the dart of craving':
-          text = 'o dardo do anseio';
-          break;
-        case 'Der Pfeil des Verlangens':
-          text = 'O dardo do anseio';
-          break;
         case '„Moench, du sammelst Almosen, bevor du isst;':
         case '“Mendicant, you seek alms before you eat;':
           text = '"Bhikkhu, você esmola comida antes de comer;';
