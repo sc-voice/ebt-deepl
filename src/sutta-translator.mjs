@@ -3,7 +3,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { default as DeepLTranslator } from "./deepl.mjs"
+import { default as DeepLAdapter } from "./deepl-adapter.mjs"
 import pkgMemoAgain from "memo-again"
 const {
   Files
@@ -87,8 +87,8 @@ export default class SuttaTranslator {
         dstLang,
         updateGlossary,
       }
-      dbg && console.log(msg, '[2]DeepLTranslator.create', optsDeepL);
-      xltDeepL = await DeepLTranslator.create(optsDeepL);
+      dbg && console.log(msg, '[2]DeepLAdapter.create', optsDeepL);
+      xltDeepL = await DeepLAdapter.create(optsDeepL);
     }
 
     let st;

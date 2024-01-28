@@ -1,5 +1,5 @@
 import should from "should";
-import { default as DeepLTranslator } from "../src/deepl.mjs";
+import { default as DeepLAdapter } from "../src/deepl-adapter.mjs";
 import * as deepl from 'deepl-node';
 import {
   DBG_VERBOSE, DBG_TEST_API
@@ -10,11 +10,11 @@ const dbgv = DBG_VERBOSE;
   this.timeout(30*1000);
 
   before(()=>{
-    DeepLTranslator.setMockApi(!DBG_TEST_API);
+    DeepLAdapter.setMockApi(!DBG_TEST_API);
   });
 
   it("create() default", async() => {
-    let dlt = await DeepLTranslator.create();
+    let dlt = await DeepLAdapter.create();
     should(dlt).properties({
       srcLang: 'en',
       dstLang: 'pt',
@@ -26,7 +26,7 @@ const dbgv = DBG_VERBOSE;
   it("create() custom", async() => {
     let srcLang = 'pt';
     let dstLang = 'de';
-    let dlt = await DeepLTranslator.create({
+    let dlt = await DeepLAdapter.create({
       srcLang,
       dstLang,
     });
@@ -38,13 +38,13 @@ const dbgv = DBG_VERBOSE;
     });
   });
   it("uploadGlossary() EN", async()=>{
-    let dlt = await DeepLTranslator.create();
+    let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
     let srcLang = 'en';
     let dstLang = 'pt';
     let translateOpts = {};
-    let glossaryName = DeepLTranslator.glossaryName({srcLang,dstLang});
-    let glossary = await DeepLTranslator.uploadGlossary({
+    let glossaryName = DeepLAdapter.glossaryName({srcLang,dstLang});
+    let glossary = await DeepLAdapter.uploadGlossary({
       srcLang,
       dstLang,
       translator,
@@ -60,7 +60,7 @@ const dbgv = DBG_VERBOSE;
   it("translate() EN", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
-    let dlt = await DeepLTranslator.create({srcLang, dstLang});
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
 
     // sujato
     let res = await dlt.translate([
@@ -76,13 +76,13 @@ const dbgv = DBG_VERBOSE;
       '"Bhikkhu, você esmola comida antes de comer;');
   });
   it("uploadGlossary() DE", async()=>{
-    let dlt = await DeepLTranslator.create();
+    let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
     let srcLang = 'de';
     let dstLang = 'pt';
     let translateOpts = {};
-    let glossaryName = DeepLTranslator.glossaryName({srcLang,dstLang});
-    let glossary = await DeepLTranslator.uploadGlossary({
+    let glossaryName = DeepLAdapter.glossaryName({srcLang,dstLang});
+    let glossary = await DeepLAdapter.uploadGlossary({
       srcLang,
       dstLang,
       translator,
@@ -98,7 +98,7 @@ const dbgv = DBG_VERBOSE;
   it("translate() DE", async () => {
     let srcLang = 'de';
     let dstLang = 'pt';
-    let dlt = await DeepLTranslator.create({srcLang, dstLang});
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
 
     // sujato
     let res = await dlt.translate([
@@ -114,7 +114,7 @@ const dbgv = DBG_VERBOSE;
       '"Bhikkhu, você esmola comida antes de comer;');
   });
   it("glossaries()", async() =>{
-    let dlt = await DeepLTranslator.create();
+    let dlt = await DeepLAdapter.create();
     let glossaries = await dlt.glossaries();
     let gpt = glossaries.reduce((a,g,i)=>{
       dbgv && console.log(`test/deepl glossary ${i}`, g);

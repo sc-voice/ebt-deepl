@@ -3,7 +3,7 @@ import { logger } from 'log-instance';
 logger.logLevel = 'warn';
 
 import { BilaraData } from 'scv-bilara';
-import { default as DeepLTranslator } from "../src/deepl.mjs";
+import { default as DeepLAdapter } from "../src/deepl-adapter.mjs";
 import { default as SuttaTranslator } from "../src/sutta-translator.mjs";
 import { 
   DBG_TEST_API,
@@ -25,7 +25,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
 
 (typeof describe==='function') && describe(MODULE, function() {
   before(()=>{
-    DeepLTranslator.setMockApi(!DBG_TEST_API);
+    DeepLAdapter.setMockApi(!DBG_TEST_API);
   });
   var _stDefault;
   async function stDefault() {
@@ -56,7 +56,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     let dstAuthor = DEEPL;
     let st = await stDefault();
     should(st).properties({ srcLang, dstLang, srcAuthor, dstAuthor});
-    should(st.xltDeepL).instanceOf(DeepLTranslator);
+    should(st.xltDeepL).instanceOf(DeepLAdapter);
   });
   it("loadSutta() an3.49", async()=>{
     let sutta_uid = 'an3.49';
