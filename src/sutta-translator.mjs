@@ -31,6 +31,10 @@ const DST_LANG = 'pt';
 const SRC_LANG = 'de';
 const SRC_AUTHOR = 'sabbamitta';
 const DST_AUTHOR = 'edited-ml';
+const LDQUOT = '“';
+const RDQUOT = '”';
+const LSQUOT = '‘';
+const RSQUOT = '’';
 
 export default class SuttaTranslator {
   constructor(opts={}) {
@@ -210,6 +214,50 @@ export default class SuttaTranslator {
     return {
       srcRef, srcPath, srcSegs,
       dstRef, dstPath, dstSegs,
+    }
+  }
+
+  curlyQuotes(text, state={}) {
+    const msg = 'SuttaTranslator.curlyQuotes()';
+    const rex = /["']/g;
+    let { single=0, double=0 } = state;
+    let match;
+    let parts = text.split(rex);
+    let quoted = [];
+    while ((match = rex.exec(text)) !== null) {
+      let quote = match[0];
+      let { lastIndex } = rex;
+      let pos = lastIndex-1;
+      switch (quote) {
+        case '"':
+          quoted.push(parts.shift());
+          if (double < 1) {
+            quoted.push(LDQUOT);
+            double++;
+          } else {
+            quoted.push(RDQUOT);
+            double--;
+          }
+          break;
+        case "'":
+          quoted.push(parts.shift());
+          if (single < 1) {
+            quoted.push(LSQUOT);
+            single++;
+          } else {
+            quoted.push(RSQUOT);
+            single--;
+          }
+          break;
+      }
+    }
+    if (parts.length) {
+      quoted.push(parts[0]);
+    }
+
+    return {
+      scText: quoted.join(''),
+      state: { single, double }
     }
   }
 

@@ -76,7 +76,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("TESTTESTtranslate() an3.49", async()=>{
+  it("translate() an3.49", async()=>{
     let sutta_uid = 'an3.49';
     let srcLang = 'de';
     let dstLang = 'pt';
@@ -113,5 +113,33 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
       sutta_uid, lang: 'pt', author: DEEPL });
 
     should(dstSegs[`${sutta_uid}:2.5`]).match(/por compaixão./);
+  });
+  it("TESTTESTcurlyQuotes()", async ()=>{
+    let st = await stDefault();
+    let xltText1 = `"they speak of 'substantial reality'`;
+    let scText1 = `“they speak of ‘substantial reality’`;
+    let xltText2 = `here," he said.`;
+    let scText2 = `here,” he said.`;
+    let xltText3 = `She said, 'why?`;
+    let scText3 = `She said, ‘why?`;
+    const RDQUOT = '”';
+
+    let res1 = st.curlyQuotes(xltText1);
+    should.deepEqual(res1, {
+      scText: scText1,
+      state: { single: 0, double: 1 }, // open double quote
+    });
+
+    let res2 = st.curlyQuotes(xltText2, res1.state);
+    should.deepEqual(res2, {
+      scText: scText2,
+      state: { single: 0, double: 0 }, // all quotes closed
+    });
+
+    let res3 = st.curlyQuotes(xltText3, res2.state);
+    should.deepEqual(res3, {
+      scText: scText3,
+      state: { single: 1, double: 0 }, // open single quotes
+    });
   });
 })

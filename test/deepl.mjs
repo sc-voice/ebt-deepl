@@ -113,7 +113,7 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
-  it("TESTTESTglossaries()", async() =>{
+  it("glossaries()", async() =>{
     let dlt = await DeepLTranslator.create();
     let glossaries = await dlt.glossaries();
     let gpt = glossaries.reduce((a,g,i)=>{
