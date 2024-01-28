@@ -87,6 +87,18 @@ DESCRIPTION
         Output JSON translation from source2 to local/bilara-data-deepl
         using ebt-deepl author.
 
+    -ocqb, --out-curly-quotes-bilara-data
+        Skip translation and only change straight quotes to curly 
+        quotes in destination file. Source files are ignored. 
+        Curly quotes are normally emitted during translation, 
+        so this option is rarely needed.
+
+    -ocqe, --out-curly-quotes-ebt-data
+        Skip translation and only change straight quotes to curly 
+        quotes in destination file. Source files are ignored. 
+        Curly quotes are normally emitted during translation, 
+        so this option is rarely needed.
+
     -oe1, --out-ebt-data1
         Output JSON translation from source1 to local/ebt-data
         using ebt-deepl author.
@@ -161,6 +173,10 @@ for (var i = 0; i < args.length; i++) {
     out = 'ob1';
   } else if (arg === '-ob2' || arg === '--out-bilara-data-deepl2') {
     out = 'ob2';
+  } else if (arg==='-ocqb' || arg==='--out-curly-quotes-bilara-data') {
+    out = 'ocqb';
+  } else if (arg==='-ocqe' || arg==='--out-curly-quotes-ebt-data') {
+    out = 'ocqe';
   } else if (arg === '-oe1' || arg === '--out-ebt-data1') {
     out = 'oe1';
   } else if (arg === '-oe2' || arg === '--out-ebt-data2') {
@@ -224,9 +240,14 @@ if (srcRef2) {
 }
 
 let xltsOut = [];
-for (let i=0; i<xlts.length; i++) {
-  let xlt = xlts[i];
-  xltsOut[i] = await xlt.translate(suid);
+switch (out) {
+  case 'ocqb':
+  case 'ocqe':
+    break;
+  default: 
+    let xlt = xlts[i];
+    xltsOut[i] = await xlt.translate(suid);
+    break;
 }
 
 let scids = Object.keys(pliSegs);
@@ -241,6 +262,9 @@ function outAll() {
   console.log(`Reference: ${refLang}/${refAuthor}`);
   console.log(`Target   : ${dstLang}/${dstAuthor}`);
 
+  let scSegs = xltsOut.map(x=>
+    SuttaTranslator.curlyQuoteSegments(x.dstSegs));
+
   for (let i=0; i<scids.length; i++) {
     let si = scids[i];
 
@@ -249,20 +273,21 @@ function outAll() {
     console.log(`${srcLang1}:\t`, srcSegs1[si]);
     srcAuthor2 && console.log(`${srcLang2}:\t`, srcSegs2[si]);
     console.log(`ref:\t`, refSegs && refSegs[si]);
-    console.log(`${srcLang1}-${dstLang}:\t`, xltsOut[0].dstSegs[si]);
+    console.log(`${srcLang1}-${dstLang}:\t`, scSegs[0][si]);
     srcAuthor2 && console.log(`${srcLang2}-${dstLang}:\t`, 
-      xltsOut[1].dstSegs[si]);
+      scSegs[1][si]);
   }
 }
 
 function outJson(xltOut) {
   let { dstSegs } = xltOut;
+  let scSegs = SuttaTranslator.curlyQuoteSegments(dstSegs);
   if (segnum) {
     console.log({
-      [scid]: dstSegs[scid],
+      [scid]: scSegs[scid],
     });
   } else {
-    console.log(JSON.stringify(xltOut.dstSegs, null, 2));
+    console.log(JSON.stringify(xltOut.scSegs, null, 2));
   }
 }
 
@@ -303,7 +328,8 @@ async function outBilaraData(xltOut, bd) {
   } else {
     dstSegs = xltOut.dstSegs;
   }
-  let json = JSON.stringify(dstSegs, null, 2);
+  let scSegs = SuttaTranslator.curlyQuoteSegments(dstSegs);
+  let json = JSON.stringify(scSegs, null, 2);
 
   let dstExists;
   try {
@@ -325,10 +351,47 @@ async function outBilaraData(xltOut, bd) {
   }
 
   dbg && console.warn(msg, json);
-  return;
 
   await fs.promises.writeFile(dstPath, json);
-  dbg && console.log(msg, `translated ${dstBase}`);
+  dbg && console.warn(msg, `translated ${dstBase}`);
+}
+
+async function outCurlyQuotes(bd) {
+  const msg = 'translate.outBilaraData()';
+  const dbg = 0;
+  const { name } = bd;
+  let outDir = path.join(__dirname, 
+    `../local/${name}/translation`,
+    dstLang,
+    EBT_DEEPL,
+    category,
+    );
+  let pliPath  = bd.docPaths(sref)[0];
+  let dstPath = pliPath
+    .replace('root/pli/ms', 
+      ['translation', dstLang, dstAuthor].join('/'))
+    .replace('root-pli-ms',
+      ['translation', dstLang, dstAuthor].join('-'));
+  let dstDir = path.dirname(dstPath);
+  let dstBase = path.basename(dstPath);
+
+  let dstSegs;
+  try {
+    dstSegs = JSON.parse(await fs.promises.readFile(dstPath));
+  } catch(e) {
+    console.warn(msg, 'file not found', dstBase);
+    process.exit(-1);
+  }
+
+  let scSegs = SuttaTranslator.curlyQuoteSegments(dstSegs);
+  let json = JSON.stringify(scSegs, null, 2);
+  dbg && console.warn(msg, json);
+
+  await fs.promises.writeFile(dstPath, json);
+}
+
+if (!dstAuthor) {
+  throw new Error(`${out} required dstAuthor`);
 }
 
 switch (out) {
@@ -361,5 +424,11 @@ switch (out) {
       throw new Error(`${out} requires srcAuthor2`);
     }
     outJson(xltsOut[1]);
+    break;
+  case 'ocqb':
+    outCurlyQuotes(bdDeepL);
+    break;
+  case 'ocqe':
+    outCurlyQuotes(ebtData);
     break;
 }

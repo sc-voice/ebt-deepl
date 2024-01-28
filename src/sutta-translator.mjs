@@ -112,6 +112,63 @@ export default class SuttaTranslator {
     return st;
   }
 
+  static curlyQuoteText(text, state={}) {
+    const msg = 'SuttaTranslator.curlyQuoteText()';
+    const rex = /["']/g;
+    let { single=0, double=0 } = state;
+    let match;
+    let parts = text.split(rex);
+    let quoted = [];
+    while ((match = rex.exec(text)) !== null) {
+      let quote = match[0];
+      let { lastIndex } = rex;
+      let pos = lastIndex-1;
+      switch (quote) {
+        case '"':
+          quoted.push(parts.shift());
+          if (double < 1) {
+            quoted.push(LDQUOT);
+            double++;
+          } else {
+            quoted.push(RDQUOT);
+            double--;
+          }
+          break;
+        case "'":
+          quoted.push(parts.shift());
+          if (single < 1) {
+            quoted.push(LSQUOT);
+            single++;
+          } else {
+            quoted.push(RSQUOT);
+            single--;
+          }
+          break;
+      }
+    }
+    if (parts.length) {
+      quoted.push(parts[0]);
+    }
+
+    return {
+      scText: quoted.join(''),
+      state: { single, double }
+    }
+  }
+
+  static curlyQuoteSegments(segsIn) {
+    let scids = Object.keys(segsIn);
+    let state;
+    let segsOut = scids.reduce((a,scid) => {
+      let text = segsIn[scid];
+      let res = this.curlyQuoteText(text, state);
+      a[scid] = res.scText;
+      state = res.state;
+      return a;
+    }, {});
+    return segsOut;
+  }
+
   static transformSource(text, srcTransform) {
     let xfmText = text;
     if (srcTransform) {
@@ -216,49 +273,5 @@ export default class SuttaTranslator {
       dstRef, dstPath, dstSegs,
     }
   }
-
-  curlyQuotes(text, state={}) {
-    const msg = 'SuttaTranslator.curlyQuotes()';
-    const rex = /["']/g;
-    let { single=0, double=0 } = state;
-    let match;
-    let parts = text.split(rex);
-    let quoted = [];
-    while ((match = rex.exec(text)) !== null) {
-      let quote = match[0];
-      let { lastIndex } = rex;
-      let pos = lastIndex-1;
-      switch (quote) {
-        case '"':
-          quoted.push(parts.shift());
-          if (double < 1) {
-            quoted.push(LDQUOT);
-            double++;
-          } else {
-            quoted.push(RDQUOT);
-            double--;
-          }
-          break;
-        case "'":
-          quoted.push(parts.shift());
-          if (single < 1) {
-            quoted.push(LSQUOT);
-            single++;
-          } else {
-            quoted.push(RSQUOT);
-            single--;
-          }
-          break;
-      }
-    }
-    if (parts.length) {
-      quoted.push(parts[0]);
-    }
-
-    return {
-      scText: quoted.join(''),
-      state: { single, double }
-    }
-  }
-
+  
 }
