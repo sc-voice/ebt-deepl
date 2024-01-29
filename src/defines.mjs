@@ -6,3 +6,4 @@ export const DBG_LOAD_SUTTA     = 0;
 export const DBG_TRANSLATE      = 0;
 export const DBG_MOCK_API       = 0; // use mock API
 export const DBG_TEST_API       = 0; // test using real API
+export const DBG_QUOTE          = 0; 

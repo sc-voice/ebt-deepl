@@ -43,6 +43,7 @@ class MockTranslator {
     const msg = "MockTranslator.translateText()";
     const dbg = DBG_VERBOSE;
     dbg && console.log(msg, {sourceLang, targetLang});
+
     return texts.map(text=>{
       text = text
         .replace(/\baus Anteilnahme an. /g, 'por compaixão.')
@@ -53,6 +54,20 @@ class MockTranslator {
         .replace(/\bthe dart of craving/g, 'o dardo do anseio')
         .replace(/\bDer Pfeil des Verlangens/g, 'O dardo do anseio')
         .replace(/\bUpaka/g, 'UPAKA')
+        .replace(/^“I am.”$/g, `"Estou a fazê-lo."`)
+        .replace(/^He said, “I am.”/g, `Ele disse: "Eu sou".`)
+        .replace(/^He said,\n“I am.”/g, `Ele disse,\n"Eu sou".`)
+        .replace(/^“These others.”/g, `"Estes outros."`)
+        .replace(/^He said, “These others.”/g, 
+          `Ele disse: "Estes outros".`)
+        .replace(/^‘I am.’/g, `Estou a fazê-lo.`)
+        .replace(/^He said, ‘I am.’/g, `Ele disse: "Eu sou".`)
+        .replace(/^He said,\n‘I am.’/g, `Ele disse,\n"Eu sou".`)
+        .replace(/^‘These others.’/g, `"Estes outros".`)
+        .replace(/^He said, ‘These others.’/g,
+          `Ele disse: "Estes outros".`)
+        .replace(/^“I say, ‘You say, ‘I said!’\?’.”/g, 
+          `"Eu digo: \'Você diz: \'Eu disse!\'?`)
         ;
       switch (text) {
         case '„Moench, du sammelst Almosen, bevor du isst;':

@@ -75,6 +75,60 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
+  it("translate() most quotes en/pt", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    const L2 = '“';
+    const R2 = '”';
+    const L1 = '‘';
+    const R1 = '’';
+
+    let res = await dlt.translate([
+      `${L2}I say, ${L1}You say, ${L1}I said!${R1}?${R1}.${R2}`,
+    ]);
+
+    let i=0;
+    // DeepL fails to translate 3-deep quotes
+    should(res[i++]).equal(`"Eu digo: \'Você diz: \'Eu disse!\'?`);
+  });
+  it("translate() quotes en/pt", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    const LDQUOT = '“';
+    const RDQUOT = '”';
+    const LSQUOT = '‘';
+    const RSQUOT = '’';
+
+    // sujato
+    let res = await dlt.translate([
+      `${LDQUOT}I am.${RDQUOT}`,
+      `He said, ${LDQUOT}I am.${RDQUOT}`,
+      `He said,\n${LDQUOT}I am.${RDQUOT}`,
+      `${LDQUOT}These others.${RDQUOT}`,
+      `He said, ${LDQUOT}These others.${RDQUOT}`,
+      "‘I am.’",
+      "He said, ‘I am.’",
+      "He said,\n‘I am.’",
+      "‘These others.’",
+      "He said, ‘These others.’"
+    ]);
+
+    let i=0;
+    should(res[i++]).equal(`"Estou a fazê-lo."`);
+    should(res[i++]).equal(`Ele disse: "Eu sou".`);
+    should(res[i++]).equal(`Ele disse,\n"Eu sou".`);
+    should(res[i++]).equal(`"Estes outros."`);
+    should(res[i++]).equal(`Ele disse: "Estes outros".`);
+    should(res[i++]).equal(`Estou a fazê-lo.`);
+    should(res[i++]).equal(`Ele disse: "Eu sou".`);
+    should(res[i++]).equal(`Ele disse,\n"Eu sou".`);
+    should(res[i++]).equal(`"Estes outros".`);
+    should(res[i++]).equal(`Ele disse: "Estes outros".`);
+  });
   it("uploadGlossary() DE", async()=>{
     let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
