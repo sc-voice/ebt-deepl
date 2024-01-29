@@ -22,7 +22,7 @@ export default class QuoteParser {
       closeQuotes = [],
       level = 0,
       maxLevel = 4,
-      dLevel = 0,
+      quotes = 0,
     } = opts;
 
     lang = lang.toLowerCase();
@@ -69,6 +69,7 @@ export default class QuoteParser {
       openQuotes,
       rexQuotes,
       maxLevel,
+      quotes,
     });
   }
 
@@ -82,17 +83,19 @@ export default class QuoteParser {
   static get QUOTE() { return QUOTE; }
   static APQUOTNBSP() { return APQUOT; }
 
-  parse(text) {
+  parse(text, level=this.level) {
     const msg = 'QuoteParser.parse()';
     const dbg = DBG_QUOTE;
     const dbgv = DBG_VERBOSE && dbg;
     let { 
-      rexQuotes, level, openQuotes, closeQuotes, maxLevel,
+      rexQuotes, openQuotes, closeQuotes, maxLevel,
     } = this;
+    let quotes = 0;
     let execRes;
     while ((execRes=rexQuotes.exec(text)) !== null) {
       let match = execRes[0];
       dbgv && console.log(msg, match);
+      quotes++;
       if (match === closeQuotes[level-1]) {
         level--;
         if (level < 0) {
@@ -114,19 +117,18 @@ export default class QuoteParser {
       }
     }
 
-    let dLevel = level - this.level;
+    let endState = { level, quotes };
     if (dbg) {
-      if (dLevel === 0) {
-        console.log(msg, `level:${level}`);
-      } else if (dLevel < 0) {
-        console.log(msg, `level:${level} (${dLevel})`);
-      } else {
-        console.log(msg, `level:${level} (+${dLevel})`);
-      }
+      console.log(msg, endState);
     }
     this.level = level;
-    this.dLevel = dLevel;
-    return this;
+    this.quotes += quotes;
+
+    return endState;
+  }
+
+  addContext(text, level=this.level) {
+    return text;
   }
 
 }
