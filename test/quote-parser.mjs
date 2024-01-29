@@ -15,12 +15,12 @@ const MODULE = 'quote-parser';
     let qp = new QuoteParser();
     should(qp).properties({
       lang : 'en',
-      openQuotes: [ LDQUOT, LSQUOT, LSQUOT, LSQUOT ],
-      closeQuotes: [ RDQUOT, RSQUOT, RSQUOT, RSQUOT ],
+      openQuotes: [ LDQUOT, LSQUOT, LDQUOT, LSQUOT ],
+      closeQuotes: [ RDQUOT, RSQUOT, RDQUOT, RSQUOT ],
       level: 0,
     });
   });
-  it("TESTTESTcustom ctor()", ()=>{
+  it("custom ctor()", ()=>{
     let qp_fr = new QuoteParser({
       lang: 'fr',
       level: 1,
@@ -53,6 +53,14 @@ const MODULE = 'quote-parser';
       closeQuotes: [ RDQUOT, RSQUOT, RSQUOT, RSQUOT ],
       level: 3,
     });
+
+    let openQuotes = [ '{', '<' ];
+    let closeQuotes = [ '}', '>' ];
+    let qp_q = new QuoteParser({openQuotes, closeQuotes});
+    should(qp_q).properties({
+      openQuotes: [ '{', '<', '<', '<' ], 
+      closeQuotes: [ '}', '>', '>', '>' ]
+    });
   });
   it("rexQuotes()", ()=>{
     let qp = new QuoteParser();
@@ -61,7 +69,7 @@ const MODULE = 'quote-parser';
     let text = `a${L2}b${L1}c${R1}d${R2}e`;
     should(text.replaceAll(qp.rexQuotes, 'X')).equal('aXbXcXdXe');
   });
-  it("TESTTESTparse()", ()=>{
+  it("parse()", ()=>{
     let qp = new QuoteParser();
     let [ L1, L2, L3 ] = qp.openQuotes;
     let [ R1, R2, R3 ] = qp.closeQuotes;
@@ -70,13 +78,20 @@ const MODULE = 'quote-parser';
     should(qp.parse(`abc`)).properties({level:1, quotes:0});
     should(qp.parse(`${R1}abc`)).properties({level:0, quotes:1 });
 
+    // Supplied state
+    should(qp.parse(`a${R3}b${R2}c`,3)).properties({ level:1, quotes:2 });
+    should(qp.parse(`${L1}abc`,0)).properties({level:1, quotes:1 });
+    should(qp.parse(`${R1}abc`,1)).properties({level:0, quotes:1 });
+
     should(qp.parse(`${L1}a${L2}b${L3}c`))
-      .properties({level: 3, quotes:3});
+      .properties({level:3, quotes:3});
+    should(qp.parse(`${L1}a${L2}b${L3}c`, 0))
+      .properties({level:3, quotes:3});
     should(qp.parse(`a${R3}b${R2}c`)).properties({ level:1, quotes:2 });
     should(qp.parse(`abc`)).properties({ level:1, quotes:0 });
     should(qp.parse(`${R1}bc`)).properties({ level:0, quotes:1 });
   });
-  it("TESTTESTparse() deepl", ()=>{
+  it("parse() deepl", ()=>{
     let qp = new QuoteParser({lang:'deepl'});
     let [ L1, L2, ] = qp.openQuotes;
     let [ R1, R2, ] = qp.closeQuotes;
@@ -84,6 +99,7 @@ const MODULE = 'quote-parser';
     should(qp.parse(`${L1}abc`)).properties({level: 1, quotes:1 });
     should(qp.parse(`abc`)).properties({level: 1, quotes:0});
     should(qp.parse(`${R1}abc`)).properties({level: 0, quotes:1 });
+    should(qp.parse(`${R1}abc`, 1)).properties({level: 0, quotes:1 });
 
     should(qp.parse(`${L1}a${L2}bc`))
       .properties({level: 2, quotes:2});
@@ -91,13 +107,26 @@ const MODULE = 'quote-parser';
     should(qp.parse(`abc`)).properties({ level: 1, quotes:0 });
     should(qp.parse(`${R1}bc`)).properties({ level: 0, quotes:1 });
   });
-  it("TESTTESTaddContext()", ()=>{
-    return; // TODO
-    let qp = new QuoteParser();
-    let [ L1, L2, ] = qp.openQuotes;
-    let [ R1, R2, ] = qp.closeQuotes;
-    should(qp.addContext(`abc`, 0)).equal(`abc`);
-    should(qp.addContext(`a${L2}b${R2}c`, 0))
-      .equal(`${L1}a${L2}b${R2}c${R1}`);
+  it("preTranslate()", ()=>{
+    let openQuotes = [ '{', '<' ];
+    let closeQuotes = [ '}', '>' ];
+    let qp = new QuoteParser({openQuotes, closeQuotes});
+
+    // Balanced depth 1
+    should(qp.preTranslate('a<b>c', 0)).equal('{a<b>c}');
+
+    // Unbalanced depth 1
+    should(qp.preTranslate('a<bc', 0)).equal('{a<bc>}');
+    should(qp.preTranslate('ab>c', 0)).equal('{<ab>c}');
+
+    // Unbaanced depth 0
+    should(qp.preTranslate('a{bc', 0)).equal('a{bc}');
+    should(qp.preTranslate('ab}c', 0)).equal('{ab}c');
+
+    // Balanced depth 0
+    should(qp.preTranslate(`{a<b>c<d>e}`, 0)).equal(`{a<b>c<d>e}`);
+    should(qp.preTranslate(`{a}b{c}`, 0)).equal(`{a}b{c}`);
+    should(qp.preTranslate(`{abc}`, 0)).equal(`{abc}`);
+    should(qp.preTranslate(`abc`, 0)).equal(`abc`);
   });
 })

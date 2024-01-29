@@ -18,36 +18,43 @@ export default class QuoteParser {
     const dbg = DBG_QUOTE;
     let {
       lang = 'en',
-      openQuotes = [],
-      closeQuotes = [],
+      openQuotes,
+      closeQuotes,
       level = 0,
       maxLevel = 4,
       quotes = 0,
     } = opts;
 
     lang = lang.toLowerCase();
+    openQuotes = openQuotes && [...openQuotes];
+    closeQuotes = closeQuotes && [...closeQuotes];
 
     switch (lang) {
-      case 'en':
-        openQuotes = [ LDQUOT, LSQUOT ];
-        closeQuotes = [ RDQUOT, RSQUOT ];
+      case 'en-uk': // UK quote nesting
+        openQuotes = openQuotes || [ LSQUOT, LDQUOT, LSQUOT, LDQUOT ];
+        closeQuotes = closeQuotes || [ RSQUOT, RDQUOT, RSQUOT, RDQUOT ];
+        break;
+      case 'en-us':
+      case 'en': // American quote nesting 
+        openQuotes = openQuotes || [ LDQUOT, LSQUOT, LDQUOT, LSQUOT ];
+        closeQuotes = closeQuotes || [ RDQUOT, RSQUOT, RDQUOT, RSQUOT ];
         break;
       case 'pt':
       case 'pt-pt':
-        openQuotes = [ LGUIL, LDQUOT, LSQUOT ];
-        closeQuotes = [ RGUIL, RDQUOT, RSQUOT ];
+        openQuotes = openQuotes || [ LGUIL, LDQUOT, LSQUOT ];
+        closeQuotes = closeQuotes || [ RGUIL, RDQUOT, RSQUOT ];
         break;
       case 'pt-br':
-        openQuotes = [ LDQUOT, LSQUOT ];
-        closeQuotes = [ RDQUOT, RSQUOT ];
+        openQuotes = openQuotes || [ LDQUOT, LSQUOT ];
+        closeQuotes = closeQuotes || [ RDQUOT, RSQUOT ];
         break;
       case 'fr':
-        openQuotes = [ LGUIL+NBSP, LDQUOT, LSQUOT ];
-        closeQuotes = [ NBSP+RGUIL, RDQUOT, RSQUOT ];
+        openQuotes = openQuotes || [ LGUIL+NBSP, LDQUOT, LSQUOT ];
+        closeQuotes = closeQuotes || [ NBSP+RGUIL, RDQUOT, RSQUOT ];
         break;
       case 'deepl':
-        openQuotes = [ '"', "'" ];
-        closeQuotes = [ '"', "'" ];
+        openQuotes = openQuotes || [ '"', "'" ];
+        closeQuotes = closeQuotes || [ '"', "'" ];
         break;
       default: {
         let emsg = `${msg} unsupported language:${lang}`;
@@ -83,8 +90,8 @@ export default class QuoteParser {
   static get QUOTE() { return QUOTE; }
   static APQUOTNBSP() { return APQUOT; }
 
-  parse(text, level=this.level) {
-    const msg = 'QuoteParser.parse()';
+  scan(text, level=this.level) {
+    const msg = 'QuoteParser.scan()';
     const dbg = DBG_QUOTE;
     const dbgv = DBG_VERBOSE && dbg;
     let { 
@@ -117,17 +124,31 @@ export default class QuoteParser {
       }
     }
 
-    let endState = { level, quotes };
-    if (dbg) {
-      console.log(msg, endState);
-    }
-    this.level = level;
-    this.quotes += quotes;
-
-    return endState;
+    return { 
+      level, 
+      quotes,
+    };
   }
 
-  addContext(text, level=this.level) {
+  parse(text, level) {
+    const msg = 'QuoteParser.parse()';
+    const dbg = DBG_QUOTE;
+    let dState = this.scan(text, level);
+    if (dbg) {
+      console.log(msg, dState);
+    }
+
+    this.level = dState.level;
+    this.quotes += dState.quotes;
+
+    return dState;
+  }
+
+  preTranslate(text, level) {
+    const msg = "QuoteParser.addContext()";
+    const dbg = 1;
+
+    //dbg && console.log(msg, {level, quotes});
     return text;
   }
 

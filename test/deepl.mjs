@@ -75,6 +75,42 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
+  it("translate() nested quotes en/pt", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    const L2 = '“';
+    const R2 = '”';
+    const L1 = '‘';
+    const R1 = '’';
+
+    let res = await dlt.translate([
+      `I say, ${L2}You say, ${L1}I said!${R1}?${R2}.`,
+    ]);
+
+    let i=0;
+    // DeepL fails to translate 3-deep quotes
+    should(res[i++]).equal(`Eu digo: "Está a dizer: 'Eu disse!'?".`);
+  })
+  it("translate() inverted nesting  quotes en/pt", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    const L2 = '“';
+    const R2 = '”';
+    const L1 = '‘';
+    const R1 = '’';
+
+    let res = await dlt.translate([
+      `I say, ${L1}You say, ${L2}I said!${R2}?${R1}.`,
+    ]);
+
+    let i=0;
+    // DeepL fails to translate 3-deep quotes
+    should(res[i++]).equal(`Eu digo: "Está a dizer: "Eu disse!"?`);
+  })
   it("translate() most quotes en/pt", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
@@ -86,12 +122,12 @@ const dbgv = DBG_VERBOSE;
     const R1 = '’';
 
     let res = await dlt.translate([
-      `${L2}I say, ${L1}You say, ${L1}I said!${R1}?${R1}.${R2}`,
+      `${L2}I say, ${L1}You say, ${L2}I said!${R2}?${R1}.${R2}`,
     ]);
 
     let i=0;
     // DeepL fails to translate 3-deep quotes
-    should(res[i++]).equal(`"Eu digo: \'Você diz: \'Eu disse!\'?`);
+    should(res[i++]).equal(`Eu digo: "Você diz: "Eu disse!"?".` );
   });
   it("translate() quotes en/pt", async () => {
     let srcLang = 'en';

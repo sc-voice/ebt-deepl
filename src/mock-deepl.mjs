@@ -66,8 +66,12 @@ class MockTranslator {
         .replace(/^‘These others.’/g, `"Estes outros".`)
         .replace(/^He said, ‘These others.’/g,
           `Ele disse: "Estes outros".`)
-        .replace(/^“I say, ‘You say, ‘I said!’\?’.”/g, 
-          `"Eu digo: \'Você diz: \'Eu disse!\'?`)
+        .replace(/^“I say, ‘You say, “I said!”\?’.”/g, 
+          'Eu digo: "Você diz: "Eu disse!"?".' )
+        .replace(/^I say, ‘You say, “I said!”\?’./g,
+          `Eu digo: "Está a dizer: "Eu disse!"?`)
+        .replace(/^I say, “You say, ‘I said!’\?”./g,
+          `Eu digo: "Está a dizer: 'Eu disse!'?".`)
         ;
       switch (text) {
         case '„Moench, du sammelst Almosen, bevor du isst;':
