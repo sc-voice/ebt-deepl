@@ -1,10 +1,12 @@
-const LDQUOT = '“';
-const RDQUOT = '”';
-const LSQUOT = '‘';
-const RSQUOT = '’';
-const LGUIL  = '«';
-const RGUIL  = '»';
-const NBSP   = '\u00a0';
+const QUOTE  = '“'; // Quotation mark
+const APQUOT = "'"; // Apostrophe/single-quote
+const LSQUOT = '‘'; // Left single quote
+const RSQUOT = '’'; // Right single quote, curly apostrophe
+const LGUIL  = '«'; // Left guillemet
+const RGUIL  = '»'; // Right guillemet
+const NBSP   = '\u00a0'; // non-breaking space
+const LDQUOT = '“'; // Left double quote
+const RDQUOT = '”'; // Right double quote
 
 import {
   DBG_QUOTE, DBG_VERBOSE,
@@ -43,6 +45,10 @@ export default class QuoteParser {
         openQuotes = [ LGUIL+NBSP, LDQUOT, LSQUOT ];
         closeQuotes = [ NBSP+RGUIL, RDQUOT, RSQUOT ];
         break;
+      case 'deepl':
+        openQuotes = [ '"', "'" ];
+        closeQuotes = [ '"', "'" ];
+        break;
       default: {
         let emsg = `${msg} unsupported language:${lang}`;
         throw new Error(emsg);
@@ -73,6 +79,8 @@ export default class QuoteParser {
   static get LGUIL() { return LGUIL; }
   static get RGUIL() { return RGUIL; }
   static get NBSP() { return NBSP; }
+  static get QUOTE() { return QUOTE; }
+  static APQUOTNBSP() { return APQUOT; }
 
   parse(text) {
     const msg = 'QuoteParser.parse()';
@@ -85,17 +93,17 @@ export default class QuoteParser {
     while ((execRes=rexQuotes.exec(text)) !== null) {
       let match = execRes[0];
       dbgv && console.log(msg, match);
-      if (match === openQuotes[level]) {
-        level++;
-        if (maxLevel < level) {
-          let emsg = `${msg} quote nesting exceeded: ${text}`;
-          console.warn(msg, emsg);
-          throw new Error(emsg);
-        }
-      } else if (match === closeQuotes[level-1]) {
+      if (match === closeQuotes[level-1]) {
         level--;
         if (level < 0) {
           let emsg = `${msg} unmatched close quote: ${text}`;
+          console.warn(msg, emsg);
+          throw new Error(emsg);
+        }
+      } else if (match === openQuotes[level]) {
+        level++;
+        if (maxLevel < level) {
+          let emsg = `${msg} quote nesting exceeded: ${text}`;
           console.warn(msg, emsg);
           throw new Error(emsg);
         }
@@ -120,4 +128,5 @@ export default class QuoteParser {
     this.dLevel = dLevel;
     return this;
   }
+
 }
