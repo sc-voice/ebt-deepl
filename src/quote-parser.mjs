@@ -144,6 +144,43 @@ export default class QuoteParser {
     return dState;
   }
 
+  swapQuotes(text, qpSwap) {
+    const msg = 'QuoteParser.swapQuotes()';
+    let { 
+      openQuotes:srcOpen, 
+      closeQuotes:srcClose, 
+      rexQuotes, 
+      maxLevel,
+    } = this;
+    if (qpSwap == null) {
+      return text;
+    }
+    let {
+      openQuotes:swapOpen,
+      closeQuotes:swapClose,
+    } = qpSwap;
+
+    let dstParts = [];
+    let srcParts = text.split(rexQuotes);
+    for (let i=0; i<srcParts.length; i++) {
+      let part = srcParts[i];
+
+      for (let j=0; j<maxLevel; j++) {
+        if (part === srcOpen[j]) {
+          part = swapOpen[j];
+          break;
+        } 
+        if (part === srcClose[j]) {
+          part = swapClose[j];
+          break;
+        }
+      }
+      dstParts.push(part)
+    }
+
+    return dstParts.join('');
+  }
+
   preTranslate(text, level) {
     const msg = "QuoteParser.addContext()";
     const dbg = 1;
