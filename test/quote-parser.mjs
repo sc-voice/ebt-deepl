@@ -92,7 +92,7 @@ const MODULE = 'quote-parser';
     should(qp.parse(`${R1}bc`)).properties({ level:0, quotes:1 });
   });
   it("parse() deepl", ()=>{
-    let qp = new QuoteParser({lang:'deepl'});
+    let qp = new QuoteParser({lang:'en-deepl'});
     let [ L1, L2, ] = qp.openQuotes;
     let [ R1, R2, ] = qp.closeQuotes;
     should(qp.parse(`abc`)).properties({level: 0, quotes:0 });
@@ -107,7 +107,7 @@ const MODULE = 'quote-parser';
     should(qp.parse(`abc`)).properties({ level: 1, quotes:0 });
     should(qp.parse(`${R1}bc`)).properties({ level: 0, quotes:1 });
   });
-  it("TESTTESTconvertQuotes()", ()=>{
+  it("convertQuotes() balanced", ()=>{
     let usText =  `“I say: ‘completed’”? `;
     let ukText =  `‘I say: “completed”’? `;
     let qp_us = new QuoteParser({lang:'en-us'});
@@ -125,6 +125,22 @@ const MODULE = 'quote-parser';
 
     should(qp_us.convertQuotes(ukText, qp_uk, 1)).equal(usText);
     should(qp_uk.convertQuotes(usText, qp_us, 1)).equal(ukText);
+    should(qp_us.level).equal(1);
+    should(qp_uk.level).equal(1);
+  });
+  it("TESTTESTconvertQuotes() unbalanced", ()=>{
+    let usText =  `‘I say: “completed”’?”`; // level 1
+    let ukText =  `“I say: ‘completed’”?’`; // level 1
+    let qp_us = new QuoteParser({lang:'en-us'});
+    let qp_uk = new QuoteParser({lang:'en-uk'});
+
+    should(qp_us.convertQuotes(usText, qp_uk, 1)).equal(ukText);
+    should(qp_uk.convertQuotes(ukText, qp_us, 1)).equal(usText);
+    should(qp_us.level).equal(0);
+    should(qp_uk.level).equal(0);
+
+    should(qp_us.convertQuotes(ukText, qp_uk, 2)).equal(usText);
+    should(qp_uk.convertQuotes(usText, qp_us, 2)).equal(ukText);
     should(qp_us.level).equal(1);
     should(qp_uk.level).equal(1);
   });

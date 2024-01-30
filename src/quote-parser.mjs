@@ -52,9 +52,9 @@ export default class QuoteParser {
         openQuotes = openQuotes || [ LGUIL+NBSP, LDQUOT, LSQUOT ];
         closeQuotes = closeQuotes || [ NBSP+RGUIL, RDQUOT, RSQUOT ];
         break;
-      case 'deepl':
-        openQuotes = openQuotes || [ '"', "'" ];
-        closeQuotes = closeQuotes || [ '"', "'" ];
+      case 'en-deepl':
+        openQuotes = openQuotes || [ '"', "'", '†', '‡' ];
+        closeQuotes = closeQuotes || [ '"', "'", '†', '‡' ];
         break;
       default: {
         let emsg = `${msg} unsupported language:${lang}`;

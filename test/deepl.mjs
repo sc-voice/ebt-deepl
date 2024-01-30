@@ -75,7 +75,7 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
-  it("translate() nested quotes en/pt", async () => {
+  it("translate() en-us quotes en/pt", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     //DeepLAdapter.setMockApi(false);
@@ -93,7 +93,43 @@ const dbgv = DBG_VERBOSE;
     // DeepL fails to translate 3-deep quotes
     should(res[i++]).equal(`Eu digo: "Está a dizer: 'Eu disse!'?".`);
   })
-  it("translate() inverted nesting  quotes en/pt", async () => {
+  it("TESTTESTtranslate() en-deepl/pt-deepl quotes", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    const L2 = '“';
+    const R2 = '”';
+    const L1 = '‘';
+    const R1 = '’';
+
+    let res = await dlt.translate([
+      `‡†I say, "You say, 'I said!'?".†!‡`,
+    ]);
+
+    let i=0;
+    // DeepL translates artifical quotes faithfully
+    should(res[i++]).equal(`‡†Eu digo, "Você diz, 'Eu disse!'?".†!‡`);
+  })
+  it("translate() en-us artificial quotes en/pt", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    const L2 = '“';
+    const R2 = '”';
+    const L1 = '‘';
+    const R1 = '’';
+
+    let res = await dlt.translate([
+      `I say, “You say, ‘I said!’?”.†!‡`,
+    ]);
+
+    let i=0;
+    // DeepL fails to translate 3-deep quotes
+    should(res[i++]).equal(`Eu digo, "Você diz, 'Eu disse!'?". †!‡`);
+  })
+  it("translate() en-uk quotes en/pt", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     //DeepLAdapter.setMockApi(false);
@@ -108,7 +144,7 @@ const dbgv = DBG_VERBOSE;
     ]);
 
     let i=0;
-    // DeepL fails to translate 3-deep quotes
+    // DeepL fails to translate en-uk quotes
     should(res[i++]).equal(`Eu digo: "Está a dizer: "Eu disse!"?`);
   })
   it("translate() most quotes en/pt", async () => {
