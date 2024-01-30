@@ -107,13 +107,26 @@ const MODULE = 'quote-parser';
     should(qp.parse(`abc`)).properties({ level: 1, quotes:0 });
     should(qp.parse(`${R1}bc`)).properties({ level: 0, quotes:1 });
   });
-  it("TESTTESTswapQuotes()", ()=>{
+  it("TESTTESTconvertQuotes()", ()=>{
     let usText =  `“I say: ‘completed’”? `;
     let ukText =  `‘I say: “completed”’? `;
     let qp_us = new QuoteParser({lang:'en-us'});
     let qp_uk = new QuoteParser({lang:'en-uk'});
-    should(qp_us.swapQuotes(usText, qp_uk)).equal(ukText);
-    should(qp_uk.swapQuotes(ukText, qp_us)).equal(usText);
+
+    should(qp_us.convertQuotes(usText, qp_uk)).equal(ukText);
+    should(qp_uk.convertQuotes(ukText, qp_us)).equal(usText);
+    should(qp_us.level).equal(0);
+    should(qp_uk.level).equal(0);
+
+    should(qp_us.convertQuotes(usText, qp_uk,0)).equal(ukText);
+    should(qp_uk.convertQuotes(ukText, qp_us,0)).equal(usText);
+    should(qp_us.level).equal(0);
+    should(qp_uk.level).equal(0);
+
+    should(qp_us.convertQuotes(ukText, qp_uk, 1)).equal(usText);
+    should(qp_uk.convertQuotes(usText, qp_us, 1)).equal(ukText);
+    should(qp_us.level).equal(1);
+    should(qp_uk.level).equal(1);
   });
   it("preTranslate()", ()=>{
     return; // TODO

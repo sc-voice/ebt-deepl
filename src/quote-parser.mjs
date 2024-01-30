@@ -144,8 +144,8 @@ export default class QuoteParser {
     return dState;
   }
 
-  swapQuotes(text, qpSwap) {
-    const msg = 'QuoteParser.swapQuotes()';
+  convertQuotes(text, qpSwap, level=this.level) {
+    const msg = 'QuoteParser.convertQuotes()';
     let { 
       openQuotes:srcOpen, 
       closeQuotes:srcClose, 
@@ -165,18 +165,28 @@ export default class QuoteParser {
     for (let i=0; i<srcParts.length; i++) {
       let part = srcParts[i];
 
-      for (let j=0; j<maxLevel; j++) {
-        if (part === srcOpen[j]) {
-          part = swapOpen[j];
-          break;
-        } 
-        if (part === srcClose[j]) {
-          part = swapClose[j];
-          break;
+      if (part === srcClose[level-1]) {
+        level--;
+        part = swapClose[level];
+        if (level < 0) {
+          let emsg = `${msg} unmatched close quote: ${text}`;
+          console.warn(msg, emsg);
+          throw new Error(emsg);
         }
+      } else if (part === srcOpen[level]) {
+        part = swapOpen[level];
+        level++;
+        if (maxLevel < level) {
+          let emsg = `${msg} quote nesting exceeded: ${text}`;
+          console.warn(msg, emsg);
+          throw new Error(emsg);
+        }
+      } else {
+        // not a quote
       }
       dstParts.push(part)
     }
+    this.level = level;
 
     return dstParts.join('');
   }
