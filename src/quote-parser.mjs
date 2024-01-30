@@ -191,6 +191,16 @@ export default class QuoteParser {
     return dstParts.join('');
   }
 
+  inQuotation(text='') {
+    let { rexQuotes, openQuotes } = this;
+    let iMatch = text.search(rexQuotes);
+    if (iMatch < 0) {
+      return true;
+    }
+    let matched = text.charAt(iMatch);
+    return matched !== openQuotes[0];
+  }
+
   preTranslate(text, level) {
     const msg = "QuoteParser.addContext()";
     const dbg = 1;
