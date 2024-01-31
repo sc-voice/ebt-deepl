@@ -26,6 +26,8 @@ class MockGlossary {
   }
 }
 
+const qp_fr_deepl = new QuoteParser({lang:'fr-deepl'});
+
 class MockTranslator {
   constructor(authKey) {
     const msg = 'MockTranslator.ctor()';
@@ -80,7 +82,10 @@ class MockTranslator {
         '<x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
         '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
       ).replace(
-        QuoteParser.testcaseRebirthEN('FR'),
+        qp_fr_deepl.testcaseFeelingsEN('French'),
+          "lorsqu'il s'agit de sentiments français ?</x>"
+      ).replace(
+        qp_fr_deepl.testcaseRebirthEN('FR'),
 '<x>Je comprends : <y>La renaissance est terminée en FR</y></x>?</w>'
       )
       ;

@@ -106,8 +106,9 @@ const dbgv = DBG_VERBOSE;
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    let srcText = QuoteParser.testcaseRebirthEN('FR');
-    //console.log('srcText', srcText);
+    let qp_en_deepl = new QuoteParser({lang: 'en-deepl'});
+    let srcText = qp_en_deepl.testcaseRebirthEN('FR');
+    console.log('srcText', srcText);
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(

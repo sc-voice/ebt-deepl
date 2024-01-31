@@ -120,20 +120,6 @@ export default class QuoteParser {
     ].join('');
   }
 
-  static testcaseRebirthEN(lang) {
-    const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
-    return [
-      //`${LQ1}`,
-      `${LQ2}I understand: `,
-      `${LQ3}`,
-      `Rebirth is ended in ${lang}`,
-      `${RQ3}`,
-      `${RQ2}`,
-      '?',
-      `${RQ1}`,
-    ].join('');
-  }
-
   static APQUOTNBSP() { return APQUOT; }
   static get LDQUOT() { return LDQUOT; }
   static get RDQUOT() { return RDQUOT; }
@@ -151,6 +137,31 @@ export default class QuoteParser {
   static get RQ2() { return RQ2; }
   static get RQ3() { return RQ3; }
   static get RQ4() { return RQ4; }
+
+  // LQ2.....RQ2 RQ1
+  testcaseRebirthEN(lang) {
+    const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
+    const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
+    return [
+      //`${LQ1}`,
+      `${LQ2}I understand: `,
+      `${LQ3}`,
+      `Rebirth is ended in ${lang}`,
+      `${RQ3}`,
+      `${RQ2}`,
+      '?',
+      `${RQ1}`,
+    ].join('');
+  }
+
+  // ... RQ2
+  testcaseFeelingsEN(lang) {
+    const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
+    const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
+    return [
+      `when it comes to ${lang} feelings?${RQ2}`  
+    ].join('');
+  }
 
   scan(text, level=this.level) {
     const msg = 'QuoteParser.scan()';
@@ -208,6 +219,7 @@ export default class QuoteParser {
 
   convertQuotes(text, qpSwap, level=this.level) {
     const msg = 'QuoteParser.convertQuotes()';
+    const dbg = DBG_VERBOSE;
     let { 
       openQuotes:srcOpen, 
       closeQuotes:srcClose, 
@@ -224,10 +236,15 @@ export default class QuoteParser {
 
     let dstParts = [];
     let srcParts = text.split(rexQuotes);
+    dbg && console.log(msg, '[1]quotes', 
+      `"${srcOpen[level]}"`, 
+      `"${srcClose[level-1]}"`, 
+    );
     for (let i=0; i<srcParts.length; i++) {
       let part = srcParts[i];
 
       if (part === srcClose[level-1]) {
+        dbg && console.log(msg, `[2]close${i}`, part);
         level--;
         part = swapClose[level];
         if (level < 0) {
@@ -236,6 +253,7 @@ export default class QuoteParser {
           throw new Error(emsg);
         }
       } else if (part === srcOpen[level]) {
+        dbg && console.log(msg, `[3]open${i}`, part);
         part = swapOpen[level];
         level++;
         if (maxLevel < level) {
@@ -244,6 +262,9 @@ export default class QuoteParser {
           throw new Error(emsg);
         }
       } else {
+        dbg && console.log(msg, `[4]skip${i}`, level, 
+          `"${part}"`, 
+        );
         // not a quote
       }
       dstParts.push(part)
@@ -254,30 +275,32 @@ export default class QuoteParser {
   }
 
   quotationLevel(text='') {
-    let { maxLevel, rexQuotes, openQuotes } = this;
+    const msg = 'QuoteParser.quotationLevel()';
+    const dbg = DBG_VERBOSE;
+    let { maxLevel, rexQuotes, openQuotes, closeQuotes } = this;
     let execRes = rexQuotes.exec(text);
     try {
       if (execRes == null) {
+        dbg && console.log(msg, '[1]no-quotes', text);
         return 0;
       }
       let [ match ] = execRes;
       for (let i=0; i<maxLevel; i++) {
         if (match === openQuotes[i]) {
+          dbg && console.log(msg, `[2]level${i} openQuotes`, text);
           return i;
         }
+        if (match === closeQuotes[i]) {
+          dbg && console.log(msg, `[3]level${i} closeQuotes`, text);
+          return i+1;
+        }
       }
+      dbg && console.log(msg, '[4]no-match?');
       return 0;
     } finally {
       rexQuotes.exec(''); // reset rexQuotes
+      //dbg && console.log('reset rexQuotes', rexQuotes.lastIndex);
     }
-  }
-
-  preTranslate(text, level) {
-    const msg = "QuoteParser.addContext()";
-    const dbg = 1;
-
-    //dbg && console.log(msg, {level, quotes});
-    return text;
   }
 
 }

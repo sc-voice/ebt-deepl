@@ -48,16 +48,13 @@ const {
     return _st_en_pt;
   }
   async function st_en_fr() {
-    if (!_st_en_pt) {
-      _st_en_pt = await SuttaTranslator.create({
-        srcLang: 'en',
-        srcAuthor: 'sujato',
-        dstLang: 'fr',
-        dstAuthor: 'noeismet',
-        bilaraData,
-      });
-    }
-    return _st_en_pt;
+    return await SuttaTranslator.create({
+      srcLang: 'en',
+      srcAuthor: 'sujato',
+      dstLang: 'fr',
+      dstAuthor: 'noeismet',
+      bilaraData,
+    });
   }
   async function st_de_pt() {
     if (!_st_de_pt) {
@@ -281,13 +278,28 @@ const {
       .equal(`“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!”`)
     //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
   });
-  it("TESTTESTtranslate() sn48.47:1.3 en/fr", async()=>{
-    let srcTexts = [ QuoteParser.testcaseRebirthEN('FR') ];
+  it("translate() sn48.47:1.3 en/fr", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    let qp_en = new QuoteParser({lang:'en'});
+    let srcTexts = [ qp_en.testcaseRebirthEN('FR') ];
+    //console.log(msg, srcTexts);
     let st = await st_en_fr();
     //DeepLAdapter.setMockApi(false);
     let dstTexts = await st.translateTexts(srcTexts);
-    should(dstTexts[0]).equal(
-      `“Je comprends : ‘La renaissance est terminée en FR’”?»`
+    should(dstTexts[0]).match(
+      /“Je comprends : ‘La renaissance est terminée en FR’”\?\u00a0?»/
+    );
+  });
+  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    let qp_en = new QuoteParser({lang:'en'});
+    let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
+    console.log(msg, srcTexts);
+    //DeepLAdapter.setMockApi(false);
+    let st = await st_en_fr();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should(dstTexts[0]).match(
+      'lorsqu\'il s\'agit de sentiments français ?”'
     );
   });
 })

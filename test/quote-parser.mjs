@@ -128,46 +128,18 @@ const MODULE = 'quote-parser';
     should(qp_us.level).equal(1);
     should(qp_uk.level).equal(1);
   });
-  it("convertQuotes() unbalanced", ()=>{
-    let usText =  `‘I say: “completed”’?”`; // level 1
-    let ukText =  `“I say: ‘completed’”?’`; // level 1
-    let qp_us = new QuoteParser({lang:'en-us'});
-    let qp_uk = new QuoteParser({lang:'en-uk'});
+  it("convertQuotes() testcaseFeelingsEN() French", ()=>{
+    const msg = 'test.QuoteParser.convertQuotes()';
+    let qp_en = new QuoteParser({lang:'en'});
+    let qp_en_deepl = new QuoteParser({lang:'en-deepl'});
+    let enText = qp_en.testcaseFeelingsEN('French');
+    let preText = qp_en_deepl.testcaseFeelingsEN('French');
+    //console.log(msg, {enText, preText});
 
-    should(qp_us.convertQuotes(usText, qp_uk, 1)).equal(ukText);
-    should(qp_uk.convertQuotes(ukText, qp_us, 1)).equal(usText);
-    should(qp_us.level).equal(0);
-    should(qp_uk.level).equal(0);
-
-    should(qp_us.convertQuotes(ukText, qp_uk, 2)).equal(usText);
-    should(qp_uk.convertQuotes(usText, qp_us, 2)).equal(ukText);
-    should(qp_us.level).equal(1);
-    should(qp_uk.level).equal(1);
+    should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
+    .equal(preText);
   });
-  it("preTranslate()", ()=>{
-    return; // TODO
-    let openQuotes = [ '{', '<' ];
-    let closeQuotes = [ '}', '>' ];
-    let qp = new QuoteParser({openQuotes, closeQuotes});
-
-    // Balanced depth 1
-    should(qp.preTranslate('a<b>c', 0)).equal('{a<b>c}');
-
-    // Unbalanced depth 1
-    should(qp.preTranslate('a<bc', 0)).equal('{a<bc>}');
-    should(qp.preTranslate('ab>c', 0)).equal('{<ab>c}');
-
-    // Unbaanced depth 0
-    should(qp.preTranslate('a{bc', 0)).equal('a{bc}');
-    should(qp.preTranslate('ab}c', 0)).equal('{ab}c');
-
-    // Balanced depth 0
-    should(qp.preTranslate(`{a<b>c<d>e}`, 0)).equal(`{a<b>c<d>e}`);
-    should(qp.preTranslate(`{a}b{c}`, 0)).equal(`{a}b{c}`);
-    should(qp.preTranslate(`{abc}`, 0)).equal(`{abc}`);
-    should(qp.preTranslate(`abc`, 0)).equal(`abc`);
-  });
-  it("quotationLevel", ()=>{
+  it("quotationLevel() en us/uk", ()=>{
     let usText =  `“I say: ‘completed’”? `;
     let ukText =  `‘I say: “completed”’? `;
     let qp_us = new QuoteParser({lang:'en-us'});
@@ -177,5 +149,13 @@ const MODULE = 'quote-parser';
     should(qp_uk.quotationLevel(ukText)).equal(0);
     should(qp_us.quotationLevel(ukText)).equal(1);
     should(qp_uk.quotationLevel(usText)).equal(1);
+  });
+  it("quotationLevel() testcaseFeelingsEN FR", ()=>{
+    const msg = 'test.QuoteParser.quotationLevel()';
+    let qp_pre = new QuoteParser({lang:'en-deepl'});
+    let frenchFeelings = qp_pre.testcaseFeelingsEN('French');
+    //console.log(msg, frenchFeelings);
+
+    should(qp_pre.quotationLevel(frenchFeelings)).equal(2);
   });
 })

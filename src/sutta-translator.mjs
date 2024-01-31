@@ -313,14 +313,18 @@ export default class SuttaTranslator {
   }
 
   preTranslate(srcTexts) {
+    const msg = 'SuttaTranslator.preTranslate()';
+    const dbg = 1;
     let { qpSrc, qpPre } = this;
     if (qpSrc == null) {
+      dbg && console.log(msg, '[1]no_qpSrc');
       return srcTexts;
     }
     return srcTexts.map((srcText,i)=>{
-      let dstText = srcText;
       let level = qpSrc.quotationLevel(srcText);
-      return qpSrc.convertQuotes(dstText, qpPre, level);
+      let dstText =  qpSrc.convertQuotes(srcText, qpPre, level);
+      dbg && console.log(msg, '[2]convertQuotes', dstText);
+      return dstText;
     });
   }
 
