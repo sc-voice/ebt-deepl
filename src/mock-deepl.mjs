@@ -52,26 +52,7 @@ class MockTranslator {
         .replace(/\bman einen Moench, /g, 'chama um bhikkhu ')
         .replace(/, Moenche, /, 'bhikkhus,')
         .replace(/\bthe dart of craving/g, 'o dardo do anseio')
-        .replace(/\bDer Pfeil des Verlangens/g, 'O dardo do anseio')
         .replace(/\bUpaka/g, 'UPAKA')
-        .replace(/^“I am.”$/g, `"Estou a fazê-lo."`)
-        .replace(/^He said, “I am.”/g, `Ele disse: "Eu sou".`)
-        .replace(/^He said,\n“I am.”/g, `Ele disse,\n"Eu sou".`)
-        .replace(/^“These others.”/g, `"Estes outros."`)
-        .replace(/^He said, “These others.”/g, 
-          `Ele disse: "Estes outros".`)
-        .replace(/^‘I am.’/g, `Estou a fazê-lo.`)
-        .replace(/^He said, ‘I am.’/g, `Ele disse: "Eu sou".`)
-        .replace(/^He said,\n‘I am.’/g, `Ele disse,\n"Eu sou".`)
-        .replace(/^‘These others.’/g, `"Estes outros".`)
-        .replace(/^He said, ‘These others.’/g,
-          `Ele disse: "Estes outros".`)
-        .replace(/^“I say, ‘You say, “I said!”\?’.”$/, 
-          'Eu digo: "Você diz: "Eu disse!"?".' )
-        .replace(/^I say, ‘You say, “I said!”\?’.$/,
-          `Eu digo: "Está a dizer: "Eu disse!"?`)
-        .replace(/^I say, “You say, ‘I said!’\?”.$/,
-          `Eu digo: "Está a dizer: 'Eu disse!'?".`)
         .replace(
       `I say, ‘You say, “I said UK!”?’.`,
       `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`)
@@ -81,13 +62,13 @@ class MockTranslator {
         .replace(
       '<w><x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
       '<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>')
+        .replace(
+          '„Moench, du sammelst Almosen, bevor du isst;',
+          '"Bhikkhu, você esmola comida antes de comer;')
+        .replace(
+          '“Mendicant, you seek alms before you eat;',
+          '"Bhikkhu, você esmola comida antes de comer;')
         ;
-      switch (text) {
-        case '„Moench, du sammelst Almosen, bevor du isst;':
-        case '“Mendicant, you seek alms before you eat;':
-          text = '"Bhikkhu, você esmola comida antes de comer;';
-          break;
-      }
       return {
         text,
       }
