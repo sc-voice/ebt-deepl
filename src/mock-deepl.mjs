@@ -63,6 +63,9 @@ class MockTranslator {
       '<w><x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
       '<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>')
         .replace(
+          `Der Pfeil des Verlangens`,
+          'O dardo do anseio')
+        .replace(
           '„Moench, du sammelst Almosen, bevor du isst;',
           '"Bhikkhu, você esmola comida antes de comer;')
         .replace(
