@@ -1,5 +1,6 @@
 import should from "should";
 import { default as DeepLAdapter } from "../src/deepl-adapter.mjs";
+import { default as QuoteParser } from "../src/quote-parser.mjs";
 import * as deepl from 'deepl-node';
 import {
   DBG_VERBOSE, DBG_TEST_API
@@ -75,93 +76,44 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
-  it("TESTTESTtranslate() quotes en-us/fr", async () => {
+  it("translate() testcaseDepthEN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    //return ; // TODO
+    let srcText = QuoteParser.testcaseDepthEN('FR');
+    //console.log('srcText', srcText);
+    let res = await dlt.translate([srcText]);
 
-    let res = await dlt.translate([
-      `“<x>I say, <y>You say, <z>I said!</z>?</y>.</x>”`,
-    ]);
-
-    let i=0;
-    // DeepL fails to translate 3-deep quotes
-    should(res[i++]).equal(
-      `"<x>Je dis, <y>Vous dites, <z>J\'ai dit !</z>?</y></x>".`);
+    should(res[0]).equal(
+      `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`);
   })
-  it("translate() en-us quotes en/pt", async () => {
+  it("translate() testcaseDepthEN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    const L2 = '“';
-    const R2 = '”';
-    const L1 = '‘';
-    const R1 = '’';
+    let srcText = QuoteParser.testcaseDepthEN('PT');
+    //console.log('srcText:', srcText);
+    let res = await dlt.translate([srcText]);
 
-    let res = await dlt.translate([
-      `I say, ${L2}You say, ${L1}I said!${R1}?${R2}.`,
-    ]);
-
-    let i=0;
-    // DeepL fails to translate 3-deep quotes
-    should(res[i++]).equal(`Eu digo: "Está a dizer: 'Eu disse!'?".`);
+    should(res[0]).equal(
+      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>`
+    );
   })
-  it("TESTTESTtranslate() en-deepl/pt-deepl quotes", async () => {
+  it("TESTTESTtranslate() en-uk quotes en/pt", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
-    //DeepLAdapter.setMockApi(false);
+    DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    const L2 = '“';
-    const R2 = '”';
-    const L1 = '‘';
-    const R1 = '’';
 
     let res = await dlt.translate([
-      `‡†I say, "You say, 'I said!'?".†!‡`,
+      `I say, ‘You say, “I said UK!”?’.`,
     ]);
 
-    let i=0;
-    // DeepL translates artifical quotes faithfully
-    should(res[i++]).equal(`‡†Eu digo, "Você diz, 'Eu disse!'?".†!‡`);
-  })
-  it("translate() en-us artificial quotes en/pt", async () => {
-    let srcLang = 'en';
-    let dstLang = 'pt';
-    //DeepLAdapter.setMockApi(false);
-    let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    const L2 = '“';
-    const R2 = '”';
-    const L1 = '‘';
-    const R1 = '’';
-
-    let res = await dlt.translate([
-      `I say, “You say, ‘I said!’?”.†!‡`,
-    ]);
-
-    let i=0;
-    // DeepL fails to translate 3-deep quotes
-    should(res[i++]).equal(`Eu digo, "Você diz, 'Eu disse!'?". †!‡`);
-  })
-  it("translate() en-uk quotes en/pt", async () => {
-    let srcLang = 'en';
-    let dstLang = 'pt';
-    //DeepLAdapter.setMockApi(false);
-    let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    const L2 = '“';
-    const R2 = '”';
-    const L1 = '‘';
-    const R1 = '’';
-
-    let res = await dlt.translate([
-      `I say, ${L1}You say, ${L2}I said!${R2}?${R1}.`,
-    ]);
-
-    let i=0;
     // DeepL fails to translate en-uk quotes
-    should(res[i++]).equal(`Eu digo: "Está a dizer: "Eu disse!"?`);
+    should(res[0]).equal(
+      `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`);
   })
   it("translate() most quotes en/pt", async () => {
     let srcLang = 'en';

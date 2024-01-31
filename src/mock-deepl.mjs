@@ -72,16 +72,15 @@ class MockTranslator {
           `Eu digo: "Está a dizer: "Eu disse!"?`)
         .replace(/^I say, “You say, ‘I said!’\?”.$/,
           `Eu digo: "Está a dizer: 'Eu disse!'?".`)
-        .replace(/^I say, “You say, ‘I said!’\?”.†!‡/,
-          `Eu digo, "Você diz, 'Eu disse!'?". †!‡`)
-        .replace(/^I say, "You say, 'I said!'\?".†!‡/,
-          `Eu digo, "Você diz, 'Eu disse!'?". †!‡`)
-        .replace(/^‡†I say, "You say, 'I said!'\?"\.†‡/,
-          `‡†Eu digo, "Você diz, 'Eu disse!'?".†‡`)
-        .replace(/^‡†I say, "You say, 'I said!'\?"\.†!‡/,
-          `‡†Eu digo, "Você diz, 'Eu disse!'?".†!‡`)
-        .replace(/^“<x>I say, <y>You say, <z>I said!<\/z>\?<\/y>\.<\/x>”/,
-        `"<x>Je dis, <y>Vous dites, <z>J'ai dit !</z>?</y></x>".`)
+        .replace(
+      `I say, ‘You say, “I said UK!”?’.`,
+      `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`)
+        .replace(
+      '<w><x>I say, <y>You say, <z>I said FR!</z>?</y>.</x></w>',
+      `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`)
+        .replace(
+      '<w><x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
+      '<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>')
         ;
       switch (text) {
         case '„Moench, du sammelst Almosen, bevor du isst;':

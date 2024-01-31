@@ -208,14 +208,16 @@ let xlts = [
   }),
 ];
 if (srcAuthor2) {
-  await SuttaTranslator.create({
-    srcLang: srcLang2, 
-    srcAuthor: srcAuthor2,
-    dstLang,
-    dstAuthor,
-    bilaraData: ebtData,
-    updateGlossary,
-  })
+  xlts.push(
+    await SuttaTranslator.create({
+      srcLang: srcLang2, 
+      srcAuthor: srcAuthor2,
+      dstLang,
+      dstAuthor,
+      bilaraData: ebtData,
+      updateGlossary,
+    })
+  )
 }
 
 let sref = SuttaRef.create(suid);
@@ -240,14 +242,16 @@ if (srcRef2) {
 }
 
 let xltsOut = [];
-switch (out) {
-  case 'ocqb':
-  case 'ocqe':
-    break;
-  default: 
-    let xlt = xlts[i];
-    xltsOut[i] = await xlt.translate(suid);
-    break;
+for (let i=0; i<xlts.length; i++) {
+  switch (out) {
+    case 'ocqb':
+    case 'ocqe':
+      break;
+    default: 
+      let xlt = xlts[i];
+      xltsOut[i] = await xlt.translate(suid);
+      break;
+  }
 }
 
 let scids = Object.keys(pliSegs);

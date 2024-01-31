@@ -244,6 +244,20 @@ export default class SuttaTranslator {
     });
   }
 
+  async translateTexts(srcTexts) {
+    const msg = 'SuttaTranslator.translateTexts()';
+    const dbg = DBG_TRANSLATE;
+    let { xltDeepL } = this;
+    let preTexts = this.preTranslate(srcTexts);
+    dbg && console.log(msg, '[1]preTexts', preTexts);
+    let postTexts = await xltDeepL.translate(preTexts);
+    dbg && console.log(msg, '[2]postTexts', preTexts);
+    let dstTexts = this.postTranslate(postTexts);
+    dbg && console.log(msg, '[3]dstTexts', postTexts);
+
+    return dstTexts;
+  }
+
   async translate(suid) {
     const msg = 'SuttaTranslator.translate()';
     const dbg = DBG_TRANSLATE;
@@ -272,7 +286,10 @@ export default class SuttaTranslator {
 
     dbg && console.log(msg, '[1]translate', 
       srcRef.toString(), `segs:${scids.length}`);
-    let dstTexts = await xltDeepL.translate(srcTexts);
+    let dstTexts = await this.translateTexts(srcTexts);
+    //let preTexts = this.preTranslate(srcTexts);
+    //let postTexts = await xltDeepL.translate(preTexts);
+    //let dstTexts = this.postTranslate(postTexts);
     let dstSegs = scids.reduce((a,scid,i)=>{
       a[scid] = dstTexts[i];
       return a;

@@ -9,14 +9,27 @@ const LDQUOT = '“'; // Left double quote
 const RDQUOT = '”'; // Right double quote
 
 // Deepl 
-const LQ1 = '"'; 
+const LQ1 = '<w>'; 
 const LQ2 = '<x>';
 const LQ3 = '<y>';
 const LQ4 = '<z>';
-const RQ1 = '"'; 
+const RQ1 = '</w>'; 
 const RQ2 = '</x>';
 const RQ3 = '</y>';
 const RQ4 = '</z>';
+
+function testcaseDepthEN(lang) {
+  const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
+  return [
+    `${LQ1}`,
+    `${LQ2}I say, `,
+    `${LQ3}You say, `,
+    `${LQ4}I said ${lang}!${RQ4}`,
+    `?${RQ3}.`,
+    `${RQ2}`,
+    `${RQ1}`,
+  ].join('');
+}
 
 import {
   DBG_QUOTE, DBG_VERBOSE,
@@ -67,8 +80,8 @@ export default class QuoteParser {
       case 'fr-deepl':
       case 'pt-deepl':
       case 'en-deepl':
-        openQuotes = openQuotes || [ '"', LQ2, LQ3, LQ4 ];
-        closeQuotes = closeQuotes || [ '"', RQ2, RQ3, RQ4 ];
+        openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
+        closeQuotes = closeQuotes || [ RQ1, RQ2, RQ3, RQ4 ];
         break;
       default: {
         let emsg = `${msg} unsupported language:${lang}`;
@@ -94,6 +107,7 @@ export default class QuoteParser {
     });
   }
 
+  static testcaseDepthEN(lang) {return testcaseDepthEN(lang);}
   static APQUOTNBSP() { return APQUOT; }
   static get LDQUOT() { return LDQUOT; }
   static get RDQUOT() { return RDQUOT; }

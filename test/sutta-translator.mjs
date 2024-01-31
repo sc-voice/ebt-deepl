@@ -34,6 +34,7 @@ const {
   });
   var _st_en_pt;
   var _st_de_pt;
+  var _st_en_fr;
   async function st_en_pt() {
     if (!_st_en_pt) {
       _st_en_pt = await SuttaTranslator.create({
@@ -41,6 +42,18 @@ const {
         srcAuthor: 'sujato',
         dstLang: 'pt',
         dstAuthor: DEEPL,
+        bilaraData,
+      });
+    }
+    return _st_en_pt;
+  }
+  async function st_en_fr() {
+    if (!_st_en_pt) {
+      _st_en_pt = await SuttaTranslator.create({
+        srcLang: 'en',
+        srcAuthor: 'sujato',
+        dstLang: 'fr',
+        dstAuthor: 'noeismet',
         bilaraData,
       });
     }
@@ -78,7 +91,7 @@ const {
     should(st).properties({ srcLang, dstLang, srcAuthor, dstAuthor});
     should(st.xltDeepL).instanceOf(DeepLAdapter);
   });
-  it("TESTTESTcreate() en", async() => {
+  it("create() en", async() => {
     let srcLang = 'en';
     let srcAuthor = 'sujato';
     let dstLang = 'pt';
@@ -116,7 +129,7 @@ const {
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("TESTTESTtranslate() an3.49", async()=>{
+  it("translate() an3.49", async()=>{
     let sutta_uid = 'an3.49';
     let srcLang = 'de';
     let dstLang = 'pt';
@@ -136,7 +149,7 @@ const {
     should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu /);
     should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu /);
   });
-  it("TESTTESTtranslate() an5.44", async()=>{
+  it("translate() an5.44", async()=>{
     let sutta_uid = 'an5.44';
     let srcLang = 'de';
     let dstLang = 'pt';
@@ -192,9 +205,10 @@ const {
       's1:1.1': `c d`,
       's1:1.2': `e${RSQUOT} d${RDQUOT}`,
     }
-    should.deepEqual(SuttaTranslator.curlyQuoteSegments(segs), segsExpected);
+    should.deepEqual(SuttaTranslator.curlyQuoteSegments(segs), 
+      segsExpected);
   });
-  it("TESTTESTpreTranslate() quoted en/pr", async()=>{
+  it("preTranslate() quoted en/pr", async()=>{
     let srcTexts = [
       `“‘I say, “You say, ‘I said!’?”.’!”`, // not in quotation
       `‘“I say, ‘You say, “I said!”?’.”!’`, // in quotation
@@ -206,16 +220,19 @@ const {
     should(st).properties({ srcLang, dstLang, });
     let preXlt = st.preTranslate(srcTexts);
     should(preXlt[0]).equal(
-      `"${LQ2}I say, ${LQ3}You say, ${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!"`
+      `${LQ1}${LQ2}I say, ${LQ3}You say, `+
+        `${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!${RQ1}`
     );
     should(preXlt[1]).equal(
-      `"${LQ2}I say, ${LQ3}You say, ${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!"`
+      `${LQ1}${LQ2}I say, ${LQ3}You say, `+
+        `${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!${RQ1}`
     );
     should(preXlt[2]).equal('Hello there');
   });
-  it("TESTTESTpostTranslate() quoted en/pt-pt", async()=>{
+  it("postTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [
-`"${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!"`,
+      `${LQ1}${LQ2}Eu digo, ${LQ3}Você diz, `+
+        `${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!${RQ1}`,
     ]; 
     let srcLang = 'en';
     let dstLang = 'pt';
@@ -226,9 +243,10 @@ const {
       .equal(`«“Eu digo, ‘Você diz, “Eu disse!”?’.”!»`)
     //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
   });
-  it("TESTTESTpostTranslate() quoted en/pt-br", async()=>{
+  it("postTranslate() quoted en/pt-br", async()=>{
     let xltTexts = [
-`"${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!"`,
+      `${LQ1}${LQ2}Eu digo, ${LQ3}Você diz, `+
+        `${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!${RQ1}`,
     ]; 
     let srcLang = 'en';
     let srcAuthor = 'sujato';
@@ -243,5 +261,11 @@ const {
     should(postXlt[0])
       .equal(`“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!”`)
     //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
+  });
+  it("translate() sn48.47:1.3 en/fr", async()=>{
+    let srcTexts = [ `‘I know: “Rebirth”’?”` ];
+    let st = await st_en_fr();
+    //DeepLAdapter.setMockApi(false);
+    let dstTexts = await st.translateTexts(srcTexts);
   });
 })
