@@ -8,6 +8,16 @@ const NBSP   = '\u00a0'; // non-breaking space
 const LDQUOT = '“'; // Left double quote
 const RDQUOT = '”'; // Right double quote
 
+// Deepl 
+const LQ1 = '"'; 
+const LQ2 = '<x>';
+const LQ3 = '<y>';
+const LQ4 = '<z>';
+const RQ1 = '"'; 
+const RQ2 = '</x>';
+const RQ3 = '</y>';
+const RQ4 = '</z>';
+
 import {
   DBG_QUOTE, DBG_VERBOSE,
 } from './defines.mjs';
@@ -57,8 +67,8 @@ export default class QuoteParser {
       case 'fr-deepl':
       case 'pt-deepl':
       case 'en-deepl':
-        openQuotes = openQuotes || [ '"', "'", '‡', '†' ];
-        closeQuotes = closeQuotes || [ '"', "'", '‡', '†' ];
+        openQuotes = openQuotes || [ '"', LQ2, LQ3, LQ4 ];
+        closeQuotes = closeQuotes || [ '"', RQ2, RQ3, RQ4 ];
         break;
       default: {
         let emsg = `${msg} unsupported language:${lang}`;
@@ -84,6 +94,7 @@ export default class QuoteParser {
     });
   }
 
+  static APQUOTNBSP() { return APQUOT; }
   static get LDQUOT() { return LDQUOT; }
   static get RDQUOT() { return RDQUOT; }
   static get LSQUOT() { return LSQUOT; }
@@ -92,7 +103,14 @@ export default class QuoteParser {
   static get RGUIL() { return RGUIL; }
   static get NBSP() { return NBSP; }
   static get QUOTE() { return QUOTE; }
-  static APQUOTNBSP() { return APQUOT; }
+  static get LQ1() { return LQ1; }
+  static get LQ2() { return LQ2; }
+  static get LQ3() { return LQ3; }
+  static get LQ4() { return LQ4; }
+  static get RQ1() { return RQ1; }
+  static get RQ2() { return RQ2; }
+  static get RQ3() { return RQ3; }
+  static get RQ4() { return RQ4; }
 
   scan(text, level=this.level) {
     const msg = 'QuoteParser.scan()';

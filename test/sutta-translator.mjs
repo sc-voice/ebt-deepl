@@ -23,6 +23,10 @@ const DE_TRANSFORM = [{
   rep: "Moench",
 }];
 const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
+const {
+  LQ1, LQ2, LQ3, LQ4,
+  RQ1, RQ2, RQ3, RQ4,
+} = QuoteParser;
 
 (typeof describe==='function') && describe(MODULE, function() {
   before(()=>{
@@ -201,13 +205,17 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     let st = await SuttaTranslator.create({srcLang, dstLang});
     should(st).properties({ srcLang, dstLang, });
     let preXlt = st.preTranslate(srcTexts);
-    should(preXlt[0]).equal(`"'I say, ‡You say, †I said!†?‡.'!"`);
-    should(preXlt[1]).equal(`"'I say, ‡You say, †I said!†?‡.'!"`);
+    should(preXlt[0]).equal(
+      `"${LQ2}I say, ${LQ3}You say, ${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!"`
+    );
+    should(preXlt[1]).equal(
+      `"${LQ2}I say, ${LQ3}You say, ${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!"`
+    );
     should(preXlt[2]).equal('Hello there');
   });
   it("TESTTESTpostTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [
-      `"'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"`,
+`"${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!"`,
     ]; 
     let srcLang = 'en';
     let dstLang = 'pt';
@@ -220,7 +228,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
   });
   it("TESTTESTpostTranslate() quoted en/pt-br", async()=>{
     let xltTexts = [
-      `"'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"`,
+`"${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!"`,
     ]; 
     let srcLang = 'en';
     let srcAuthor = 'sujato';

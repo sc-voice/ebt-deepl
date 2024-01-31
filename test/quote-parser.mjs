@@ -128,7 +128,7 @@ const MODULE = 'quote-parser';
     should(qp_us.level).equal(1);
     should(qp_uk.level).equal(1);
   });
-  it("TESTTESTconvertQuotes() unbalanced", ()=>{
+  it("convertQuotes() unbalanced", ()=>{
     let usText =  `‘I say: “completed”’?”`; // level 1
     let ukText =  `“I say: ‘completed’”?’`; // level 1
     let qp_us = new QuoteParser({lang:'en-us'});
@@ -167,7 +167,7 @@ const MODULE = 'quote-parser';
     should(qp.preTranslate(`{abc}`, 0)).equal(`{abc}`);
     should(qp.preTranslate(`abc`, 0)).equal(`abc`);
   });
-  it("TESTTESTinQuotation", ()=>{
+  it("inQuotation", ()=>{
     let usText =  `“I say: ‘completed’”? `;
     let ukText =  `‘I say: “completed”’? `;
     let qp_us = new QuoteParser({lang:'en-us'});
