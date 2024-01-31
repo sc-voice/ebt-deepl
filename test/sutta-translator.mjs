@@ -223,7 +223,7 @@ const {
     should(preXlt[1]).equal('Hello there');
   });
   it("TESTTESTpreTranslate() en-uk quoted en/pr", async()=>{
-    let text = QuoteParser.testcaseQ2EN('UK');
+    let text = QuoteParser.testcaseQ2EN('UKPT');
     let srcTexts = [text];
     //console.log(text);
     let srcLang = 'en';
@@ -232,7 +232,20 @@ const {
     should(st).properties({ srcLang, dstLang, });
     let preXlt = st.preTranslate(srcTexts);
     should(preXlt[0]).equal(
-      `<x>I say, <y>You say, <z>I said UK!</z>?</y>.</x></w>`
+      `<x>I say, <y>You say, <z>I said UKPT!</z>?</y>.</x></w>`
+    );
+  });
+  it("TESTTESTpreTranslate() en-uk quoted en/fr", async()=>{
+    let text = QuoteParser.testcaseQ2EN('UKFR');
+    let srcTexts = [text];
+    //console.log(text);
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let preXlt = st.preTranslate(srcTexts);
+    should(preXlt[0]).equal(
+      `<x>I say, <y>You say, <z>I said UKFR!</z>?</y>.</x></w>`
     );
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
