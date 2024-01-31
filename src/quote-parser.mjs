@@ -120,6 +120,20 @@ export default class QuoteParser {
     ].join('');
   }
 
+  static testcaseRebirthEN(lang) {
+    const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
+    return [
+      //`${LQ1}`,
+      `${LQ2}I understand: `,
+      `${LQ3}`,
+      `Rebirth is ended in ${lang}`,
+      `${RQ3}`,
+      `${RQ2}`,
+      '?',
+      `${RQ1}`,
+    ].join('');
+  }
+
   static APQUOTNBSP() { return APQUOT; }
   static get LDQUOT() { return LDQUOT; }
   static get RDQUOT() { return RDQUOT; }

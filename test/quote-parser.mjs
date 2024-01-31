@@ -167,7 +167,7 @@ const MODULE = 'quote-parser';
     should(qp.preTranslate(`{abc}`, 0)).equal(`{abc}`);
     should(qp.preTranslate(`abc`, 0)).equal(`abc`);
   });
-  it("TESTTESTquotationLevel", ()=>{
+  it("quotationLevel", ()=>{
     let usText =  `“I say: ‘completed’”? `;
     let ukText =  `‘I say: “completed”’? `;
     let qp_us = new QuoteParser({lang:'en-us'});

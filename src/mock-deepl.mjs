@@ -2,6 +2,8 @@ import {
   DBG_MOCK_API, DBG_VERBOSE,
 } from './defines.mjs';
 
+import { default as QuoteParser } from './quote-parser.mjs';
+
 class MockGlossary {
   constructor(args) {
     const msg = 'MockGlossary.ctor()';
@@ -76,7 +78,11 @@ class MockTranslator {
         `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`)
       .replace(
         '<x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
-      '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>')
+        '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
+      ).replace(
+        QuoteParser.testcaseRebirthEN('FR'),
+'<x>Je comprends : <y>La renaissance est terminée en FR</y></x>?</w>'
+      )
       ;
       return {
         text,

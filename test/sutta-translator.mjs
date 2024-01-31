@@ -222,7 +222,7 @@ const {
     );
     should(preXlt[1]).equal('Hello there');
   });
-  it("TESTTESTpreTranslate() en-uk quoted en/pr", async()=>{
+  it("preTranslate() en-uk quoted en/pr", async()=>{
     let text = QuoteParser.testcaseQ2EN('UKPT');
     let srcTexts = [text];
     //console.log(text);
@@ -235,7 +235,7 @@ const {
       `<x>I say, <y>You say, <z>I said UKPT!</z>?</y>.</x></w>`
     );
   });
-  it("TESTTESTpreTranslate() en-uk quoted en/fr", async()=>{
+  it("preTranslate() en-uk quoted en/fr", async()=>{
     let text = QuoteParser.testcaseQ2EN('UKFR');
     let srcTexts = [text];
     //console.log(text);
@@ -281,10 +281,13 @@ const {
       .equal(`“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!”`)
     //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
   });
-  it("translate() sn48.47:1.3 en/fr", async()=>{
-    let srcTexts = [ `‘I know: “Rebirth”’?”` ];
+  it("TESTTESTtranslate() sn48.47:1.3 en/fr", async()=>{
+    let srcTexts = [ QuoteParser.testcaseRebirthEN('FR') ];
     let st = await st_en_fr();
     //DeepLAdapter.setMockApi(false);
     let dstTexts = await st.translateTexts(srcTexts);
+    should(dstTexts[0]).equal(
+      `“Je comprends : ‘La renaissance est terminée en FR’”?»`
+    );
   });
 })

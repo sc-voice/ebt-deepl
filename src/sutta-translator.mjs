@@ -114,6 +114,10 @@ export default class SuttaTranslator {
           ? new QuoteParser({lang:'pt-pt'})
           : new QuoteParser({lang:'pt-br'});
       } break;
+      case 'fr': {
+        stOpts.qpPost = new QuoteParser({lang:'fr-deepl'});
+        stOpts.qpDst = new QuoteParser({lang:'fr'});
+      } break;
     }
 
     let st;
@@ -250,9 +254,9 @@ export default class SuttaTranslator {
     let preTexts = this.preTranslate(srcTexts);
     dbg && console.log(msg, '[1]preTexts', preTexts);
     let postTexts = await xltDeepL.translate(preTexts);
-    dbg && console.log(msg, '[2]postTexts', preTexts);
+    dbg && console.log(msg, '[2]postTexts', postTexts);
     let dstTexts = this.postTranslate(postTexts);
-    dbg && console.log(msg, '[3]dstTexts', postTexts);
+    dbg && console.log(msg, '[3]dstTexts', dstTexts);
 
     return dstTexts;
   }
@@ -321,13 +325,15 @@ export default class SuttaTranslator {
   }
 
   postTranslate(xltTexts) {
+    const msg = 'SuttaTranslator.postTranslate()';
     let { qpPost, qpDst } = this;
     if (qpPost == null) {
       return xltTexts;
     }
 
     return xltTexts.map((xltText,i)=>{
-      return qpPost.convertQuotes(xltText, qpDst, 0);
+      let level = qpPost.quotationLevel(xltText);
+      return qpPost.convertQuotes(xltText, qpDst, level);
     });
   }
   
