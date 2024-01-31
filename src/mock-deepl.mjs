@@ -80,6 +80,8 @@ class MockTranslator {
           `‡†Eu digo, "Você diz, 'Eu disse!'?".†‡`)
         .replace(/^‡†I say, "You say, 'I said!'\?"\.†!‡/,
           `‡†Eu digo, "Você diz, 'Eu disse!'?".†!‡`)
+        .replace(/^“<x>I say, <y>You say, <z>I said!<\/z>\?<\/y>\.<\/x>”/,
+        `"<x>Je dis, <y>Vous dites, <z>J'ai dit !</z>?</y></x>".`)
         ;
       switch (text) {
         case '„Moench, du sammelst Almosen, bevor du isst;':

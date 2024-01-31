@@ -27,8 +27,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_fr).properties({
       lang : 'fr',
-      openQuotes: [ LGUIL+NBSP, LDQUOT, LSQUOT, LSQUOT ],
-      closeQuotes: [ NBSP+RGUIL, RDQUOT, RSQUOT, RSQUOT ],
+      openQuotes: [ LGUIL+NBSP, LDQUOT, LSQUOT, LDQUOT ],
+      closeQuotes: [ NBSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ],
       level: 1,
     });
 
@@ -38,8 +38,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_pt).properties({
       lang : 'pt',
-      openQuotes: [ LGUIL, LDQUOT, LSQUOT, LSQUOT ],
-      closeQuotes: [ RGUIL, RDQUOT, RSQUOT, RSQUOT ],
+      openQuotes: [ LGUIL, LDQUOT, LSQUOT, LDQUOT ],
+      closeQuotes: [ RGUIL, RDQUOT, RSQUOT, RDQUOT ],
       level: 2,
     });
 
@@ -49,8 +49,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_br).properties({
       lang : 'pt-br',
-      openQuotes: [ LDQUOT, LSQUOT, LSQUOT, LSQUOT ],
-      closeQuotes: [ RDQUOT, RSQUOT, RSQUOT, RSQUOT ],
+      openQuotes: [ LDQUOT, LSQUOT, LDQUOT, LSQUOT ],
+      closeQuotes: [ RDQUOT, RSQUOT, RDQUOT, RSQUOT ],
       level: 3,
     });
 
@@ -177,6 +177,5 @@ const MODULE = 'quote-parser';
     should(qp_uk.inQuotation(ukText)).equal(false);
     should(qp_us.inQuotation(ukText)).equal(true);
     should(qp_uk.inQuotation(usText)).equal(true);
-    
   });
 })

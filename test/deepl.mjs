@@ -75,6 +75,22 @@ const dbgv = DBG_VERBOSE;
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
+  it("TESTTESTtranslate() quotes en-us/fr", async () => {
+    let srcLang = 'en';
+    let dstLang = 'fr';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    //return ; // TODO
+
+    let res = await dlt.translate([
+      `“<x>I say, <y>You say, <z>I said!</z>?</y>.</x>”`,
+    ]);
+
+    let i=0;
+    // DeepL fails to translate 3-deep quotes
+    should(res[i++]).equal(
+      `"<x>Je dis, <y>Vous dites, <z>J\'ai dit !</z>?</y></x>".`);
+  })
   it("translate() en-us quotes en/pt", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';

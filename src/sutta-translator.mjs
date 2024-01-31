@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { default as DeepLAdapter } from "./deepl-adapter.mjs"
+import { default as QuoteParser } from "./quote-parser.mjs"
 import pkgMemoAgain from "memo-again"
 const {
   Files
@@ -28,9 +29,9 @@ import {
 var creating = false;
 
 const DST_LANG = 'pt';
-const SRC_LANG = 'de';
-const SRC_AUTHOR = 'sabbamitta';
-const DST_AUTHOR = 'edited-ml';
+const SRC_LANG = 'en';
+const SRC_AUTHOR = 'sujato';
+const DST_AUTHOR = 'ebt-deepl';
 const LDQUOT = '“';
 const RDQUOT = '”';
 const LSQUOT = '‘';
@@ -91,20 +92,37 @@ export default class SuttaTranslator {
       xltDeepL = await DeepLAdapter.create(optsDeepL);
     }
 
+    let stOpts = {
+      xltDeepL,
+      srcLang,
+      srcAuthor,
+      srcTransform,
+      dstLang,
+      dstAuthor,
+      bilaraData,
+    }
+    switch (srcLang) {
+      case 'en': {
+        stOpts.qpSrc1 = new QuoteParser({lang:'en-us'});
+        stOpts.qpSrc2 = new QuoteParser({lang:'en-uk'});
+        stOpts.qpPre = new QuoteParser({lang:'en-deepl'});
+      } break;
+    }
+    switch (dstLang) {
+      case 'pt': {
+        stOpts.qpPost = new QuoteParser({lang:'pt-deepl'});
+        stOpts.qpDst = dstAuthor === 'ebt-deepl'
+          ? new QuoteParser({lang:'pt-pt'})
+          : new QuoteParser({lang:'pt-br'});
+      } break;
+    }
+
     let st;
     try {
       creating = true;
       dbg && console.log(msg, '[3]SuttaTranslator', 
         `${srcLang}/${srcAuthor} => ${dstLang}/${dstAuthor}`);
-      st = new SuttaTranslator({
-        xltDeepL,
-        srcLang,
-        srcAuthor,
-        srcTransform,
-        dstLang,
-        dstAuthor,
-        bilaraData,
-      });
+      st = new SuttaTranslator(stOpts);
     } finally {
       creating = false;
     }
@@ -272,6 +290,29 @@ export default class SuttaTranslator {
       srcRef, srcPath, srcSegs,
       dstRef, dstPath, dstSegs,
     }
+  }
+
+  preTranslate(srcTexts) {
+    let { qpSrc1, qpSrc2, qpPre } = this;
+    if (qpSrc1 == null) {
+      return srcTexts;
+    }
+    return srcTexts.map((srcText,i)=>{
+      let dstText = srcText;
+      let qpSrc = qpSrc1.inQuotation(srcText) ? qpSrc2 : qpSrc1;
+      return qpSrc.convertQuotes(dstText, qpPre, 0);
+    });
+  }
+
+  postTranslate(xltTexts) {
+    let { qpPost, qpDst } = this;
+    if (qpPost == null) {
+      return xltTexts;
+    }
+
+    return xltTexts.map((xltText,i)=>{
+      return qpPost.convertQuotes(xltText, qpDst, 0);
+    });
   }
   
 }

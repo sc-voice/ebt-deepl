@@ -5,6 +5,7 @@ logger.logLevel = 'warn';
 import { BilaraData } from 'scv-bilara';
 import { default as DeepLAdapter } from "../src/deepl-adapter.mjs";
 import { default as SuttaTranslator } from "../src/sutta-translator.mjs";
+import { default as QuoteParser } from "../src/quote-parser.mjs";
 import { 
   DBG_TEST_API,
 } from '../src/defines.mjs';
@@ -15,7 +16,7 @@ const LSQUOT = '‘';
 const RSQUOT = '’';
 const SUTTA_SML = "sn2.16";
 const SUTTA_MED = "sn1.20";
-const DEEPL = "deepl";
+const DEEPL = "ebt-deepl";
 const MODULE = 'sutta-translator';
 const DE_TRANSFORM = [{
   rex: /Mönch( oder eine Nonne)?/ig,
@@ -27,16 +28,31 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
   before(()=>{
     DeepLAdapter.setMockApi(!DBG_TEST_API);
   });
-  var _stDefault;
-  async function stDefault() {
-    if (!_stDefault) {
-      _stDefault = await SuttaTranslator.create({
+  var _st_en_pt;
+  var _st_de_pt;
+  async function st_en_pt() {
+    if (!_st_en_pt) {
+      _st_en_pt = await SuttaTranslator.create({
+        srcLang: 'en',
+        srcAuthor: 'sujato',
         dstLang: 'pt',
         dstAuthor: DEEPL,
         bilaraData,
       });
     }
-    return _stDefault;
+    return _st_en_pt;
+  }
+  async function st_de_pt() {
+    if (!_st_de_pt) {
+      _st_de_pt = await SuttaTranslator.create({
+        srcLang: 'de',
+        srcAuthor: 'sabbamitta',
+        dstLang: 'pt',
+        dstAuthor: DEEPL,
+        bilaraData,
+      });
+    }
+    return _st_de_pt;
   }
   
   this.timeout(60*1000); 
@@ -49,18 +65,34 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     }
     should(eCaught?.message).match(/use SuttaTranslator.create()/);
   });
-  it("create() default", async() => {
-    let srcLang = 'de';
+  it("TESTESTcreate() default", async() => {
+    let srcLang = 'en';
     let dstLang = 'pt';
-    let srcAuthor = 'sabbamitta';
+    let srcAuthor = 'sujato';
     let dstAuthor = DEEPL;
-    let st = await stDefault();
+    let st = await st_en_pt();
     should(st).properties({ srcLang, dstLang, srcAuthor, dstAuthor});
     should(st.xltDeepL).instanceOf(DeepLAdapter);
   });
+  it("TESTTESTcreate() en", async() => {
+    let srcLang = 'en';
+    let srcAuthor = 'sujato';
+    let dstLang = 'pt';
+    let dstAuthor = 'ebt-deepl';
+    let st = await SuttaTranslator.create({
+      srcLang, srcAuthor, dstLang, dstAuthor});
+    should(st).properties({ srcLang, dstLang, });
+    should(st.xltDeepL).instanceOf(DeepLAdapter);
+    should(st.qpSrc1).instanceOf(QuoteParser);
+    should(st.qpSrc2).instanceOf(QuoteParser);
+    should(st.qpSrc1?.lang).equal('en-us');
+    should(st.qpSrc2?.lang).equal('en-uk');
+    should(st.qpPost?.lang).equal('pt-deepl');
+    should(st.qpDst?.lang).equal('pt-pt');
+  });
   it("loadSutta() an3.49", async()=>{
     let sutta_uid = 'an3.49';
-    let st = await stDefault();
+    let st = await st_en_pt();
     let res = await st.loadSutta(sutta_uid);
     let {
       segments,
@@ -69,7 +101,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
   });
   it("loadSutta() an3.49/de/sabbamitta", async()=>{
     let sutta_uid = 'an3.49/de/sabbamitta';
-    let st = await stDefault();
+    let st = await st_de_pt();
     let txt = '"an3.49:2.1": "Das ist ein Mönch, der eifrig ist, '
     let res = await st.loadSutta(sutta_uid, {
       srcTransform: DE_TRANSFORM,
@@ -80,13 +112,13 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("translate() an3.49", async()=>{
+  it("TESTTESTtranslate() an3.49", async()=>{
     let sutta_uid = 'an3.49';
     let srcLang = 'de';
     let dstLang = 'pt';
     let srcAuthor = 'sabbamitta';
     let dstAuthor = DEEPL;
-    let st = await stDefault();
+    let st = await st_de_pt();
     let res = await st.translate(sutta_uid);
     let { 
       srcRef, srcPath, srcSegs, dstRef, dstPath, dstSegs 
@@ -100,13 +132,13 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu /);
     should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu /);
   });
-  it("translate() an5.44", async()=>{
+  it("TESTTESTtranslate() an5.44", async()=>{
     let sutta_uid = 'an5.44';
     let srcLang = 'de';
     let dstLang = 'pt';
     let srcAuthor = 'sabbamitta';
     let dstAuthor = DEEPL;
-    let st = await stDefault();
+    let st = await st_de_pt();
     let res = await st.translate(sutta_uid);
     let { 
       srcRef, srcPath, srcSegs, dstRef, dstPath, dstSegs 
@@ -119,7 +151,7 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
     should(dstSegs[`${sutta_uid}:2.5`]).match(/por compaixão./);
   });
   it("curlyQuoteText()", async ()=>{
-    let st = await stDefault();
+    let st = await st_en_pt();
     let xltText1 = `"they speak of 'substantial reality'`;
     let scText1 = `“they speak of ‘substantial reality’`;
     let xltText2 = `here," he said.`;
@@ -157,5 +189,51 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
       's1:1.2': `e${RSQUOT} d${RDQUOT}`,
     }
     should.deepEqual(SuttaTranslator.curlyQuoteSegments(segs), segsExpected);
+  });
+  it("TESTTESTpreTranslate() quoted en/pr", async()=>{
+    let srcTexts = [
+      `“‘I say, “You say, ‘I said!’?”.’!”`, // not in quotation
+      `‘“I say, ‘You say, “I said!”?’.”!’`, // in quotation
+      'Hello there',
+    ]; 
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let preXlt = st.preTranslate(srcTexts);
+    should(preXlt[0]).equal(`"'I say, ‡You say, †I said!†?‡.'!"`);
+    should(preXlt[1]).equal(`"'I say, ‡You say, †I said!†?‡.'!"`);
+    should(preXlt[2]).equal('Hello there');
+  });
+  it("TESTTESTpostTranslate() quoted en/pt-pt", async()=>{
+    let xltTexts = [
+      `"'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"`,
+    ]; 
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let postXlt = st.postTranslate(xltTexts);
+    should(postXlt[0])
+      .equal(`«“Eu digo, ‘Você diz, “Eu disse!”?’.”!»`)
+    //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
+  });
+  it("TESTTESTpostTranslate() quoted en/pt-br", async()=>{
+    let xltTexts = [
+      `"'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"`,
+    ]; 
+    let srcLang = 'en';
+    let srcAuthor = 'sujato';
+    let dstLang = 'pt';
+    let dstAuthor = 'laera-quaresma';
+    let st = await SuttaTranslator.create({
+      srcLang, srcAuthor, dstLang, dstAuthor 
+    });
+    should(st).properties({ srcLang, dstLang, });
+    should(st.qpDst?.lang).equal('pt-br');
+    let postXlt = st.postTranslate(xltTexts);
+    should(postXlt[0])
+      .equal(`“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!”`)
+    //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
   });
 })

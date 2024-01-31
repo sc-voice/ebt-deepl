@@ -13,6 +13,10 @@ import * as deepl from 'deepl-node';
 import { default as MockDeepL } from './mock-deepl.mjs';
 
 const EMPTY_TEXT = "911911911";
+const TRANSLATE_OPTS = {
+  tagHandling: 'xml',
+  formality: 'more',
+}
 
 var mockApi = DBG_MOCK_API;
 
@@ -102,8 +106,7 @@ export default class DeepLAdapter {
       dstLang='pt',
       sourceLang,
       targetLang,
-      formality='more',
-      translateOpts,
+      translateOpts=TRANSLATE_OPTS,
       updateGlossary = false,
       translator,
     } = opts;
@@ -112,6 +115,8 @@ export default class DeepLAdapter {
     if (translator == null) {
       let authKey = DeepLAdapter.authKey({authFile});
       dbg && console.log(msg, '[1]new deepl.Translator()');
+      let deeplOpts = {
+      };
       translator = mockApi
         ? new MockDeepL.Translator(authKey)
         : new deepl.Translator(authKey);
@@ -139,7 +144,7 @@ export default class DeepLAdapter {
     }
     translateOpts = translateOpts
       ? JSON.parse(JSON.stringify(translateOpts))
-      : {formality};
+      : TRANSLATE_OPTS;
     glossary && (translateOpts.glossary = glossary);
     let initialized = true;
 

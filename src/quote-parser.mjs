@@ -34,6 +34,7 @@ export default class QuoteParser {
         openQuotes = openQuotes || [ LSQUOT, LDQUOT, LSQUOT, LDQUOT ];
         closeQuotes = closeQuotes || [ RSQUOT, RDQUOT, RSQUOT, RDQUOT ];
         break;
+      case 'pt-br':
       case 'en-us':
       case 'en': // American quote nesting 
         openQuotes = openQuotes || [ LDQUOT, LSQUOT, LDQUOT, LSQUOT ];
@@ -41,20 +42,23 @@ export default class QuoteParser {
         break;
       case 'pt':
       case 'pt-pt':
-        openQuotes = openQuotes || [ LGUIL, LDQUOT, LSQUOT ];
-        closeQuotes = closeQuotes || [ RGUIL, RDQUOT, RSQUOT ];
+        openQuotes = openQuotes || [ LGUIL, LDQUOT, LSQUOT, LDQUOT ];
+        closeQuotes = closeQuotes || [ RGUIL, RDQUOT, RSQUOT, RDQUOT ];
         break;
-      case 'pt-br':
         openQuotes = openQuotes || [ LDQUOT, LSQUOT ];
         closeQuotes = closeQuotes || [ RDQUOT, RSQUOT ];
         break;
       case 'fr':
-        openQuotes = openQuotes || [ LGUIL+NBSP, LDQUOT, LSQUOT ];
-        closeQuotes = closeQuotes || [ NBSP+RGUIL, RDQUOT, RSQUOT ];
+        openQuotes = openQuotes || 
+          [ LGUIL+NBSP, LDQUOT, LSQUOT, LDQUOT ];
+        closeQuotes = closeQuotes || 
+          [ NBSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ];
         break;
+      case 'fr-deepl':
+      case 'pt-deepl':
       case 'en-deepl':
-        openQuotes = openQuotes || [ '"', "'", '†', '‡' ];
-        closeQuotes = closeQuotes || [ '"', "'", '†', '‡' ];
+        openQuotes = openQuotes || [ '"', "'", '‡', '†' ];
+        closeQuotes = closeQuotes || [ '"', "'", '‡', '†' ];
         break;
       default: {
         let emsg = `${msg} unsupported language:${lang}`;
