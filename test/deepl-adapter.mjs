@@ -101,6 +101,31 @@ const dbgv = DBG_VERBOSE;
       `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>`
     );
   })
+  it("translate() testcaseQ2EN FR", async () => {
+    let srcLang = 'en';
+    let dstLang = 'fr';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let srcText = QuoteParser.testcaseQ2EN('FR');
+    //console.log('srcText', srcText);
+    let res = await dlt.translate([srcText]);
+
+    should(res[0]).equal(
+      `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`);
+  })
+  it("translate() testcaseQ2EN PT", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let srcText = QuoteParser.testcaseQ2EN('PT');
+    //console.log('srcText', srcText);
+    let res = await dlt.translate([srcText]);
+
+    // Closing XML element is passed through
+    should(res[0]).equal(
+      '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>');
+  })
   it("translate() en-uk quotes en/pt", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';

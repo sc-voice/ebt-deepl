@@ -103,8 +103,7 @@ export default class SuttaTranslator {
     }
     switch (srcLang) {
       case 'en': {
-        stOpts.qpSrc1 = new QuoteParser({lang:'en-us'});
-        stOpts.qpSrc2 = new QuoteParser({lang:'en-uk'});
+        stOpts.qpSrc = new QuoteParser({lang:'en-us'});
         stOpts.qpPre = new QuoteParser({lang:'en-deepl'});
       } break;
     }
@@ -310,14 +309,14 @@ export default class SuttaTranslator {
   }
 
   preTranslate(srcTexts) {
-    let { qpSrc1, qpSrc2, qpPre } = this;
-    if (qpSrc1 == null) {
+    let { qpSrc, qpPre } = this;
+    if (qpSrc == null) {
       return srcTexts;
     }
     return srcTexts.map((srcText,i)=>{
       let dstText = srcText;
-      let qpSrc = qpSrc1.inQuotation(srcText) ? qpSrc2 : qpSrc1;
-      return qpSrc.convertQuotes(dstText, qpPre, 0);
+      let level = qpSrc.quotationLevel(srcText);
+      return qpSrc.convertQuotes(dstText, qpPre, level);
     });
   }
 

@@ -18,19 +18,6 @@ const RQ2 = '</x>';
 const RQ3 = '</y>';
 const RQ4 = '</z>';
 
-function testcaseDepthEN(lang) {
-  const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
-  return [
-    `${LQ1}`,
-    `${LQ2}I say, `,
-    `${LQ3}You say, `,
-    `${LQ4}I said ${lang}!${RQ4}`,
-    `?${RQ3}.`,
-    `${RQ2}`,
-    `${RQ1}`,
-  ].join('');
-}
-
 import {
   DBG_QUOTE, DBG_VERBOSE,
 } from './defines.mjs';
@@ -107,7 +94,32 @@ export default class QuoteParser {
     });
   }
 
-  static testcaseDepthEN(lang) {return testcaseDepthEN(lang);}
+  static testcaseQ2EN(lang) {
+    const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
+    return [
+      // LQ1 in preceding segment
+      `${LQ2}I say, `,
+      `${LQ3}You say, `,
+      `${LQ4}I said ${lang}!${RQ4}`,
+      `?${RQ3}.`,
+      `${RQ2}`,
+      `${RQ1}`, // closing 
+    ].join('');
+  }
+
+  static testcaseDepthEN(lang) {
+    const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
+    return [
+      `${LQ1}`,
+      `${LQ2}I say, `,
+      `${LQ3}You say, `,
+      `${LQ4}I said ${lang}!${RQ4}`,
+      `?${RQ3}.`,
+      `${RQ2}`,
+      `${RQ1}`,
+    ].join('');
+  }
+
   static APQUOTNBSP() { return APQUOT; }
   static get LDQUOT() { return LDQUOT; }
   static get RDQUOT() { return RDQUOT; }
@@ -227,14 +239,23 @@ export default class QuoteParser {
     return dstParts.join('');
   }
 
-  inQuotation(text='') {
-    let { rexQuotes, openQuotes } = this;
-    let iMatch = text.search(rexQuotes);
-    if (iMatch < 0) {
-      return true;
+  quotationLevel(text='') {
+    let { maxLevel, rexQuotes, openQuotes } = this;
+    let execRes = rexQuotes.exec(text);
+    try {
+      if (execRes == null) {
+        return 0;
+      }
+      let [ match ] = execRes;
+      for (let i=0; i<maxLevel; i++) {
+        if (match === openQuotes[i]) {
+          return i;
+        }
+      }
+      return 0;
+    } finally {
+      rexQuotes.exec(''); // reset rexQuotes
     }
-    let matched = text.charAt(iMatch);
-    return matched !== openQuotes[0];
   }
 
   preTranslate(text, level) {

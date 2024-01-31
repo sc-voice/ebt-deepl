@@ -100,10 +100,8 @@ const {
       srcLang, srcAuthor, dstLang, dstAuthor});
     should(st).properties({ srcLang, dstLang, });
     should(st.xltDeepL).instanceOf(DeepLAdapter);
-    should(st.qpSrc1).instanceOf(QuoteParser);
-    should(st.qpSrc2).instanceOf(QuoteParser);
-    should(st.qpSrc1?.lang).equal('en-us');
-    should(st.qpSrc2?.lang).equal('en-uk');
+    should(st.qpSrc).instanceOf(QuoteParser);
+    should(st.qpSrc?.lang).equal('en-us');
     should(st.qpPost?.lang).equal('pt-deepl');
     should(st.qpDst?.lang).equal('pt-pt');
   });
@@ -208,10 +206,9 @@ const {
     should.deepEqual(SuttaTranslator.curlyQuoteSegments(segs), 
       segsExpected);
   });
-  it("preTranslate() quoted en/pr", async()=>{
+  it("preTranslate() en-us quoted en/pr", async()=>{
     let srcTexts = [
-      `“‘I say, “You say, ‘I said!’?”.’!”`, // not in quotation
-      `‘“I say, ‘You say, “I said!”?’.”!’`, // in quotation
+      `“‘I say, “You say, ‘I said!’?”.’!”`, // en-us
       'Hello there',
     ]; 
     let srcLang = 'en';
@@ -223,11 +220,20 @@ const {
       `${LQ1}${LQ2}I say, ${LQ3}You say, `+
         `${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!${RQ1}`
     );
-    should(preXlt[1]).equal(
-      `${LQ1}${LQ2}I say, ${LQ3}You say, `+
-        `${LQ4}I said!${RQ4}?${RQ3}.${RQ2}!${RQ1}`
+    should(preXlt[1]).equal('Hello there');
+  });
+  it("TESTTESTpreTranslate() en-uk quoted en/pr", async()=>{
+    let text = QuoteParser.testcaseQ2EN('UK');
+    let srcTexts = [text];
+    //console.log(text);
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let preXlt = st.preTranslate(srcTexts);
+    should(preXlt[0]).equal(
+      `<x>I say, <y>You say, <z>I said UK!</z>?</y>.</x></w>`
     );
-    should(preXlt[2]).equal('Hello there');
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [
