@@ -8,12 +8,16 @@
   "dependencies": {
     "deepl-node": "^1.11.0",
     "eslint": "^8.56.0",
-    "log-instance": "^1.5.0",
-    "merkle-json": "^2.6.0",
-    "scv-bilara": "^3.107.41"
+    "log-instance": "^1.5.0"
   },
   "devDependencies": {
+    "install": "^0.13.0",
+    "memo-again": "^0.8.0",
+    "merkle-json": "^2.6.0",
     "mocha": "^10.0.0",
+    "npm": "^10.4.0",
+    "scv-bilara": "^3.131.21",
+    "scv-esm": "^1.88.26",
     "should": "^13.2.3"
   },
   "scripts": {
