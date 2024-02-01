@@ -245,6 +245,20 @@ const {
       `<x>I say, <y>You say, <z>I said UKFR!</z>?</y>.</x></w>`
     );
   });
+  it("preTranslate() testcaseFeelingsEN French", async()=>{
+    const msg = 'test.SuttaTranslator.preTranslate()';
+    const dbg = 0;
+    let srcLang = 'en';
+    let dstLang = 'fr';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    let text = st.qpSrc.testcaseFeelingsEN('French');
+    let srcTexts = [text];
+    dbg && console.log(msg, srcTexts);
+    let preXlt = st.preTranslate(srcTexts);
+    should(preXlt[0]).equal(
+      `what’s the escape from that French feeling?</x>`
+    );
+  });
   it("postTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [
       `${LQ1}${LQ2}Eu digo, ${LQ3}Você diz, `+
@@ -290,11 +304,11 @@ const {
       /“Je comprends : ‘La renaissance est terminée en FR’”\?\u00a0?»/
     );
   });
-  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
+  it("translate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
-    console.log(msg, srcTexts);
+    //console.log(msg, srcTexts);
     //DeepLAdapter.setMockApi(false);
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);

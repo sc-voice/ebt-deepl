@@ -62,15 +62,20 @@ const MODULE = 'quote-parser';
       closeQuotes: [ '}', '>', '>', '>' ]
     });
   });
-  it("rexQuotes()", ()=>{
+  it("rexQuotes() en-us", ()=>{
+    const msg = 'test.QuoteParser.rexQuotes()';
     let qp = new QuoteParser();
     let [ L2, L1 ] = qp.openQuotes;
     let [ R2, R1 ] = qp.closeQuotes;
-    let text = `a${L2}b${L1}c${R1}d${R2}e`;
-    should(text.replaceAll(qp.rexQuotes, 'X')).equal('aXbXcXdXe');
+    let text = `a${L2} b${L1} c${R1} d${R1}${R2} e${R1}`;
+    let parts = text.split(qp.rexSplit);
+    //console.log(msg, qp.rexSplit, parts);
+    should.deepEqual(parts, [
+      'a', L2, ' b', L1, ' c', R1, ' d', R1, '', R2, ' e', R1, '',
+    ]);
   });
   it("parse()", ()=>{
-    let qp = new QuoteParser();
+    let qp = new QuoteParser({lang:'en-deepl'});
     let [ L1, L2, L3 ] = qp.openQuotes;
     let [ R1, R2, R3 ] = qp.closeQuotes;
     should(qp.parse(`abc`)).properties({level:0, quotes:0 });
@@ -150,12 +155,32 @@ const MODULE = 'quote-parser';
     should(qp_us.quotationLevel(ukText)).equal(1);
     should(qp_uk.quotationLevel(usText)).equal(1);
   });
-  it("quotationLevel() testcaseFeelingsEN FR", ()=>{
+  it("TESTTESTquotationLevel() testcaseFeelingsEN FR", ()=>{
     const msg = 'test.QuoteParser.quotationLevel()';
-    let qp_pre = new QuoteParser({lang:'en-deepl'});
-    let frenchFeelings = qp_pre.testcaseFeelingsEN('French');
-    //console.log(msg, frenchFeelings);
+    const dbg = 0;
 
-    should(qp_pre.quotationLevel(frenchFeelings)).equal(2);
+    let qp_en = new QuoteParser({lang:'en'});
+    let enText = qp_en.testcaseFeelingsEN('French');
+    dbg && console.log(msg, enText);
+    should(qp_en.quotationLevel(enText)).equal(2);
+
+    let qp_pre = new QuoteParser({lang:'en-deepl'});
+    let preText = qp_pre.testcaseFeelingsEN('French');
+    dbg && console.log(msg, preText);
+    should(qp_pre.quotationLevel(preText)).equal(2);
+  });
+  it("TESTTESTquotationLevel() testcaseReligionsEN FR", ()=>{
+    const msg = 'test.QuoteParser.quotationLevel()';
+    const dbg = 0;
+
+    let qp_en = new QuoteParser({lang:'en'});
+    let enText = qp_en.testcaseReligionsEN('French');
+    should(qp_en.quotationLevel(enText)).equal(1);
+    dbg && console.log(msg, qp_en.rexSplit, enText);
+
+    let qp_pre = new QuoteParser({lang:'en-deepl'});
+    let preText = qp_pre.testcaseReligionsEN('French');
+    dbg && console.log(msg, qp_pre.rexSplit, preText);
+    should(qp_pre.quotationLevel(preText)).equal(1);
   });
 })

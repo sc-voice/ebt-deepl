@@ -314,7 +314,7 @@ export default class SuttaTranslator {
 
   preTranslate(srcTexts) {
     const msg = 'SuttaTranslator.preTranslate()';
-    const dbg = 1;
+    const dbg = 0;
     let { qpSrc, qpPre } = this;
     if (qpSrc == null) {
       dbg && console.log(msg, '[1]no_qpSrc');
@@ -323,7 +323,7 @@ export default class SuttaTranslator {
     return srcTexts.map((srcText,i)=>{
       let level = qpSrc.quotationLevel(srcText);
       let dstText =  qpSrc.convertQuotes(srcText, qpPre, level);
-      dbg && console.log(msg, '[2]convertQuotes', dstText);
+      dbg && console.log(msg, `[2]convertQuotes${level}`, dstText);
       return dstText;
     });
   }
