@@ -86,7 +86,12 @@ class MockTranslator {
           'lorsqu\'il s\'agit de sentiments français ?</x>'
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
-'<x>Je comprends : <y>La renaissance est terminée en FR</y></x>?</w>'
+          '<x>Je comprends : <y>La renaissance est terminée '+
+            'en FR</y></x>?</w>'
+      ).replace(
+        qp_fr_deepl.testcasePleasuresEN('French'),
+          'comprendre la gratification, l\'inconvénient et '+
+            'la fuite des plaisirs français'
       )
       ;
       return {

@@ -306,14 +306,26 @@ const {
   });
   it("translate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
+    //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
     //console.log(msg, srcTexts);
-    //DeepLAdapter.setMockApi(false);
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
       'lorsqu\'il s\'agit de sentiments français ?”'
+    );
+  });
+  it("TESTTESTtranslate() testcasePleasuresEN FR", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    //DeepLAdapter.setMockApi(false);
+    let qp_en = new QuoteParser({lang:'en'});
+    let srcTexts = [ qp_en.testcasePleasuresEN('French') ];
+    //console.log(msg, srcTexts);
+    let st = await st_en_fr();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should(dstTexts[0]).match(
+     'comprendre la gratification, l\'inconvénient et la fuite des plaisirs français'
     );
   });
 })

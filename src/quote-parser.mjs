@@ -1,3 +1,9 @@
+import fs from "fs";
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const QUOTE  = '“'; // Quotation mark
 const APOS   = "'"; // Apostrophe/single-quote
 const LSQUOT = '‘'; // Left single quote
@@ -9,6 +15,7 @@ const LDQUOT = '“'; // Left double quote
 const RDQUOT = '”'; // Right double quote
 
 const FR_QUOTES = '«\|»\|“\|”\|‘\|’';
+const RE_POST_APOS = /^\w/;
 
 // Deepl 
 const LQ1 = '<w>'; 
@@ -95,6 +102,11 @@ export default class QuoteParser {
       closeQuotes[i] = closeQuotes[i] || closeQuotes[i-1];
     }
 
+    let rexPreApos = QuoteParser.loadApostrophe(lang);
+    if (rexPreApos) {
+      this.rexPreApos = rexPreApos;
+    }
+
     Object.assign(this, {
       closeQuotes,
       lang,
@@ -105,6 +117,25 @@ export default class QuoteParser {
       maxLevel,
       quotes,
     });
+  }
+
+  static loadApostrophe(lang) {
+    const msg = 'QuoteParser.loadApostrophe()';
+    const dbg = 0;
+    let majorLang = lang.split('-')[0];
+    let fname = `apostrophe_${majorLang}.txt`;
+    let fpath = path.join(__dirname, './glossary', fname);
+    let rex;
+    try {
+      let text = fs.readFileSync(fpath).toString().trim();
+      let lines = text.split("’\n")
+        .map(line=>line && `\\b${line}$`);
+      rex = new RegExp(lines.join('|'), 'ig');
+      dbg && console.log(msg, `[1]${lang}`, rex);
+    } catch (e) {
+      dbg && console.warn(msg, '[2]No apostrophe info:', fname);
+    }
+    return rex;
   }
 
   static testcaseQ2EN(lang) {
@@ -150,6 +181,23 @@ export default class QuoteParser {
   static get RQ2() { return RQ2; }
   static get RQ3() { return RQ3; }
   static get RQ4() { return RQ4; }
+
+  // ...APOS...
+  testcasePleasuresEN(lang) {
+    const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
+    const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
+
+    return `understand ${lang} pleasures’ `+
+      `gratification, drawback, and escape`;
+  }
+
+  // ...APOS...RQ1 RQ2
+  testcaseSquirrelsEN(lang) {
+    const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
+    const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
+
+    return `the ${lang} squirrels’ feeding ground${RQ2}${RQ1}`;
+  }
 
   // LQ2.....RQ2 RQ1
   testcaseRebirthEN(lang) {
@@ -239,6 +287,28 @@ export default class QuoteParser {
     return dState;
   }
 
+  isApostrophe([before, quote, after]) {
+    const msg = 'QuoteParser.isApostrophe()';
+    const dbg = 0;
+    let { rexPreApos } = this;
+
+    if (quote !== RSQUOT) {
+      dbg && console.log(msg, '[1]!RSQUOT', before, quote, after);
+      return false;
+    }
+    if (rexPreApos && rexPreApos.test(before)) {
+      dbg && console.log(msg, '[3]rexPreApos', before);
+      return true;
+    }
+    if (RE_POST_APOS.test(after)) {
+      dbg && console.log(msg, '[3]RE_POST_APOS', after);
+      return true;
+    }
+
+    dbg && console.log(msg, '[4]RSQUOT', quote);
+    return false;
+  }
+
   convertQuotes(text, qpSwap, level=this.level) {
     const msg = 'QuoteParser.convertQuotes()';
     const dbg = 0 || DBG_VERBOSE;
@@ -267,7 +337,8 @@ export default class QuoteParser {
         dbg && console.log(msg, `[1]text@${i}`, part);
       } else if (part === srcCloseQuote) {
         let nextPart = srcParts[i+1];
-        if (srcCloseQuote===RSQUOT && /^\w/.test(nextPart)) {
+        if (this.isApostrophe(srcParts.slice(i-1,3))) {
+        //if (srcCloseQuote===RSQUOT && RE_POST_APOS.test(nextPart)) {
           dbg && console.log(msg, `[2]apos@${i}`, {part, nextPart});
         } else {
           dbg && console.log(msg, `[3]close@${i}`, {part, nextPart});
@@ -320,7 +391,7 @@ export default class QuoteParser {
           return j;
         }
         if (part === closeQuotes[j]) {
-          if (closeQuotes[j] === RSQUOT && /^\w/.test(parts[i+1])) {
+          if (closeQuotes[j]===RSQUOT && RE_POST_APOS.test(parts[i+1])) {
             dbg && console.log(msg, `[4]apos`, part);
           } else {
             dbg && console.log(msg, `[5]level${j} closeQuotes`, part);

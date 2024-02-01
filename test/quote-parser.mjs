@@ -19,6 +19,11 @@ const MODULE = 'quote-parser';
       closeQuotes: [ RDQUOT, RSQUOT, RDQUOT, RSQUOT ],
       level: 0,
     });
+    let { rexPreApos } = qp;
+    should(rexPreApos).instanceOf(RegExp);
+    should('the squirrels').match(rexPreApos);
+    should('the skuirrels').not.match(rexPreApos);
+    should('thesquirrels').not.match(rexPreApos);
   });
   it("custom ctor()", ()=>{
     let qp_fr = new QuoteParser({
@@ -144,6 +149,28 @@ const MODULE = 'quote-parser';
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);
   });
+  it("convertQuotes() testcasePleasuresEN() French", ()=>{
+    const msg = 'test.QuoteParser.convertQuotes()';
+    let qp_en = new QuoteParser({lang:'en'});
+    let qp_en_deepl = new QuoteParser({lang:'en-deepl'});
+    let enText = qp_en.testcasePleasuresEN('French');
+    let preText = qp_en_deepl.testcasePleasuresEN('French');
+    console.log(msg, {enText, preText});
+
+    should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
+    .equal(preText);
+  });
+  it("convertQuotes() testcaseSquirrelsEN() French", ()=>{
+    const msg = 'test.QuoteParser.convertQuotes()';
+    let qp_en = new QuoteParser({lang:'en'});
+    let qp_en_deepl = new QuoteParser({lang:'en-deepl'});
+    let enText = qp_en.testcaseSquirrelsEN('French');
+    let preText = qp_en_deepl.testcaseSquirrelsEN('French');
+    console.log(msg, {enText, preText});
+
+    should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
+    .equal(preText);
+  });
   it("quotationLevel() en us/uk", ()=>{
     let usText =  `“I say: ‘completed’”? `;
     let ukText =  `‘I say: “completed”’? `;
@@ -155,7 +182,7 @@ const MODULE = 'quote-parser';
     should(qp_us.quotationLevel(ukText)).equal(1);
     should(qp_uk.quotationLevel(usText)).equal(1);
   });
-  it("TESTTESTquotationLevel() testcaseFeelingsEN FR", ()=>{
+  it("quotationLevel() testcaseFeelingsEN FR", ()=>{
     const msg = 'test.QuoteParser.quotationLevel()';
     const dbg = 0;
 
@@ -169,7 +196,7 @@ const MODULE = 'quote-parser';
     dbg && console.log(msg, preText);
     should(qp_pre.quotationLevel(preText)).equal(2);
   });
-  it("TESTTESTquotationLevel() testcaseReligionsEN FR", ()=>{
+  it("quotationLevel() testcaseReligionsEN FR", ()=>{
     const msg = 'test.QuoteParser.quotationLevel()';
     const dbg = 0;
 

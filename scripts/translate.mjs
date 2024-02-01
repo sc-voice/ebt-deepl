@@ -361,7 +361,7 @@ async function outBilaraData(xltOut, bd) {
 }
 
 async function outCurlyQuotes(bd) {
-  const msg = 'translate.outBilaraData()';
+  const msg = 'translate.outCurlyQuotes()';
   const dbg = 0;
   const { name } = bd;
   let outDir = path.join(__dirname, 
