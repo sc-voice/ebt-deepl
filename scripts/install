@@ -1,0 +1,19 @@
+#!/bin/bash
+
+DIR=`dirname $0`
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+echo -e "${SCRIPT}: BEGIN `date` (OK)"
+
+echo -e "${SCRIPT}: apt update; apt upgrade..."
+sudo apt update -y
+sudo apt upgrade -y
+
+set -e
+
+#${DIR}/install-node16.sh
+${DIR}/install-npm.sh
+#${DIR}/install-ripgrep.sh
+npm install
+
+echo -e "${SCRIPT}: END `date` (OK)"

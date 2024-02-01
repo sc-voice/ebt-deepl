@@ -1,0 +1,9 @@
+#!/bin/bash
+
+DIR=`dirname $0`
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+echo -e "${SCRIPT}: BEGIN `date` (OK)"
+
+
+echo -e "${SCRIPT}: END `date` (OK)"

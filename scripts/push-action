@@ -1,0 +1,20 @@
+#!/bin/bash
+DIR=`dirname $0`; 
+APPDIR="$DIR/.."
+pushd $APPDIR
+SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+echo -e "${SCRIPT}: BEGIN `date`"
+
+set -e
+
+git pull
+echo -e "${SCRIPT}: updating dependencies..."
+npm install 
+
+npm run build:messages
+npm run build:dist
+npm run build:html
+npm run git:commit -npm
+npm run gh-pages
+
+echo -e "${SCRIPT}: END `date`"
