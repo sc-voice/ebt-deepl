@@ -1,6 +1,6 @@
 {
   "name": "ebt-vue3",
-  "version": "1.16.2",
+  "version": "1.16.3",
   "description": "Javascript Library for EBT translation via DeepL",
   "main": "src/index.mjs",
   "private": false,
