@@ -194,6 +194,16 @@ export default class SuttaTranslator {
     return segsOut;
   }
 
+  static titleCase(text) {
+    let iLetter = text.search(/\w/);
+    if (iLetter < 0) {
+      return text;
+    }
+    return text.substring(0, iLetter) +
+      text.charAt(iLetter).toUpperCase() +
+      text.substring(iLetter+1);
+  }
+
   static transformSource(text, srcTransform) {
     let xfmText = text;
     if (srcTransform) {
@@ -295,7 +305,9 @@ export default class SuttaTranslator {
       srcRef.toString(), `segs:${scids.length}`);
     let dstTexts = await this.translateTexts(srcTexts);
     let dstSegs = scids.reduce((a,scid,i)=>{
-      a[scid] = dstTexts[i];
+      a[scid] = /:0/.test(scid)
+        ? SuttaTranslator.titleCase(dstTexts[i])
+        : dstTexts[i];
       return a;
     }, {});
     let dstRef = SuttaRef.create(sutta_uid, dstLang);

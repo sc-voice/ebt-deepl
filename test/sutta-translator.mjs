@@ -32,20 +32,15 @@ const {
   before(()=>{
     DeepLAdapter.setMockApi(!DBG_TEST_API);
   });
-  var _st_en_pt;
   var _st_de_pt;
-  var _st_en_fr;
   async function st_en_pt() {
-    if (!_st_en_pt) {
-      _st_en_pt = await SuttaTranslator.create({
-        srcLang: 'en',
-        srcAuthor: 'sujato',
-        dstLang: 'pt',
-        dstAuthor: DEEPL,
-        bilaraData,
-      });
-    }
-    return _st_en_pt;
+    return await SuttaTranslator.create({
+      srcLang: 'en',
+      srcAuthor: 'sujato',
+      dstLang: 'pt',
+      dstAuthor: DEEPL,
+      bilaraData,
+    });
   }
   async function st_en_fr() {
     return await SuttaTranslator.create({
@@ -79,7 +74,7 @@ const {
     }
     should(eCaught?.message).match(/use SuttaTranslator.create()/);
   });
-  it("TESTESTcreate() default", async() => {
+  it("create() default", async() => {
     let srcLang = 'en';
     let dstLang = 'pt';
     let srcAuthor = 'sujato';
@@ -123,6 +118,26 @@ const {
       segments,
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
+  });
+  it("TESTTESTtranslate() titles an3.94", async()=>{
+    let sutta_uid = 'an3.94';
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let srcAuthor = 'sujato';
+    let dstAuthor = DEEPL;
+    //DeepLAdapter.setMockApi(false);
+    let st = await st_en_pt();
+    let res = await st.translate(sutta_uid);
+    let { 
+      srcRef, srcPath, srcSegs, dstRef, dstPath, dstSegs 
+    } = res;
+    should(srcRef).properties({ 
+      sutta_uid, lang: 'en', author: 'sujato' });
+    should(dstRef).properties({ 
+      sutta_uid, lang: 'pt', author: DEEPL });
+    should(dstSegs['an3.94:0.3']).equal(
+      'Primavera ',
+    );
   });
   it("translate() an3.49", async()=>{
     let sutta_uid = 'an3.49';
@@ -245,7 +260,7 @@ const {
       `<x>I say, <y>You say, <z>I said UKFR!</z>?</y>.</x></w>`
     );
   });
-  it("TESTTESTpreTranslate() testcaseFeelingsEN French", async()=>{
+  it("preTranslate() testcaseFeelingsEN French", async()=>{
     const msg = 'test.SuttaTranslator.preTranslate()';
     const dbg = 0;
     let srcLang = 'en';
@@ -294,7 +309,7 @@ const {
       `“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!” `
     );
   });
-  it("translate() sn48.47:1.3 en/fr", async()=>{
+  it("translate() testcaseRebirthEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseRebirthEN('FR') ];
@@ -306,16 +321,16 @@ const {
       /“Je comprends : ‘La renaissance est terminée en FR’”\?\u00a0?»/
     );
   });
-  it("translate() testcaseFeelingsEN FR", async()=>{
+  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
-    //DeepLAdapter.setMockApi(false);
+    DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
     //console.log(msg, srcTexts);
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      'comment échapper à ce sentiment français ?". '
+      'Comment échapper à ce sentiment d\'appartenance à la France ?” '
     );
   });
   it("translate() testcasePleasuresEN FR", async()=>{

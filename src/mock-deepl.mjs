@@ -83,7 +83,7 @@ class MockTranslator {
         '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
-        'comment échapper à ce sentiment français ?".'
+        'Comment échapper à ce sentiment d\'appartenance à la France ?” '
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
           '<x>Je comprends : <y>La renaissance est terminée '+
@@ -95,6 +95,9 @@ class MockTranslator {
       ).replace(
         "craving aggregates' origin",
         'l\'origine des agrégats de l\'envie'
+      ).replace(
+        "Springtime",
+        'Primavera'
       )
       ;
       return {
