@@ -52,6 +52,7 @@ export default class SuttaTranslator {
     const msg = 'SuttaTranslator.create()';
     const dbg = DBG_CREATE;
     let {
+      appendWhitespace=true, // SC requirement
       dstLang=DST_LANG,
       srcLang=SRC_LANG,
       srcAuthor = SRC_AUTHOR,
@@ -94,6 +95,7 @@ export default class SuttaTranslator {
     }
 
     let stOpts = {
+      appendWhitespace,
       xltDeepL,
       srcLang,  // 'en', 'en-us', 'en-uk', 'en-deepl', ...
       srcLang2, // e.g., 'en' vs. 'en-us'
@@ -329,14 +331,18 @@ export default class SuttaTranslator {
 
   postTranslate(xltTexts) {
     const msg = 'SuttaTranslator.postTranslate()';
-    let { qpPost, qpDst } = this;
+    let { appendWhitespace, qpPost, qpDst } = this;
     if (qpPost == null) {
       return xltTexts;
     }
 
     return xltTexts.map((xltText,i)=>{
       let level = qpPost.quotationLevel(xltText);
-      return qpPost.convertQuotes(xltText, qpDst, level);
+      let outText =  qpPost.convertQuotes(xltText, qpDst, level);
+      if (appendWhitespace && !xltText.endsWith(' ')) {
+        outText = outText + ' ';
+      }
+      return outText;
     });
   }
   

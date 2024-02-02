@@ -272,8 +272,8 @@ const {
     should(st).properties({ srcLang, dstLang, });
     let postXlt = st.postTranslate(xltTexts);
     should(postXlt[0])
-      .equal(`«“Eu digo, ‘Você diz, “Eu disse!”?’.”!»`)
-    //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
+      .equal(`«“Eu digo, ‘Você diz, “Eu disse!”?’.”!» `
+    );
   });
   it("postTranslate() quoted en/pt-br", async()=>{
     let xltTexts = [
@@ -290,8 +290,9 @@ const {
     should(st).properties({ srcLang, dstLang, });
     should(st.qpDst?.lang).equal('pt-br');
     let postXlt = st.postTranslate(xltTexts);
-    should(postXlt[0])
-      .equal(`“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!”`)
+    should(postXlt[0]).equal(
+      `“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!” `
+    );
   });
   it("translate() sn48.47:1.3 en/fr", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
@@ -314,7 +315,7 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      'comment échapper à ce sentiment français ?".'
+      'comment échapper à ce sentiment français ?". '
     );
   });
   it("translate() testcasePleasuresEN FR", async()=>{
@@ -326,7 +327,7 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-     'comprendre la gratification, l\'inconvénient et la fuite des plaisirs français'
+     'comprendre la gratification, l\'inconvénient et la fuite des plaisirs français '
     );
   });
 })
