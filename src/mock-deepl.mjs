@@ -83,7 +83,7 @@ class MockTranslator {
         '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
-          'lorsqu\'il s\'agit de sentiments français ?</x>'
+        'comment échapper à ce sentiment français ?".'
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
           '<x>Je comprends : <y>La renaissance est terminée '+
@@ -92,6 +92,9 @@ class MockTranslator {
         qp_fr_deepl.testcasePleasuresEN('French'),
           'comprendre la gratification, l\'inconvénient et '+
             'la fuite des plaisirs français'
+      ).replace(
+        "craving aggregates' origin",
+        'l\'origine des agrégats de l\'envie'
       )
       ;
       return {

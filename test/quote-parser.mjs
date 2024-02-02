@@ -149,13 +149,24 @@ const MODULE = 'quote-parser';
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);
   });
+  it("convertQuotes() testcaseGratificationEN() French", ()=>{
+    const msg = 'test.QuoteParser.convertQuotes()';
+    let qp_en = new QuoteParser({lang:'en'});
+    let qp_en_deepl = new QuoteParser({lang:'en-deepl'});
+    let enText = qp_en.testcaseGratificationEN('French');
+    let preText = qp_en_deepl.testcaseGratificationEN('French');
+    //console.log(msg, {enText, preText});
+
+    should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
+    .equal(preText);
+  });
   it("convertQuotes() testcasePleasuresEN() French", ()=>{
     const msg = 'test.QuoteParser.convertQuotes()';
     let qp_en = new QuoteParser({lang:'en'});
     let qp_en_deepl = new QuoteParser({lang:'en-deepl'});
     let enText = qp_en.testcasePleasuresEN('French');
     let preText = qp_en_deepl.testcasePleasuresEN('French');
-    console.log(msg, {enText, preText});
+    //console.log(msg, {enText, preText});
 
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);
@@ -166,7 +177,7 @@ const MODULE = 'quote-parser';
     let qp_en_deepl = new QuoteParser({lang:'en-deepl'});
     let enText = qp_en.testcaseSquirrelsEN('French');
     let preText = qp_en_deepl.testcaseSquirrelsEN('French');
-    console.log(msg, {enText, preText});
+    //console.log(msg, {enText, preText});
 
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);

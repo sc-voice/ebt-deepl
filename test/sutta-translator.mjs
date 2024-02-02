@@ -245,13 +245,15 @@ const {
       `<x>I say, <y>You say, <z>I said UKFR!</z>?</y>.</x></w>`
     );
   });
-  it("preTranslate() testcaseFeelingsEN French", async()=>{
+  it("TESTTESTpreTranslate() testcaseFeelingsEN French", async()=>{
     const msg = 'test.SuttaTranslator.preTranslate()';
     const dbg = 0;
     let srcLang = 'en';
     let dstLang = 'fr';
     let st = await SuttaTranslator.create({srcLang, dstLang});
-    let text = st.qpSrc.testcaseFeelingsEN('French');
+    let rawText = st.qpSrc.testcaseFeelingsEN('French');
+    let { srcTransform } = st;
+    let text = SuttaTranslator.transformSource(rawText, srcTransform);
     let srcTexts = [text];
     dbg && console.log(msg, srcTexts);
     let preXlt = st.preTranslate(srcTexts);
@@ -290,7 +292,6 @@ const {
     let postXlt = st.postTranslate(xltTexts);
     should(postXlt[0])
       .equal(`“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!”`)
-    //        "'Eu digo, ‡Você diz, †Eu disse!†?‡.'!"
   });
   it("translate() sn48.47:1.3 en/fr", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
@@ -313,10 +314,10 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      'lorsqu\'il s\'agit de sentiments français ?”'
+      'comment échapper à ce sentiment français ?".'
     );
   });
-  it("TESTTESTtranslate() testcasePleasuresEN FR", async()=>{
+  it("translate() testcasePleasuresEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});

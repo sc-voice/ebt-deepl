@@ -58,6 +58,22 @@ const dbgv = DBG_VERBOSE;
       targetLang: 'pt',
     })
   });
+  it("translate() possessive apostrophe EN", async () => {
+    let srcLang = 'en';
+    let dstLang = 'fr';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+
+    // sujato
+    let res = await dlt.translate([
+      "craving aggregates' origin",
+    ]);
+
+    // The straight quote can be used for possessve apostrophe
+    should(res[0]).equal(
+      'l\'origine des agrégats de l\'envie'
+    );
+  });
   it("translate() EN", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';

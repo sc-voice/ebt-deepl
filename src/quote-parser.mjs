@@ -183,6 +183,15 @@ export default class QuoteParser {
   static get RQ4() { return RQ4; }
 
   // ...APOS...
+  testcaseGratificationEN(lang) {
+    const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
+    const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
+
+    return `‘But reverends, what’s the gratification, `+
+      `the drawback, and the escape when it comes to ${lang}`;
+  }
+
+  // ...APOS...
   testcasePleasuresEN(lang) {
     const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
     const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
@@ -287,25 +296,30 @@ export default class QuoteParser {
     return dState;
   }
 
-  isApostrophe([before, quote, after]) {
+  isApostrophe(context) {
     const msg = 'QuoteParser.isApostrophe()';
     const dbg = 0;
+    const [ before, quote, after ] = context;
     let { rexPreApos } = this;
 
     if (quote !== RSQUOT) {
-      dbg && console.log(msg, '[1]!RSQUOT', before, quote, after);
+      dbg && console.log(msg, '[1]!RSQUOT', context);
       return false;
     }
     if (rexPreApos && rexPreApos.test(before)) {
-      dbg && console.log(msg, '[3]rexPreApos', before);
+      dbg && console.log(msg, '[2]rexPreApos', before);
       return true;
     }
+    if (after === '') {
+      dbg && console.log(msg, '[3]$', context);
+      return false;
+    }
     if (RE_POST_APOS.test(after)) {
-      dbg && console.log(msg, '[3]RE_POST_APOS', after);
+      dbg && console.log(msg, '[4]RE_POST_APOS', context);
       return true;
     }
 
-    dbg && console.log(msg, '[4]RSQUOT', quote);
+    dbg && console.log(msg, '[5]RSQUOT', context);
     return false;
   }
 
@@ -328,20 +342,23 @@ export default class QuoteParser {
 
     let dstParts = [];
     let srcParts = text.split(rexSplit);
+    dbg && console.log(msg, '[1]srcParts', srcParts);
+    let lastPart;
+    let nextPart = srcParts[0];
     for (let i=0; i<srcParts.length; i++) {
-      let part = srcParts[i];
+      let part = nextPart;
       let srcOpenQuote = srcOpen[level];
       let srcCloseQuote = srcClose[level-1];
 
       if (i%2 === 0) {
-        dbg && console.log(msg, `[1]text@${i}`, part);
+        dbg && console.log(msg, `[2]text@${i}`, part);
       } else if (part === srcCloseQuote) {
         let nextPart = srcParts[i+1];
-        if (this.isApostrophe(srcParts.slice(i-1,3))) {
-        //if (srcCloseQuote===RSQUOT && RE_POST_APOS.test(nextPart)) {
-          dbg && console.log(msg, `[2]apos@${i}`, {part, nextPart});
+        let context = [srcParts[i-1], part, nextPart];
+        if (this.isApostrophe(context)) {
+          dbg && console.log(msg, `[3]apos@${i}`, {part, nextPart});
         } else {
-          dbg && console.log(msg, `[3]close@${i}`, {part, nextPart});
+          dbg && console.log(msg, `[4]close@${i}`, {part, nextPart});
           level--;
           part = swapClose[level];
           if (level < 0) {
@@ -351,7 +368,7 @@ export default class QuoteParser {
           }
         }
       } else if (part === srcOpenQuote) {
-        dbg && console.log(msg, `[4]open@${i}`, part);
+        dbg && console.log(msg, `[5]open@${i}`, part);
         part = swapOpen[level];
         level++;
         if (maxLevel < level) {
@@ -360,12 +377,14 @@ export default class QuoteParser {
           throw new Error(emsg);
         }
       } else {
-        dbg && console.log(msg, `[5]skip@${i}`, level, 
+        dbg && console.log(msg, `[6]skip@${i}`, level, 
           `"${part}"`, 
         );
         // not a quote
       }
       dstParts.push(part)
+      lastPart = part;
+      nextPart = srcParts[i+1];
     }
     this.level = level;
 
@@ -391,16 +410,17 @@ export default class QuoteParser {
           return j;
         }
         if (part === closeQuotes[j]) {
-          if (closeQuotes[j]===RSQUOT && RE_POST_APOS.test(parts[i+1])) {
-            dbg && console.log(msg, `[4]apos`, part);
+          let context = [parts[i-1], part, parts[i+1]];
+          if (this.isApostrophe(context)) {
+            dbg && console.log(msg, `[4]apos`, context);
           } else {
-            dbg && console.log(msg, `[5]level${j} closeQuotes`, part);
+            dbg && console.log(msg, `[5]level${j} closeQuotes`, context);
             return j+1;
           }
         }
       }
+      dbg && console.log(msg, '[4]no-match?', {part});
     }
-    dbg && console.log(msg, '[4]no-match?', {part});
     return 0;
   }
 

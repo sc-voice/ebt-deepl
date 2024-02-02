@@ -64,8 +64,9 @@ export default class SuttaTranslator {
       updateGlossary,
     } = opts;
 
+    let srcLang2 = srcLang.split('-')[0];
     if (srcTransform == null || typeof srcTransform === 'string') {
-      let xfmName = srcTransform || `transform_${srcLang}.json`;
+      let xfmName = srcTransform || `transform_${srcLang2}.json`;
       let xfmPath = path.join(__dirname, 'glossary', xfmName);
       let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
       if (xfmBuf) {
@@ -94,7 +95,8 @@ export default class SuttaTranslator {
 
     let stOpts = {
       xltDeepL,
-      srcLang,
+      srcLang,  // 'en', 'en-us', 'en-uk', 'en-deepl', ...
+      srcLang2, // e.g., 'en' vs. 'en-us'
       srcAuthor,
       srcTransform,
       dstLang,
@@ -290,9 +292,6 @@ export default class SuttaTranslator {
     dbg && console.log(msg, '[1]translate', 
       srcRef.toString(), `segs:${scids.length}`);
     let dstTexts = await this.translateTexts(srcTexts);
-    //let preTexts = this.preTranslate(srcTexts);
-    //let postTexts = await xltDeepL.translate(preTexts);
-    //let dstTexts = this.postTranslate(postTexts);
     let dstSegs = scids.reduce((a,scid,i)=>{
       a[scid] = dstTexts[i];
       return a;
