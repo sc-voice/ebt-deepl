@@ -59,6 +59,10 @@ export default class QuoteParser {
         openQuotes = openQuotes || [ LDQUOT, LSQUOT, LDQUOT, LSQUOT ];
         closeQuotes = closeQuotes || [ RDQUOT, RSQUOT, RDQUOT, RSQUOT ];
         break;
+      case 'nl':
+        openQuotes = openQuotes || [ LDQUOT, LDQUOT,LDQUOT,  LDQUOT, ];
+        closeQuotes = closeQuotes || [ RDQUOT, RDQUOT,RDQUOT,  RDQUOT, ];
+        break;
       case 'pt':
       case 'pt-pt':
         openQuotes = openQuotes || [ LGUIL, LDQUOT, LSQUOT, LDQUOT ];
@@ -73,15 +77,14 @@ export default class QuoteParser {
         closeQuotes = closeQuotes || 
           [ NBSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ];
         break;
-      case 'fr-deepl':
-      case 'pt-deepl':
-      case 'en-deepl':
-        openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
-        closeQuotes = closeQuotes || [ RQ1, RQ2, RQ3, RQ4 ];
-        break;
       default: {
-        let emsg = `${msg} unsupported language:${lang}`;
-        throw new Error(emsg);
+        if (lang.endsWith('-deepl')) {
+          openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
+          closeQuotes = closeQuotes || [ RQ1, RQ2, RQ3, RQ4 ];
+        } else {
+          let emsg = `${msg} unsupported language:${lang}`;
+          throw new Error(emsg);
+        }
       } break;
     }
     

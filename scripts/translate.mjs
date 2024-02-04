@@ -231,7 +231,7 @@ if (suid == null) {
 
 let sref = SuttaRef.create(suid);
 if (sref == null) {
-  throw new Error('Invalid SuttaRef', suid);
+  throw new Error(`Invalid SuttaRef ${suid}`);
 }
 let { sutta_uid, lang, author, segnum, scid } = sref;
 
@@ -300,7 +300,7 @@ function outJson(xltOut) {
       [scid]: scSegs[scid],
     });
   } else {
-    console.log(JSON.stringify(xltOut.scSegs, null, 2));
+    console.log(JSON.stringify(scSegs, null, 2));
   }
 }
 

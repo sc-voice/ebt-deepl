@@ -122,6 +122,10 @@ export default class SuttaTranslator {
         stOpts.qpPost = new QuoteParser({lang:'fr-deepl'});
         stOpts.qpDst = new QuoteParser({lang:'fr'});
       } break;
+      default: {
+        stOpts.qpPost = new QuoteParser({lang:`${dstLang}-deepl`});
+        stOpts.qpDst = new QuoteParser({lang:dstLang});
+      } break;
     }
 
     let st;
