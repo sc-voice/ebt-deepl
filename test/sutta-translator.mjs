@@ -119,7 +119,7 @@ const {
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("TESTTESTtranslate() titles an3.94", async()=>{
+  it("translate() titles an3.94", async()=>{
     let sutta_uid = 'an3.94';
     let srcLang = 'en';
     let dstLang = 'pt';
@@ -321,9 +321,9 @@ const {
       /“Je comprends : ‘La renaissance est terminée en FR’”\?\u00a0?»/
     );
   });
-  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
+  it("translate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
-    DeepLAdapter.setMockApi(false);
+    //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
     //console.log(msg, srcTexts);

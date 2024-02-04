@@ -323,7 +323,7 @@ export default class QuoteParser {
     return false;
   }
 
-  convertQuotes(text, qpSwap, level=this.level) {
+  convertQuotes(text='', qpSwap, level=this.level) {
     const msg = 'QuoteParser.convertQuotes()';
     const dbg = 0 || DBG_VERBOSE;
     let { 
@@ -332,7 +332,7 @@ export default class QuoteParser {
       rexSplit,
       maxLevel,
     } = this;
-    if (qpSwap == null) {
+    if (qpSwap == null || text=='') {
       return text;
     }
     let {

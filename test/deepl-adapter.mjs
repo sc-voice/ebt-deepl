@@ -21,7 +21,7 @@ const dbgv = DBG_VERBOSE;
       dstLang: 'pt',
       sourceLang: 'en',
       targetLang: 'pt-PT',
-      glossaryName: 'ebt_en_pt',
+      glossaryName: 'ebt_en_pt_ebt-deepl',
     });
   });
   it("create() custom", async() => {
@@ -52,7 +52,7 @@ const dbgv = DBG_VERBOSE;
       translateOpts,
     });
     should(glossary).properties({
-      name: 'ebt_en_pt',
+      name: 'ebt_en_pt_ebt-deepl',
       ready: true,
       sourceLang: 'en',
       targetLang: 'pt',
@@ -170,13 +170,15 @@ const dbgv = DBG_VERBOSE;
     should(res[0]).equal(
       `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`);
   })
-  it("uploadGlossary() DE", async()=>{
+  it("TESTTESTuploadGlossary() DE", async()=>{
     let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
     let srcLang = 'de';
     let dstLang = 'pt';
+    let dstAuthor = 'ebt-deepl';
     let translateOpts = {};
-    let glossaryName = DeepLAdapter.glossaryName({srcLang,dstLang});
+    let glossaryName = DeepLAdapter.glossaryName({
+      srcLang, dstLang, dstAuthor});
     let glossary = await DeepLAdapter.uploadGlossary({
       srcLang,
       dstLang,
@@ -184,7 +186,7 @@ const dbgv = DBG_VERBOSE;
       translateOpts,
     });
     should(glossary).properties({
-      name: 'ebt_de_pt',
+      name: 'ebt_de_pt_ebt-deepl',
       ready: true,
       sourceLang: 'de',
       targetLang: 'pt',

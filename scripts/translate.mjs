@@ -220,6 +220,15 @@ if (srcAuthor2) {
   )
 }
 
+if (suid == null) {
+  if (updateGlossary) {
+    console.log("Glossary uploaded");
+    process.exit(0);
+  }
+  console.log("No sutta_uid specified");
+  process.exit(-1);
+}
+
 let sref = SuttaRef.create(suid);
 if (sref == null) {
   throw new Error('Invalid SuttaRef', suid);
