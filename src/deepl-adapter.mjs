@@ -112,11 +112,12 @@ export default class DeepLAdapter {
       updateGlossary = false,
       translator,
     } = opts;
+    dbg && console.log(msg, '[1]opts', opts);
     sourceLang = sourceLang || DeepLAdapter.deeplLang(srcLang);
     targetLang = targetLang || DeepLAdapter.deeplLang(dstLang);
     if (translator == null) {
       let authKey = DeepLAdapter.authKey({authFile});
-      dbg && console.log(msg, '[1]new deepl.Translator()');
+      dbg && console.log(msg, '[2]new deepl.Translator()');
       let deeplOpts = {
       };
       translator = mockApi
@@ -132,15 +133,15 @@ export default class DeepLAdapter {
     }, null)
     if (updateGlossary) {
       let dbg = DBG_GLOSSARY;
-      console.warn(msg, "[2]updateGlossary", glossaryName);
-      dbg && console.log(msg, "[5]uploadGlossary");
+      console.warn(msg, "[3]updateGlossary", glossaryName);
+      dbg && console.log(msg, "[4]uploadGlossary");
       glossary = await DeepLAdapter.uploadGlossary({
         srcLang, dstLang, dstAuthor, translator, glossaries, 
       });
     } 
     if (glossary) {
       let { glossaryId, name } = glossary;
-      dbg && console.warn(msg, '[4]using glossary', name, 
+      dbg && console.warn(msg, '[5]using glossary', name, 
         glossaryId && glossaryId.substring(0,8));
     } else {
       let dbg = DBG_GLOSSARY;

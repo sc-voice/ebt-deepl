@@ -87,7 +87,9 @@ export default class SuttaTranslator {
     if (xltDeepL == null) {
       let optsDeepL = { 
         srcLang,
+        srcAuthor,
         dstLang,
+        dstAuthor,
         updateGlossary,
       }
       dbg && console.log(msg, '[2]DeepLAdapter.create', optsDeepL);

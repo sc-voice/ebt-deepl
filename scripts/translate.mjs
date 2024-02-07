@@ -28,6 +28,7 @@ let refLang;
 let refAuthor;
 let [nodePath, scriptPath, ...args] = process.argv;
 let category = 'sutta';
+let listGlossary1 = false;
 
 // For SC-Voice.net
 let ebtData = await new BilaraData({
@@ -74,6 +75,9 @@ DESCRIPTION
 
     -dr, --dst-replace
         Replace existing destination file. Default is false.
+
+    -lg1, --list-glossary1
+        List glossary entries for first translation source.
 
     -oa, --out-all
         Output Pali, source1, source2, reference, translation1,
@@ -151,6 +155,8 @@ for (var i = 0; i < args.length; i++) {
     dstAuthor = args[++i];
   } else if (arg === '-dr' || arg === '--dst-replace') {
     dstReplace = true;
+  } else if (arg === '-lg1' || arg === '--list-glossary1') {
+    listGlossary1 = true;
   } else if (arg === '-sl1' || arg === '--src-lang1') {
     srcLang1 = args[++i];
   } else if (arg === '-sl2' || arg === '--src-lang2') {
@@ -218,6 +224,26 @@ if (srcAuthor2) {
       updateGlossary,
     })
   )
+}
+
+async function listGlossaryEntries(xlt) {
+  let { xltDeepL } = xlt;
+  let { glossaryName, glossary, translator } = xltDeepL;
+  let { glossaryId, entryCount } = glossary;
+  console.warn('name:', glossaryName, `[${entryCount} entries]`);
+  console.warn('id  :', glossaryId);
+  let entries = await translator.getGlossaryEntries(glossaryId);
+  let { implEntries } = entries;
+  let keys = Object.keys(implEntries);
+  keys.forEach(key=>{
+    let value = implEntries[key];
+    console.log(`${key} | ${value}`);
+  });
+  process.exit(0);
+}
+
+if (listGlossary1) {
+  listGlossaryEntries(xlts[0]);
 }
 
 if (suid == null) {
