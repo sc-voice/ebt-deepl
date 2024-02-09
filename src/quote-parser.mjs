@@ -63,6 +63,7 @@ export default class QuoteParser {
         openQuotes = openQuotes || [ LDQUOT, LDQUOT,LDQUOT,  LDQUOT, ];
         closeQuotes = closeQuotes || [ RDQUOT, RDQUOT,RDQUOT,  RDQUOT, ];
         break;
+      case 'es':
       case 'pt':
       case 'pt-pt':
         openQuotes = openQuotes || [ LGUIL, LDQUOT, LSQUOT, LDQUOT ];

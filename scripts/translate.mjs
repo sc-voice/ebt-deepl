@@ -332,7 +332,7 @@ function outJson(xltOut) {
 
 async function outBilaraData(xltOut, bd) {
   const msg = 'translate.outBilaraData()';
-  const dbg = 1;
+  const dbg = 0;
   const { name } = bd;
   let outDir = path.join(__dirname, 
     `../local/${name}/translation`,
