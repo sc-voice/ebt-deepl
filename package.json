@@ -1,6 +1,6 @@
 {
   "name": "ebt-deepl",
-  "version": "1.21.7",
+  "version": "1.21.8",
   "description": "Javascript Library for EBT translation via DeepL",
   "main": "src/index.mjs",
   "private": false,
