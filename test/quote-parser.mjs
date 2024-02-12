@@ -7,6 +7,7 @@ import {
 } from '../src/defines.mjs';
 const { 
   LDQUOT, RDQUOT, LSQUOT, RSQUOT, LGUIL, RGUIL, NBSP,
+  THNSP,
 } = QuoteParser;
 
 const MODULE = 'quote-parser';
@@ -32,8 +33,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_fr).properties({
       lang : 'fr',
-      openQuotes: [ LGUIL+NBSP, LDQUOT, LSQUOT, LDQUOT ],
-      closeQuotes: [ NBSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ],
+      openQuotes: [ LGUIL+THNSP, LDQUOT, LSQUOT, LDQUOT ],
+      closeQuotes: [ THNSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ],
       level: 1,
     });
 
@@ -171,7 +172,7 @@ const MODULE = 'quote-parser';
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);
   });
-  it("convertQuotes() testcaseSquirrelsEN() French", ()=>{
+  it("TESTTESTconvertQuotes() testcaseSquirrelsEN() French", ()=>{
     const msg = 'test.QuoteParser.convertQuotes()';
     let qp_en = new QuoteParser({lang:'en'});
     let qp_en_deepl = new QuoteParser({lang:'en-deepl'});

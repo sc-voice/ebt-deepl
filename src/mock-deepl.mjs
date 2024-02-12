@@ -26,6 +26,7 @@ class MockGlossary {
   }
 }
 
+const qp_en_deepl = new QuoteParser({lang:'en-deepl'});
 const qp_fr_deepl = new QuoteParser({lang:'fr-deepl'});
 
 class MockTranslator {
@@ -45,8 +46,8 @@ class MockTranslator {
 
   async translateText(texts, sourceLang, targetLang, translateOpts) {
     const msg = "MockTranslator.translateText()";
-    const dbg = DBG_VERBOSE;
-    dbg && console.log(msg, {sourceLang, targetLang});
+    const dbg = 0 || DBG_VERBOSE;
+    dbg && console.log(msg, {sourceLang, targetLang}, texts);
 
     return texts.map(text=>{
       text = text
@@ -83,7 +84,7 @@ class MockTranslator {
         '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
-        'Comment échapper à ce sentiment d\'appartenance à la France ?” '
+        "Comment échapper à ce sentiment d\'appartenance à la France ?” "
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
           '<x>Je comprends : <y>La renaissance est terminée '+
@@ -95,6 +96,9 @@ class MockTranslator {
       ).replace(
         "craving aggregates' origin",
         'l\'origine des agrégats de l\'envie'
+      ).replace(
+        "The French child's toy",
+        "Le jouet de l\'enfant français",
       ).replace(
         "Springtime",
         'Primavera'

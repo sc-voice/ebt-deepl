@@ -7,10 +7,11 @@ const __dirname = path.dirname(__filename);
 const QUOTE  = '“'; // Quotation mark
 const APOS   = "'"; // Apostrophe/single-quote
 const LSQUOT = '‘'; // Left single quote
-const RSQUOT = '’'; // Right single quote, curly apostrophe
+const RSQUOT = '’'; // \u2019 Right single quote, curly apostrophe
 const LGUIL  = '«'; // Left guillemet
 const RGUIL  = '»'; // Right guillemet
 const NBSP   = '\u00a0'; // non-breaking space
+const THNSP  = '\u2009'; // thin space
 const LDQUOT = '“'; // Left double quote
 const RDQUOT = '”'; // Right double quote
 
@@ -39,6 +40,7 @@ export default class QuoteParser {
       lang = 'en',
       openQuotes,
       closeQuotes,
+      apostrophe = RSQUOT,
       level = 0,
       maxLevel = 4,
       quotes = 0,
@@ -74,14 +76,15 @@ export default class QuoteParser {
         break;
       case 'fr':
         openQuotes = openQuotes || 
-          [ LGUIL+NBSP, LDQUOT, LSQUOT, LDQUOT ];
+          [ LGUIL+THNSP, LDQUOT, LSQUOT, LDQUOT ];
         closeQuotes = closeQuotes || 
-          [ NBSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ];
+          [ THNSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ];
         break;
       default: {
         if (lang.endsWith('-deepl')) {
           openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
           closeQuotes = closeQuotes || [ RQ1, RQ2, RQ3, RQ4 ];
+          apostrophe = APOS;
         } else {
           let emsg = `${msg} unsupported language:${lang}`;
           throw new Error(emsg);
@@ -112,6 +115,7 @@ export default class QuoteParser {
     }
 
     Object.assign(this, {
+      apostrophe,
       closeQuotes,
       lang,
       level,
@@ -176,6 +180,7 @@ export default class QuoteParser {
   static get LGUIL() { return LGUIL; }
   static get RGUIL() { return RGUIL; }
   static get NBSP() { return NBSP; }
+  static get THNSP() { return THNSP; }
   static get QUOTE() { return QUOTE; }
   static get LQ1() { return LQ1; }
   static get LQ2() { return LQ2; }
@@ -188,28 +193,31 @@ export default class QuoteParser {
 
   // ...APOS...
   testcaseGratificationEN(lang) {
+    const apos = this.apostrophe;
     const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
     const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
 
-    return `‘But reverends, what’s the gratification, `+
+    return `‘But reverends, what${apos}s the gratification, `+
       `the drawback, and the escape when it comes to ${lang}`;
   }
 
   // ...APOS...
   testcasePleasuresEN(lang) {
+    const apos = this.apostrophe;
     const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
     const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
 
-    return `understand ${lang} pleasures’ `+
+    return `understand ${lang} pleasures${apos} `+
       `gratification, drawback, and escape`;
   }
 
   // ...APOS...RQ1 RQ2
   testcaseSquirrelsEN(lang) {
+    const apos = this.apostrophe;
     const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
     const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
 
-    return `the ${lang} squirrels’ feeding ground${RQ2}${RQ1}`;
+    return `the ${lang} squirrels${apos} feeding ground${RQ2}${RQ1}`;
   }
 
   // LQ2.....RQ2 RQ1
@@ -230,10 +238,11 @@ export default class QuoteParser {
 
   // ... RQ2
   testcaseFeelingsEN(lang) {
+    const apos = this.apostrophe;
     const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
     const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
     return [
-      `what${RSQUOT}s the escape from that ${lang} feeling?${RQ2}`  
+      `what${apos}s the escape from that ${lang} feeling?${RQ2}`  
     ].join('');
   }
 
@@ -244,6 +253,16 @@ export default class QuoteParser {
     return [
       `Why don't we visit ${lang} religions?${RQ1} `,
     ].join('');
+  }
+
+  testcaseApostropheEN(lang) {
+    const { apostrophe } = this;
+    return `The ${lang} child${apostrophe}s toy`;
+  }
+
+  testcaseApostropheFR(lang) {
+    const { apostrophe } = this;
+    return `Le jouet de l${apostrophe}enfant ${lang}`;
   }
 
   scan(text, level=this.level) {
@@ -333,6 +352,7 @@ export default class QuoteParser {
     let { 
       openQuotes:srcOpen, 
       closeQuotes:srcClose, 
+      apostrophe:srcApos,
       rexSplit,
       maxLevel,
     } = this;
@@ -342,6 +362,7 @@ export default class QuoteParser {
     let {
       openQuotes:swapOpen,
       closeQuotes:swapClose,
+      apostrophe:swapApos,
     } = qpSwap;
 
     let dstParts = [];
@@ -392,7 +413,11 @@ export default class QuoteParser {
     }
     this.level = level;
 
-    return dstParts.join('');
+    let aposParts =  dstParts.join('').split(srcApos);
+    dbg && console.log(msg, '[7]aposParts', 
+      aposParts, swapApos.charCodeAt(0));
+
+    return aposParts.join(swapApos);
   }
 
   quotationLevel(text='') {

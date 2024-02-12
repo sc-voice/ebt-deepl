@@ -273,7 +273,7 @@ const {
     dbg && console.log(msg, srcTexts);
     let preXlt = st.preTranslate(srcTexts);
     should(preXlt[0]).equal(
-      `what’s the escape from that French feeling?</x>`
+      `what's the escape from that French feeling?</x>`
     );
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
@@ -309,19 +309,20 @@ const {
       `“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!” `
     );
   });
-  it("translate() testcaseRebirthEN FR", async()=>{
+  it("TESTTESTtranslate() testcaseRebirthEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     let qp_en = new QuoteParser({lang:'en'});
+    let sp = QuoteParser.THNSP;
     let srcTexts = [ qp_en.testcaseRebirthEN('FR') ];
     //console.log(msg, srcTexts);
     let st = await st_en_fr();
     //DeepLAdapter.setMockApi(false);
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      /“Je comprends : ‘La renaissance est terminée en FR’”\?\u00a0?»/
+      /“Je comprends : ‘La renaissance est terminée en FR’”\?\u2009?»/
     );
   });
-  it("translate() testcaseFeelingsEN FR", async()=>{
+  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
@@ -330,7 +331,7 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      'Comment échapper à ce sentiment d\'appartenance à la France ?” '
+      'Comment échapper à ce sentiment d’appartenance à la France ?” '
     );
   });
   it("translate() testcasePleasuresEN FR", async()=>{
@@ -342,7 +343,22 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-     'comprendre la gratification, l\'inconvénient et la fuite des plaisirs français '
+     'comprendre la gratification, l’inconvénient et la fuite des plaisirs français '
     );
+  });
+  it("translate() testcaseApostropheEN FR", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let qp_en = new QuoteParser({lang:'en'});
+    let qp_fr = new QuoteParser({lang:'fr'});
+    let srcTexts = [ qp_en.testcaseApostropheEN('French') ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_fr();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should(dstTexts[0]).match(
+      qp_fr.testcaseApostropheFR('français ')
+    );
+    dbg && console.log(msg, dstTexts);
   });
 })
