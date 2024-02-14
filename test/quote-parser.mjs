@@ -6,8 +6,8 @@ import {
   DBG_QUOTE,
 } from '../src/defines.mjs';
 const { 
-  LDQUOT, RDQUOT, LSQUOT, RSQUOT, LGUIL, RGUIL, NBSP,
-  THNSP,
+  LDQUOT, RDQUOT, LSQUOT, RSQUOT, LDGUIL, RDGUIL, NBSP,
+  THNSP, LGUIL, RGUIL,
 } = QuoteParser;
 
 const MODULE = 'quote-parser';
@@ -26,15 +26,15 @@ const MODULE = 'quote-parser';
     should('the skuirrels').not.match(rexPreApos);
     should('thesquirrels').not.match(rexPreApos);
   });
-  it("custom ctor()", ()=>{
+  it("TESTTESTcustom ctor()", ()=>{
     let qp_fr = new QuoteParser({
       lang: 'fr',
       level: 1,
     });
     should(qp_fr).properties({
       lang : 'fr',
-      openQuotes: [ LGUIL+THNSP, LDQUOT, LSQUOT, LDQUOT ],
-      closeQuotes: [ THNSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ],
+      openQuotes: [ LDGUIL+THNSP, LGUIL+THNSP, LDQUOT, LSQUOT, ],
+      closeQuotes: [ THNSP+RDGUIL, THNSP+RGUIL, RDQUOT, RSQUOT, ],
       level: 1,
     });
 
@@ -44,8 +44,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_pt).properties({
       lang : 'pt',
-      openQuotes: [ LGUIL, LDQUOT, LSQUOT, LDQUOT ],
-      closeQuotes: [ RGUIL, RDQUOT, RSQUOT, RDQUOT ],
+      openQuotes: [ LDGUIL, LDQUOT, LSQUOT, LDQUOT ],
+      closeQuotes: [ RDGUIL, RDQUOT, RSQUOT, RDQUOT ],
       level: 2,
     });
 

@@ -8,8 +8,10 @@ const QUOTE  = '“'; // Quotation mark
 const APOS   = "'"; // Apostrophe/single-quote
 const LSQUOT = '‘'; // Left single quote
 const RSQUOT = '’'; // \u2019 Right single quote, curly apostrophe
-const LGUIL  = '«'; // Left guillemet
-const RGUIL  = '»'; // Right guillemet
+const LDGUIL = '«'; // Left double guillemet
+const RDGUIL = '»'; // Right double guillemet
+const LGUIL  = '\u2039'; // Left guillemet
+const RGUIL  = '\u203a'; // Right guillemet
 const NBSP   = '\u00a0'; // non-breaking space
 const THNSP  = '\u2009'; // thin space
 const LDQUOT = '“'; // Left double quote
@@ -68,17 +70,23 @@ export default class QuoteParser {
       case 'es':
       case 'pt':
       case 'pt-pt':
-        openQuotes = openQuotes || [ LGUIL, LDQUOT, LSQUOT, LDQUOT ];
-        closeQuotes = closeQuotes || [ RGUIL, RDQUOT, RSQUOT, RDQUOT ];
+        openQuotes = openQuotes || [ LDGUIL, LDQUOT, LSQUOT, LDQUOT ];
+        closeQuotes = closeQuotes || [ RDGUIL, RDQUOT, RSQUOT, RDQUOT ];
         break;
         openQuotes = openQuotes || [ LDQUOT, LSQUOT ];
         closeQuotes = closeQuotes || [ RDQUOT, RSQUOT ];
         break;
+      case 'fr-eu':
+        openQuotes = openQuotes || 
+          [ LDGUIL+THNSP, LDQUOT, LSQUOT, ];
+        closeQuotes = closeQuotes || 
+          [ THNSP+RDGUIL, RDQUOT, RSQUOT, ];
+        break;
       case 'fr':
         openQuotes = openQuotes || 
-          [ LGUIL+THNSP, LDQUOT, LSQUOT, LDQUOT ];
+          [ LDGUIL+THNSP, LGUIL+THNSP, LDQUOT, LSQUOT, ];
         closeQuotes = closeQuotes || 
-          [ THNSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ];
+          [ THNSP+RDGUIL, THNSP+RGUIL, RDQUOT, RSQUOT, ];
         break;
       default: {
         if (lang.endsWith('-deepl')) {
@@ -179,6 +187,8 @@ export default class QuoteParser {
   static get RSQUOT() { return RSQUOT; }
   static get LGUIL() { return LGUIL; }
   static get RGUIL() { return RGUIL; }
+  static get LDGUIL() { return LDGUIL; }
+  static get RDGUIL() { return RDGUIL; }
   static get NBSP() { return NBSP; }
   static get THNSP() { return THNSP; }
   static get QUOTE() { return QUOTE; }

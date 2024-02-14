@@ -319,10 +319,10 @@ const {
     //DeepLAdapter.setMockApi(false);
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      /“Je comprends : ‘La renaissance est terminée en FR’”\?\u2009?»/
+      /‹ Je comprends : “La renaissance est terminée en FR” ›\?\u2009?»/
     );
   });
-  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
+  it("translate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
