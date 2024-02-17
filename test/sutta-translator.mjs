@@ -268,7 +268,7 @@ const {
     let st = await SuttaTranslator.create({srcLang, dstLang});
     let rawText = st.qpSrc.testcaseFeelingsEN('French');
     let { srcTransform } = st;
-    let text = SuttaTranslator.transformSource(rawText, srcTransform);
+    let text = SuttaTranslator.transformText(rawText, srcTransform);
     let srcTexts = [text];
     dbg && console.log(msg, srcTexts);
     let preXlt = st.preTranslate(srcTexts);
@@ -309,7 +309,7 @@ const {
       `“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!” `
     );
   });
-  it("TESTTESTtranslate() testcaseRebirthEN FR", async()=>{
+  it("translate() testcaseRebirthEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     let qp_en = new QuoteParser({lang:'en'});
     let sp = QuoteParser.THNSP;
@@ -360,5 +360,20 @@ const {
       qp_fr.testcaseApostropheFR('français ')
     );
     dbg && console.log(msg, dstTexts);
+  });
+  it("TESTTESTpostTranslate() an1.278-286 PT", async()=>{
+    const msg = 'test.SuttaTranslator.postTranslate()';
+    const dbg = 0;
+    let xltTexts = [
+      'É impossível, bhikkhus, não pode acontecer.',
+    ]; 
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let postXlt = st.postTranslate(xltTexts);
+    should(postXlt[0]).equal(
+      'É impossível, monges, não pode acontecer. ',
+    );
   });
 })

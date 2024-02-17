@@ -26,7 +26,7 @@ const MODULE = 'quote-parser';
     should('the skuirrels').not.match(rexPreApos);
     should('thesquirrels').not.match(rexPreApos);
   });
-  it("TESTTESTcustom ctor()", ()=>{
+  it("custom ctor()", ()=>{
     let qp_fr = new QuoteParser({
       lang: 'fr',
       level: 1,
@@ -172,7 +172,7 @@ const MODULE = 'quote-parser';
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);
   });
-  it("TESTTESTconvertQuotes() testcaseSquirrelsEN() French", ()=>{
+  it("convertQuotes() testcaseSquirrelsEN() French", ()=>{
     const msg = 'test.QuoteParser.convertQuotes()';
     let qp_en = new QuoteParser({lang:'en'});
     let qp_en_deepl = new QuoteParser({lang:'en-deepl'});

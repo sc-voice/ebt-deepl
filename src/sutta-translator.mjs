@@ -58,6 +58,7 @@ export default class SuttaTranslator {
       srcAuthor = SRC_AUTHOR,
       dstAuthor=DST_AUTHOR,
       srcTransform,
+      dstTransform,
       xltDeepL,
       bilaraData = await new BilaraData({
         name: 'ebt-data',
@@ -67,7 +68,7 @@ export default class SuttaTranslator {
 
     let srcLang2 = srcLang.split('-')[0];
     if (srcTransform == null || typeof srcTransform === 'string') {
-      let xfmName = srcTransform || `transform_${srcLang2}.json`;
+      let xfmName = srcTransform || `src_${srcLang2}.json`;
       let xfmPath = path.join(__dirname, 'glossary', xfmName);
       let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
       if (xfmBuf) {
@@ -77,6 +78,26 @@ export default class SuttaTranslator {
         srcTransform = xfmKeys.reduce((a,key)=>{
           a.push({
             rex: new RegExp(`\\b${key}`, 'ig'),
+            rep: xfm[key],
+          });
+          return a;
+        }, []);
+      }
+    }
+
+    let dstLang2 = dstLang.split('-')[0];
+    if (dstTransform == null || typeof dstTransform === 'string') {
+      let xfmName = dstTransform || 
+        `dst_${srcLang2}_${dstLang2}.json`;
+      let xfmPath = path.join(__dirname, 'glossary', xfmName);
+      let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
+      if (xfmBuf) {
+        dbg && console.log(msg, '[1]dstTransform', xfmName);
+        let xfm = JSON.parse(xfmBuf);
+        let xfmKeys = Object.keys(xfm);
+        dstTransform = xfmKeys.reduce((a,key)=>{
+          a.push({
+            rex: new RegExp(`\\b${key}`, 'g'),
             rep: xfm[key],
           });
           return a;
@@ -103,6 +124,7 @@ export default class SuttaTranslator {
       srcLang2, // e.g., 'en' vs. 'en-us'
       srcAuthor,
       srcTransform,
+      dstTransform,
       dstLang,
       dstAuthor,
       bilaraData,
@@ -210,10 +232,10 @@ export default class SuttaTranslator {
       text.substring(iLetter+1);
   }
 
-  static transformSource(text, srcTransform) {
+  static transformText(text, transform) {
     let xfmText = text;
-    if (srcTransform) {
-      srcTransform.forEach(xfm=>{
+    if (transform) {
+      transform.forEach(xfm=>{
         xfmText = xfmText.replaceAll(xfm.rex, xfm.rep)
       });
     }
@@ -238,7 +260,7 @@ export default class SuttaTranslator {
       var filePath = path.join(root, bilaraPath);
       var rawText = (await fs.promises.readFile(filePath)).toString();
       var xfmText = SuttaTranslator
-        .transformSource(rawText, srcTransform);
+        .transformText(rawText, srcTransform);
       dbg && console.log(msg, {rawText,xfmText});
       var segments = JSON.parse(xfmText);
     } catch(e) {
@@ -349,14 +371,19 @@ export default class SuttaTranslator {
 
   postTranslate(xltTexts) {
     const msg = 'SuttaTranslator.postTranslate()';
-    let { appendWhitespace, qpPost, qpDst } = this;
+    let { 
+      dstTransform, appendWhitespace, qpPost, qpDst 
+    } = this;
     if (qpPost == null) {
       return xltTexts;
     }
 
     return xltTexts.map((xltText,i)=>{
       let level = qpPost.quotationLevel(xltText);
-      let outText =  qpPost.convertQuotes(xltText, qpDst, level);
+      let quoteText = qpPost.convertQuotes(xltText, qpDst, level);
+      let outText = SuttaTranslator
+        .transformText(quoteText, dstTransform);
+
       if (appendWhitespace && !xltText.endsWith(' ')) {
         outText = outText + ' ';
       }
