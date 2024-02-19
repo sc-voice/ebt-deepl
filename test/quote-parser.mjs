@@ -6,7 +6,8 @@ import {
   DBG_QUOTE,
 } from '../src/defines.mjs';
 const { 
-  LDQUOT, RDQUOT, LSQUOT, RSQUOT, LGUIL, RGUIL, NBSP,
+  LDQUOT, RDQUOT, LSQUOT, RSQUOT, LDGUIL, RDGUIL, NBSP,
+  THNSP, LGUIL, RGUIL,
 } = QuoteParser;
 
 const MODULE = 'quote-parser';
@@ -32,8 +33,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_fr).properties({
       lang : 'fr',
-      openQuotes: [ LGUIL+NBSP, LDQUOT, LSQUOT, LDQUOT ],
-      closeQuotes: [ NBSP+RGUIL, RDQUOT, RSQUOT, RDQUOT ],
+      openQuotes: [ LDGUIL+THNSP, LGUIL+THNSP, LDQUOT, LSQUOT, ],
+      closeQuotes: [ THNSP+RDGUIL, THNSP+RGUIL, RDQUOT, RSQUOT, ],
       level: 1,
     });
 
@@ -43,8 +44,8 @@ const MODULE = 'quote-parser';
     });
     should(qp_pt).properties({
       lang : 'pt',
-      openQuotes: [ LGUIL, LDQUOT, LSQUOT, LDQUOT ],
-      closeQuotes: [ RGUIL, RDQUOT, RSQUOT, RDQUOT ],
+      openQuotes: [ LDGUIL, LDQUOT, LSQUOT, LDQUOT ],
+      closeQuotes: [ RDGUIL, RDQUOT, RSQUOT, RDQUOT ],
       level: 2,
     });
 

@@ -3,7 +3,7 @@
 DIR=`dirname $0`
 SCRIPT=`basename $0 | tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`
 
-RQDVER=8
+RQDVER=10
 NPMVER=`npm --version | sed -e 's/\..*//'`
 if [ "$NPMVER" == "${RQDVER}" ]; then
     echo -e "${SCRIPT}: npm ${NPMVER} found (OK)"

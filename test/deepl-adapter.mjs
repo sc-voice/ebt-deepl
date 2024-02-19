@@ -170,7 +170,7 @@ const dbgv = DBG_VERBOSE;
     should(res[0]).equal(
       `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`);
   })
-  it("TESTTESTuploadGlossary() DE", async()=>{
+  it("uploadGlossary() DE", async()=>{
     let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
     let srcLang = 'de';

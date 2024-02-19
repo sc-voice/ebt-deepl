@@ -268,12 +268,12 @@ const {
     let st = await SuttaTranslator.create({srcLang, dstLang});
     let rawText = st.qpSrc.testcaseFeelingsEN('French');
     let { srcTransform } = st;
-    let text = SuttaTranslator.transformSource(rawText, srcTransform);
+    let text = SuttaTranslator.transformText(rawText, srcTransform);
     let srcTexts = [text];
     dbg && console.log(msg, srcTexts);
     let preXlt = st.preTranslate(srcTexts);
     should(preXlt[0]).equal(
-      `what’s the escape from that French feeling?</x>`
+      `what's the escape from that French feeling?</x>`
     );
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
@@ -312,13 +312,14 @@ const {
   it("translate() testcaseRebirthEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     let qp_en = new QuoteParser({lang:'en'});
+    let sp = QuoteParser.THNSP;
     let srcTexts = [ qp_en.testcaseRebirthEN('FR') ];
     //console.log(msg, srcTexts);
     let st = await st_en_fr();
     //DeepLAdapter.setMockApi(false);
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      /“Je comprends : ‘La renaissance est terminée en FR’”\?\u00a0?»/
+      /‹ Je comprends : “La renaissance est terminée en FR” ›\?\u2009?»/
     );
   });
   it("translate() testcaseFeelingsEN FR", async()=>{
@@ -330,7 +331,7 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      'Comment échapper à ce sentiment d\'appartenance à la France ?” '
+      'Comment échapper à ce sentiment d’appartenance à la France ?” '
     );
   });
   it("translate() testcasePleasuresEN FR", async()=>{
@@ -342,7 +343,37 @@ const {
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-     'comprendre la gratification, l\'inconvénient et la fuite des plaisirs français '
+     'comprendre la gratification, l’inconvénient et la fuite des plaisirs français '
+    );
+  });
+  it("translate() testcaseApostropheEN FR", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let qp_en = new QuoteParser({lang:'en'});
+    let qp_fr = new QuoteParser({lang:'fr'});
+    let srcTexts = [ qp_en.testcaseApostropheEN('French') ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_fr();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should(dstTexts[0]).match(
+      qp_fr.testcaseApostropheFR('français ')
+    );
+    dbg && console.log(msg, dstTexts);
+  });
+  it("TESTTESTpostTranslate() an1.278-286 PT", async()=>{
+    const msg = 'test.SuttaTranslator.postTranslate()';
+    const dbg = 0;
+    let xltTexts = [
+      'É impossível, bhikkhus, não pode acontecer.',
+    ]; 
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let postXlt = st.postTranslate(xltTexts);
+    should(postXlt[0]).equal(
+      'É impossível, monges, não pode acontecer. ',
     );
   });
 })
