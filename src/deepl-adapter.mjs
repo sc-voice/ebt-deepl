@@ -24,8 +24,6 @@ export default class DeepLAdapter {
   constructor(opts={}) {
     let {
       authFile,
-      dstLang, // bilara-data lang
-      srcLang, // bilara-data lang
       glossary,
       glossaryName,
       initialized,
@@ -33,13 +31,17 @@ export default class DeepLAdapter {
       targetLang,// deepl lang
       translateOpts,
       translator,
-    } = opts;
+      dstLang,
+      dstLang2, // bilara-data lang
+      srcLang2, // bilara-data lang
+      srcLang,
+    } = DeepLAdapter.srcDstLangs(opts);
 
     let emsg = 'use DeepLAdapter.create()';
     let check = 1;
     if (null == authFile) throw new Error(`${emsg} ${check}`);
     check++;
-    if (null == dstLang) throw new Error(`${emsg} ${check}`);
+    if (null == dstLang2) throw new Error(`${emsg} ${check}`);
     check++;
     if (null == glossaryName) throw new Error(`${emsg} ${check}`);
     check++;
@@ -49,7 +51,7 @@ export default class DeepLAdapter {
     check++;
     if (null == targetLang) throw new Error(`${emsg} ${check}`);
     check++;
-    if (null == srcLang) throw new Error(`${emsg} ${check}`);
+    if (null == srcLang2) throw new Error(`${emsg} ${check}`);
     check++;
     if (null == translateOpts) throw new Error(`${emsg} ${check}`);
     check++;
@@ -59,10 +61,12 @@ export default class DeepLAdapter {
     Object.assign(this, {
       authFile,
       dstLang,
+      dstLang2,
       glossary,
       glossaryName,
       initialized,
       srcLang,
+      srcLang2,
       sourceLang,
       targetLang,
       translateOpts: JSON.parse(JSON.stringify(translateOpts)),
@@ -78,6 +82,18 @@ export default class DeepLAdapter {
     return fs.readFileSync(authFile).toString().trim();
   }
 
+  static srcDstLangs(opts={}) {
+    let { srcLang='en', dstLang='pt-pt' } = opts;
+    srcLang = srcLang.toLowerCase();
+    let srcLang2 = srcLang.split('-')[0];
+    dstLang = dstLang.toLowerCase();
+    let dstLang2 = dstLang.split('-')[0];
+
+    return Object.assign({}, 
+      opts, 
+      { srcLang, srcLang2, dstLang, dstLang2 });
+  }
+
   static deeplLang(lang) {
     switch (lang) {
       case 'pt': return 'pt-PT';
@@ -89,11 +105,15 @@ export default class DeepLAdapter {
     const msg = 'DeepLAdapter.glossaryName()';
     const dbg = DBG_GLOSSARY;
     let {
-      srcLang,
-      dstLang,
       dstAuthor='ebt-deepl',
     } = opts;
-    let name = `ebt_${srcLang}_${dstLang}_${dstAuthor}`.toLowerCase();
+    let {
+      dstLang,
+      dstLang2, // bilara-data lang
+      srcLang2, // bilara-data lang
+      srcLang,
+    } = DeepLAdapter.srcDstLangs(opts);
+    let name = `ebt_${srcLang2}_${dstLang2}_${dstAuthor}`.toLowerCase();
     dbg && console.log(msg, name);
     return name;
   }
@@ -103,15 +123,17 @@ export default class DeepLAdapter {
     const dbg = DBG_CREATE;
     let {
       authFile=path.join(cwd,'local/deepl.auth'),
-      srcLang='en',
-      dstLang='pt',
+      srcLang,
+      srcLang2,
+      dstLang,
+      dstLang2,
       dstAuthor='ebt-deepl',
       sourceLang,
       targetLang,
       translateOpts=TRANSLATE_OPTS,
       updateGlossary = false,
       translator,
-    } = opts;
+    } = DeepLAdapter.srcDstLangs(opts);
     dbg && console.log(msg, '[1]opts', opts);
     sourceLang = sourceLang || DeepLAdapter.deeplLang(srcLang);
     targetLang = targetLang || DeepLAdapter.deeplLang(dstLang);
@@ -156,10 +178,12 @@ export default class DeepLAdapter {
     let ctorOpts = {
       authFile,
       dstLang,
+      dstLang2,
       glossary,
       glossaryName,
       initialized,
       srcLang,
+      srcLang2,
       sourceLang,
       targetLang,
       translateOpts,
@@ -180,11 +204,13 @@ export default class DeepLAdapter {
     const dbgv = DBG_VERBOSE && dbg;
     let {
       srcLang,
+      srcLang2,
       dstLang,
+      dstLang2,
       dstAuthor,
       translator,
       glossaries,
-    } = opts;
+    } = DeepLAdapter.srcDstLangs(opts);
     let glossaryName = DeepLAdapter.glossaryName({
       srcLang, dstLang, dstAuthor});
     let glossary;

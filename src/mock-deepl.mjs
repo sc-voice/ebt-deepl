@@ -51,7 +51,12 @@ class MockTranslator {
 
     return texts.map(text=>{
       text = text
-      .replace(/\baus Anteilnahme an. /g, 'por compaixão.')
+      .replace(
+        '<w>Bhikkhus, I do not see a single thing that is so '+
+          'very blameworthy as wrong view.',
+        '<w>Bhikkhus, eu não vejo uma única coisa que seja '+
+          'tão censurável como uma visão incorreta. '
+      ).replace(/\baus Anteilnahme an. /g, 'por compaixão.')
       .replace(/\bBei welchen drei\? /g, 'Quais são os três? ')
       .replace(/\bDas ist ein Moench, /g, 'Este é um bhikkhu ')
       .replace(/\bman einen Moench, /g, 'chama um bhikkhu ')
@@ -74,7 +79,7 @@ class MockTranslator {
         '„Moench, du sammelst Almosen, bevor du isst;',
         '"Bhikkhu, você esmola comida antes de comer;')
       .replace(
-        '“Mendicant, you seek alms before you eat;',
+        '“Bhikkhu, you seek alms before you eat;',
         '"Bhikkhu, você esmola comida antes de comer;')
       .replace(
         '<x>I say, <y>You say, <z>I said FR!</z>?</y>.</x></w>',
@@ -84,7 +89,7 @@ class MockTranslator {
         '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
-        "Comment échapper à ce sentiment d\'appartenance à la France ?” "
+        'Comment échapper à ce sentiment d’appartenance à la France ? › '
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
           '<x>Je comprends : <y>La renaissance est terminée '+
@@ -102,6 +107,9 @@ class MockTranslator {
       ).replace(
         "Springtime",
         'Primavera'
+      ).replace(
+        '“Bhikkhu, that is incorrect view;',
+        '"Bhikkhu, essa visão é incorrecta;'
       )
       ;
       return {

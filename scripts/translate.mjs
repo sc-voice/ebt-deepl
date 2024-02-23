@@ -21,7 +21,7 @@ let srcAuthor1;
 let srcLang2;
 let srcAuthor2;
 let updateGlossary = false;
-let dstLang = 'pt';
+let dstLang = 'pt-PT';
 let dstAuthor = EBT_DEEPL;
 let dstReplace = false;
 let refLang;
@@ -213,6 +213,8 @@ let xlts = [
     updateGlossary,
   }),
 ];
+let dstLang2 = xlts[0].dstLang2;
+
 if (srcAuthor2) {
   xlts.push(
     await SuttaTranslator.create({
@@ -263,7 +265,7 @@ let { sutta_uid, lang, author, segnum, scid } = sref;
 
 let srcRef1 = {sutta_uid, lang:srcLang1, author:srcAuthor1}
 let srcRef2 = srcAuthor2 && {sutta_uid, lang:srcLang2, author:srcAuthor2}
-let refRef = {sutta_uid, lang:dstLang, author:refAuthor}
+let refRef = {sutta_uid, lang:dstLang2, author:refAuthor}
 let pliRef = {sutta_uid, lang:'pli', author: 'ms'}
 let { segments: pliSegs, } = await xlts[0].loadSutta(pliRef);
 let xltOpts = {bilaraData: ebtData}
@@ -299,7 +301,7 @@ function outAll() {
   console.log(`Source1  : ${srcLang1}/${srcAuthor1}`);
   srcAuthor2 && console.log(`Source2  : ${srcLang2}/${srcAuthor2}`);
   console.log(`Reference: ${refLang}/${refAuthor}`);
-  console.log(`Target   : ${dstLang}/${dstAuthor}`);
+  console.log(`Target   : ${dstLang2}/${dstAuthor}`);
 
   let scSegs = xltsOut.map(x=>
     SuttaTranslator.curlyQuoteSegments(x.dstSegs));
@@ -312,8 +314,8 @@ function outAll() {
     console.log(`${srcLang1}:\t`, srcSegs1[si]);
     srcAuthor2 && console.log(`${srcLang2}:\t`, srcSegs2[si]);
     console.log(`ref:\t`, refSegs && refSegs[si]);
-    console.log(`${srcLang1}-${dstLang}:\t`, scSegs[0][si]);
-    srcAuthor2 && console.log(`${srcLang2}-${dstLang}:\t`, 
+    console.log(`${srcLang1}-${dstLang2}:\t`, scSegs[0][si]);
+    srcAuthor2 && console.log(`${srcLang2}-${dstLang2}:\t`, 
       scSegs[1][si]);
   }
 }
@@ -336,16 +338,16 @@ async function outBilaraData(xltOut, bd) {
   const { name } = bd;
   let outDir = path.join(__dirname, 
     `../local/${name}/translation`,
-    dstLang,
+    dstLang2,
     EBT_DEEPL,
     category,
     );
   let pliPath  = bd.docPaths(sref)[0];
   let dstPath = pliPath
     .replace('root/pli/ms', 
-      ['translation', dstLang, dstAuthor].join('/'))
+      ['translation', dstLang2, dstAuthor].join('/'))
     .replace('root-pli-ms',
-      ['translation', dstLang, dstAuthor].join('-'));
+      ['translation', dstLang2, dstAuthor].join('-'));
   let dstDir = path.dirname(dstPath);
   let dstBase = path.basename(dstPath);
 
@@ -401,16 +403,16 @@ async function outCurlyQuotes(bd) {
   const { name } = bd;
   let outDir = path.join(__dirname, 
     `../local/${name}/translation`,
-    dstLang,
+    dstLang2,
     EBT_DEEPL,
     category,
     );
   let pliPath  = bd.docPaths(sref)[0];
   let dstPath = pliPath
     .replace('root/pli/ms', 
-      ['translation', dstLang, dstAuthor].join('/'))
+      ['translation', dstLang2, dstAuthor].join('/'))
     .replace('root-pli-ms',
-      ['translation', dstLang, dstAuthor].join('-'));
+      ['translation', dstLang2, dstAuthor].join('-'));
   let dstDir = path.dirname(dstPath);
   let dstBase = path.basename(dstPath);
 

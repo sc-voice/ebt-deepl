@@ -35,11 +35,11 @@ const {
   var _st_de_pt;
   async function st_en_pt() {
     return await SuttaTranslator.create({
-      srcLang: 'en',
-      srcAuthor: 'sujato',
-      dstLang: 'pt',
-      dstAuthor: DEEPL,
-      bilaraData,
+      //srcLang: 'en',
+      //srcAuthor: 'sujato',
+      //dstLang: 'pt-PT',
+      //dstAuthor: DEEPL,
+      //bilaraData,
     });
   }
   async function st_en_fr() {
@@ -76,11 +76,14 @@ const {
   });
   it("create() default", async() => {
     let srcLang = 'en';
-    let dstLang = 'pt';
+    let dstLang = 'pt-PT';
     let srcAuthor = 'sujato';
     let dstAuthor = DEEPL;
     let st = await st_en_pt();
-    should(st).properties({ srcLang, dstLang, srcAuthor, dstAuthor});
+    should(st.srcLang).equal('en');
+    should(st.srcLang2).equal('en');
+    should(st.dstLang).equal('pt-pt');
+    should(st.dstLang2).equal('pt');
     should(st.xltDeepL).instanceOf(DeepLAdapter);
   });
   it("create() en", async() => {
@@ -327,11 +330,11 @@ const {
     //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
-    //console.log(msg, srcTexts);
+    console.log(msg, srcTexts);
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(
-      'Comment échapper à ce sentiment d’appartenance à la France ?” '
+      'Comment échapper à ce sentiment d’appartenance à la France ? › '
     );
   });
   it("translate() testcasePleasuresEN FR", async()=>{
@@ -361,19 +364,38 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTpostTranslate() an1.278-286 PT", async()=>{
+  it("TESTTESTtranslate() visão incorrecta EN", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let srcTexts = [ 
+      '“Bhikkhus, I do not see a single thing that is so '+
+        'very blameworthy as wrong view.',
+    ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should(dstTexts[0]).equal(
+      '«Monges, eu não vejo uma única coisa que seja '+
+        'tão censurável como uma visão incorreta. '
+    );
+    dbg && console.log(msg, dstTexts);
+  });
+
+  it("postTranslate() monges, incorrecto PT", async()=>{
     const msg = 'test.SuttaTranslator.postTranslate()';
     const dbg = 0;
     let xltTexts = [
-      'É impossível, bhikkhus, não pode acontecer.',
+      'É impossível, bhikkhus, é incorrecto.',
     ]; 
     let srcLang = 'en';
-    let dstLang = 'pt';
+    let dstLang = 'pt-pt';
     let st = await SuttaTranslator.create({srcLang, dstLang});
+    dbg && console.log(st.dstTransform);
     should(st).properties({ srcLang, dstLang, });
     let postXlt = st.postTranslate(xltTexts);
     should(postXlt[0]).equal(
-      'É impossível, monges, não pode acontecer. ',
+      'É impossível, monges, é incorreto. ',
     );
   });
 })

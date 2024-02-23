@@ -24,11 +24,12 @@ const {
 
 import {
   DBG_CREATE, DBG_FIND, DBG_LOAD_SUTTA, DBG_TRANSLATE,
+  DBG_TRANSFORM,
 } from './defines.mjs'
 
 var creating = false;
 
-const DST_LANG = 'pt';
+const DST_LANG = 'pt-PT';
 const SRC_LANG = 'en';
 const SRC_AUTHOR = 'sujato';
 const DST_AUTHOR = 'ebt-deepl';
@@ -50,7 +51,7 @@ export default class SuttaTranslator {
 
   static async create(opts={}) {
     const msg = 'SuttaTranslator.create()';
-    const dbg = DBG_CREATE;
+    const dbg = DBG_CREATE || DBG_TRANSFORM;
     let {
       appendWhitespace=true, // SC requirement
       dstLang=DST_LANG,
@@ -66,7 +67,11 @@ export default class SuttaTranslator {
       updateGlossary,
     } = opts;
 
+    srcLang = srcLang.toLowerCase();
+    dstLang = dstLang.toLowerCase();
     let srcLang2 = srcLang.split('-')[0];
+    let dstLang2 = dstLang.split('-')[0];
+
     if (srcTransform == null || typeof srcTransform === 'string') {
       let xfmName = srcTransform || `src_${srcLang2}.json`;
       let xfmPath = path.join(__dirname, 'glossary', xfmName);
@@ -77,7 +82,7 @@ export default class SuttaTranslator {
         let xfmKeys = Object.keys(xfm);
         srcTransform = xfmKeys.reduce((a,key)=>{
           a.push({
-            rex: new RegExp(`\\b${key}`, 'ig'),
+            rex: new RegExp(`\\b${key}`, 'g'),
             rep: xfm[key],
           });
           return a;
@@ -85,23 +90,23 @@ export default class SuttaTranslator {
       }
     }
 
-    let dstLang2 = dstLang.split('-')[0];
     if (dstTransform == null || typeof dstTransform === 'string') {
       let xfmName = dstTransform || 
-        `dst_${srcLang2}_${dstLang2}.json`;
+        `dst_${srcLang2}_${dstLang}.json`;
       let xfmPath = path.join(__dirname, 'glossary', xfmName);
       let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
       if (xfmBuf) {
-        dbg && console.log(msg, '[1]dstTransform', xfmName);
         let xfm = JSON.parse(xfmBuf);
         let xfmKeys = Object.keys(xfm);
         dstTransform = xfmKeys.reduce((a,key)=>{
           a.push({
-            rex: new RegExp(`\\b${key}`, 'g'),
+            rex: new RegExp(`${key}`, 'g'),
             rep: xfm[key],
           });
           return a;
         }, []);
+        dbg && console.log(msg, '[1]dstTransform', xfmName, 
+          dstTransform);
       }
     }
 
@@ -125,7 +130,8 @@ export default class SuttaTranslator {
       srcAuthor,
       srcTransform,
       dstTransform,
-      dstLang,
+      dstLang, // e.g., 'pt-br', 'pt-pt'
+      dstLang2,
       dstAuthor,
       bilaraData,
     }
@@ -136,20 +142,28 @@ export default class SuttaTranslator {
       } break;
     }
     switch (dstLang) {
-      case 'pt': {
+      case 'pt-pt': 
+        stOpts.qpPost = new QuoteParser({lang:'pt-deepl'});
+        stOpts.qpDst = new QuoteParser({lang:'pt-pt'});
+        break;
+      case 'pt-br':
+        stOpts.qpPost = new QuoteParser({lang:'pt-deepl'});
+        stOpts.qpDst = new QuoteParser({lang:'pt-br'});
+        break;
+      case 'pt':
         stOpts.qpPost = new QuoteParser({lang:'pt-deepl'});
         stOpts.qpDst = dstAuthor === 'ebt-deepl'
           ? new QuoteParser({lang:'pt-pt'})
           : new QuoteParser({lang:'pt-br'});
-      } break;
-      case 'fr': {
+        break;
+      case 'fr': 
         stOpts.qpPost = new QuoteParser({lang:'fr-deepl'});
         stOpts.qpDst = new QuoteParser({lang:'fr'});
-      } break;
-      default: {
-        stOpts.qpPost = new QuoteParser({lang:`${dstLang}-deepl`});
+        break;
+      default:
+        stOpts.qpPost = new QuoteParser({lang:`${dstLang2}-deepl`});
         stOpts.qpDst = new QuoteParser({lang:dstLang});
-      } break;
+        break;
     }
 
     let st;
@@ -309,7 +323,7 @@ export default class SuttaTranslator {
     const sref = SuttaRef.create(suid);
     const { sutta_uid, lang, author, segnum } = sref;
     let { 
-      seeker, srcLang, srcAuthor, dstLang, dstAuthor, 
+      seeker, srcLang, srcAuthor, dstLang2, dstAuthor, 
       bilaraData, xltDeepL,
     } = this;
     let { root, bilaraPathMap:bpm } = bilaraData;
@@ -338,12 +352,12 @@ export default class SuttaTranslator {
         : dstTexts[i];
       return a;
     }, {});
-    let dstRef = SuttaRef.create(sutta_uid, dstLang);
+    let dstRef = SuttaRef.create(sutta_uid, dstLang2);
     dstRef.author = dstAuthor;
     let dstPath = bpm.suidPath(sutta_uid);
     dstPath = dstPath
-      .replace('_root-pli-ms', `_translation-${dstLang}-${dstAuthor}`)
-      .replace('root/pli/', `translation/${dstLang}/`)
+      .replace('_root-pli-ms', `_translation-${dstLang2}-${dstAuthor}`)
+      .replace('root/pli/', `translation/${dstLang2}/`)
       .replace('/ms/', `/${dstAuthor}/`);
     dstPath = dstPath && path.join(root, dstPath);
 
@@ -371,6 +385,7 @@ export default class SuttaTranslator {
 
   postTranslate(xltTexts) {
     const msg = 'SuttaTranslator.postTranslate()';
+    const dbg = DBG_TRANSFORM;
     let { 
       dstTransform, appendWhitespace, qpPost, qpDst 
     } = this;
@@ -383,7 +398,10 @@ export default class SuttaTranslator {
       let quoteText = qpPost.convertQuotes(xltText, qpDst, level);
       let outText = SuttaTranslator
         .transformText(quoteText, dstTransform);
-
+     
+      if (dbg && outText !== quoteText) {
+        console.log(msg, '[1]transformText', {quoteText, outText});
+      }
       if (appendWhitespace && !xltText.endsWith(' ')) {
         outText = outText + ' ';
       }

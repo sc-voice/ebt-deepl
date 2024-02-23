@@ -7,7 +7,10 @@ import {
 } from '../src/defines.mjs';
 const dbgv = DBG_VERBOSE;
 
-(typeof describe === 'function') && describe("deepl", function() {
+
+(typeof describe === 'function') && 
+  describe("deepl-adapter", function() 
+{
   this.timeout(30*1000);
 
   before(()=>{
@@ -18,14 +21,16 @@ const dbgv = DBG_VERBOSE;
     let dlt = await DeepLAdapter.create();
     should(dlt).properties({
       srcLang: 'en',
-      dstLang: 'pt',
+      srcLang2: 'en',
+      dstLang: 'pt-pt',
+      dstLang2: 'pt',
       sourceLang: 'en',
-      targetLang: 'pt-PT',
+      targetLang: 'pt-pt',
       glossaryName: 'ebt_en_pt_ebt-deepl',
     });
   });
   it("create() custom", async() => {
-    let srcLang = 'pt';
+    let srcLang = 'pt-pt';
     let dstLang = 'de';
     let dlt = await DeepLAdapter.create({
       srcLang,
@@ -33,8 +38,10 @@ const dbgv = DBG_VERBOSE;
     });
     should(dlt).properties({
       srcLang,
+      srcLang2: 'pt',
       dstLang,
-      sourceLang: 'pt-PT',
+      dstLang2: 'de',
+      sourceLang: 'pt-pt',
       targetLang: 'de',
     });
   });
@@ -42,7 +49,7 @@ const dbgv = DBG_VERBOSE;
     let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
     let srcLang = 'en';
-    let dstLang = 'pt';
+    let dstLang = 'pt-PT';
     let translateOpts = {};
     let glossaryName = DeepLAdapter.glossaryName({srcLang,dstLang});
     let glossary = await DeepLAdapter.uploadGlossary({
@@ -51,12 +58,12 @@ const dbgv = DBG_VERBOSE;
       translator,
       translateOpts,
     });
-    should(glossary).properties({
-      name: 'ebt_en_pt_ebt-deepl',
-      ready: true,
-      sourceLang: 'en',
-      targetLang: 'pt',
-    })
+    console.log(Object.keys(glossary));
+    should(glossaryName).equal('ebt_en_pt_ebt-deepl');
+    should(glossary.name).equal('ebt_en_pt_ebt-deepl');
+    should(glossary.ready).equal(true);
+    should(glossary.sourceLang).equal('en');
+    should(glossary.targetLang).equal('pt'); // DeepL 
   });
   it("translate() possessive apostrophe EN", async () => {
     let srcLang = 'en';
@@ -74,7 +81,7 @@ const dbgv = DBG_VERBOSE;
       'l\'origine des agrégats de l\'envie'
     );
   });
-  it("translate() EN", async () => {
+  it("translate() EN=>PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
@@ -82,7 +89,7 @@ const dbgv = DBG_VERBOSE;
     // sujato
     let res = await dlt.translate([
       "the dart of craving",
-      "“Mendicant, you seek alms before you eat;",
+      "“Bhikkhu, you seek alms before you eat;",
     ]);
 
     should(res[0]).equal('o dardo do anseio');
@@ -91,6 +98,22 @@ const dbgv = DBG_VERBOSE;
     // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
+  });
+  it("translate() incorrectly EN>PT", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt-PT';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+
+    // sujato
+    let res = await dlt.translate([
+      "“Bhikkhu, that is incorrect view;",
+    ]);
+
+    // Compare with laera-quaresma:
+    // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
+    should(res[0]).equal(
+      '"Bhikkhu, essa visão é incorrecta;');
   });
   it("translate() testcaseDepthEN FR", async () => {
     let srcLang = 'en';
@@ -174,7 +197,7 @@ const dbgv = DBG_VERBOSE;
     let dlt = await DeepLAdapter.create();
     let { translator } = dlt;
     let srcLang = 'de';
-    let dstLang = 'pt';
+    let dstLang = 'pt-PT';
     let dstAuthor = 'ebt-deepl';
     let translateOpts = {};
     let glossaryName = DeepLAdapter.glossaryName({
@@ -185,12 +208,10 @@ const dbgv = DBG_VERBOSE;
       translator,
       translateOpts,
     });
-    should(glossary).properties({
-      name: 'ebt_de_pt_ebt-deepl',
-      ready: true,
-      sourceLang: 'de',
-      targetLang: 'pt',
-    })
+    should(glossary.name).equal('ebt_de_pt_ebt-deepl');
+    should(glossary.ready).equal(true);
+    should(glossary.sourceLang).equal('de');
+    should(glossary.targetLang).equal('pt'); // DeepL
   });
   it("translate() DE", async () => {
     let srcLang = 'de';
