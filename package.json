@@ -1,6 +1,6 @@
 {
   "name": "ebt-deepl",
-  "version": "1.26.14",
+  "version": "1.26.16",
   "description": "Javascript Library for EBT translation via DeepL",
   "main": "src/index.mjs",
   "private": false,
@@ -17,7 +17,7 @@
     "mocha": "^10.0.0",
     "npm": "^10.4.0",
     "scv-bilara": "^3.146.0",
-    "scv-esm": "^1.101.10",
+    "scv-esm": "^1.101.12",
     "should": "^13.2.3"
   },
   "scripts": {
