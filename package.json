@@ -16,18 +16,18 @@
   "private": false,
   "directories": {},
   "dependencies": {
-    "deepl-node": "^1.11.0",
-    "memo-again": "^0.8.0",
-    "scv-bilara": "^3.147.2",
-    "scv-esm": "^1.101.15"
+    "deepl-node": "^1.11.0"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
     "install": "^0.13.0",
     "log-instance": "^1.6.0",
+    "memo-again": "^0.8.0",
     "merkle-json": "^2.6.0",
     "mocha": "^10.0.0",
     "npm": "^10.4.0",
+    "scv-bilara": "^3.147.3",
+    "scv-esm": "^1.101.16",
     "should": "^13.2.3"
   },
   "scripts": {
