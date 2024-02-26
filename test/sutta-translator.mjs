@@ -42,6 +42,15 @@ const {
       //bilaraData,
     });
   }
+  async function st_en_es() {
+    return await SuttaTranslator.create({
+      srcLang: 'en',
+      srcAuthor: 'sujato',
+      dstLang: 'es',
+      dstAuthor: 'ebt-deepl',
+      bilaraData,
+    });
+  }
   async function st_en_fr() {
     return await SuttaTranslator.create({
       srcLang: 'en',
@@ -349,7 +358,7 @@ const {
      'comprendre la gratification, l’inconvénient et la fuite des plaisirs français '
     );
   });
-  it("translate() testcaseApostropheEN FR", async()=>{
+  it("translateTexts() testcaseApostropheEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
@@ -364,7 +373,7 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslate() visão incorrecta EN", async()=>{
+  it("translateTexts() visão incorrecta EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
@@ -381,7 +390,6 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-
   it("postTranslate() monges, incorrecto PT", async()=>{
     const msg = 'test.SuttaTranslator.postTranslate()';
     const dbg = 0;
