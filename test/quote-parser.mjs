@@ -1,7 +1,8 @@
-
 import should from "should";
 
-import { default as QuoteParser } from "../src/quote-parser.mjs";
+import { 
+  QuoteParser 
+} from "../index.mjs";
 import { 
   DBG_QUOTE,
 } from '../src/defines.mjs';

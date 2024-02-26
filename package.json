@@ -1,8 +1,20 @@
 {
   "name": "ebt-deepl",
   "version": "1.27.0",
+  "type": "module",
   "description": "Javascript Library for EBT translation via DeepL",
-  "main": "src/index.mjs",
+  "exports": "index.mjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    ".": {
+      "import": "./public/index.mjs",
+      "require": "./public/index.js"
+    },
+    "./package": "./package.json",
+    "./package.json": "./package.json"
+  },
   "private": false,
   "directories": {},
   "dependencies": {

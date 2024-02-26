@@ -1,12 +1,12 @@
 import should from "should";
-import { default as DeepLAdapter } from "../src/deepl-adapter.mjs";
-import { default as QuoteParser } from "../src/quote-parser.mjs";
-import * as deepl from 'deepl-node';
+import {
+  DeepLAdapter,
+  QuoteParser,
+} from '../index.mjs';
 import {
   DBG_VERBOSE, DBG_TEST_API
 } from '../src/defines.mjs';
 const dbgv = DBG_VERBOSE;
-
 
 (typeof describe === 'function') && 
   describe("deepl-adapter", function() 

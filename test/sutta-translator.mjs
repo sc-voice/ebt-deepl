@@ -3,12 +3,14 @@ import { logger } from 'log-instance';
 logger.logLevel = 'warn';
 
 import { BilaraData } from 'scv-bilara';
-import { default as DeepLAdapter } from "../src/deepl-adapter.mjs";
-import { default as SuttaTranslator } from "../src/sutta-translator.mjs";
-import { default as QuoteParser } from "../src/quote-parser.mjs";
+import { 
+  DeepLAdapter,
+  QuoteParser,
+  SuttaTranslator,
+} from "../index.mjs";
 import { 
   DBG_TEST_API,
-} from '../src/defines.mjs';
+} from "../src/defines.mjs";
 
 const LDQUOT = '“';
 const RDQUOT = '”';
