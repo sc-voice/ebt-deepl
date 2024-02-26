@@ -1,7 +1,7 @@
 import should from "should";
-import { logger } from 'log-instance';
-logger.logLevel = 'warn';
 
+import { logger } from 'log-instance';
+logger.level = 'warn';
 import { BilaraData } from 'scv-bilara';
 import { 
   DeepLAdapter,
@@ -341,7 +341,7 @@ const {
     //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
     let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
-    console.log(msg, srcTexts);
+    //console.log(msg, srcTexts);
     let st = await st_en_fr();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).match(

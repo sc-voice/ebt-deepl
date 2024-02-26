@@ -3,6 +3,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 import { default as DeepLAdapter } from "./deepl-adapter.mjs"
 import { default as QuoteParser } from "./quote-parser.mjs"
 import pkgMemoAgain from "memo-again"

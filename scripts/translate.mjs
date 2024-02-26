@@ -4,8 +4,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import { logger } from 'log-instance';
-logger.logLevel = 'warn';
 import { BilaraData } from 'scv-bilara'
 import { default as SuttaTranslator } from "../src/sutta-translator.mjs"
 import pkgScvEsm  from "scv-esm";
