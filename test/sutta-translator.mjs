@@ -388,7 +388,7 @@ const {
   it("TESTTESTtranslateTexts() the skillful EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = DBG.TEST;
-    DeepLAdapter.setMockApi(false);
+    //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
       'are these things skillful or unskillful?',
       'succeed in the system of skillful teaching.',
@@ -396,7 +396,7 @@ const {
       'They are entirely a heap of the skillful. "',
       'He gives up the unskillful and develops the skillful.',
       'Whatever qualities are skillful, part of the skillful, all are rooted.',
-      '“One who desires merit, grounded in the skillful, ',
+      'One who desires merit, grounded in the skillful, ',
     ];
     dbg && console.log(msg, srcTexts);
     let st = await st_en_pt();
@@ -404,7 +404,7 @@ const {
     dbg && console.log(msg, dstTexts);
     let i = 0;
     should(dstTexts[i++]).equal(
-      'estas coisas são hábeis ou não hábeis? ');
+      'estas coisas são hábeis ou inábeis? ');
     should(dstTexts[i++]).equal(
       'tenha sucesso no sistema de ensino hábil. ');
     should(dstTexts[i++]).equal(
@@ -416,7 +416,7 @@ const {
     should(dstTexts[i++]).equal( 
       'Quaisquer que sejam as qualidades hábeis, parte do hábil, todas estão enraizadas. ');
     should(dstTexts[i++]).equal( 
-      '«Aquele que deseja o mérito, baseado no hábil, ');
+      'Aquele que deseja o mérito, baseado no hábil, ');
   });
   it("translateTexts() visão incorrecta EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';

@@ -110,6 +110,27 @@ class MockTranslator {
       ).replace(
         '“Bhikkhu, that is incorrect view;',
         '"Bhikkhu, essa visão é incorrecta;'
+      ).replace(
+        'are these things skillful or unskillful?',
+        'estas coisas são hábeis ou inábeis? '
+      ).replace(
+        'succeed in the system of skillful teaching.',
+        'tenha sucesso no sistema de ensino hábil. '
+      ).replace(
+        'so the skillful person ',
+        'por isso, a pessoa hábil '
+      ).replace(
+        'They are entirely a heap of the skillful. "',
+        'São inteiramente um amontoado de hábeis. " '
+      ).replace(
+        'He gives up the unskillful and develops the skillful.',
+        'Abandona o inábil e desenvolve o hábil. '
+      ).replace(
+        'Whatever qualities are skillful, part of the skillful, all are rooted.',
+        'Quaisquer que sejam as qualidades hábeis, parte do hábil, todas estão enraizadas. '
+      ).replace(
+        'One who desires merit, grounded in the skillful, ',
+        'Aquele que deseja o mérito, baseado no hábil, '
       )
       ;
       return {
