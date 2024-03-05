@@ -6,7 +6,8 @@ const __dirname = path.dirname(__filename);
 const cwd = process.cwd();
 
 import {
-  DBG_GLOSSARY, DBG_CREATE, DBG_VERBOSE, DBG_TRANSLATE,
+  DBG,
+  DBG_CREATE, DBG_VERBOSE, DBG_TRANSLATE,
   DBG_MOCK_API, 
 } from './defines.mjs'
 import * as deepl from 'deepl-node';
@@ -20,8 +21,7 @@ const TRANSLATE_OPTS = {
 
 var mockApi = DBG_MOCK_API;
 
-export default class DeepLAdapter {
-  constructor(opts={}) {
+export default class DeepLAdapter { constructor(opts={}) {
     let {
       authFile,
       glossary,
@@ -103,7 +103,7 @@ export default class DeepLAdapter {
 
   static glossaryName(opts={}) {
     const msg = 'DeepLAdapter.glossaryName()';
-    const dbg = DBG_GLOSSARY;
+    const dbg = DBG.GLOSSARY;
     let {
       dstAuthor='ebt-deepl',
     } = opts;
@@ -120,7 +120,7 @@ export default class DeepLAdapter {
 
   static async create(opts={}) {
     const msg = 'DeepLAdapter.create()';
-    const dbg = DBG_CREATE;
+    const dbg = DBG.GLOSSARY || DBG_CREATE;
     let {
       authFile=path.join(cwd,'local/deepl.auth'),
       srcLang,
@@ -154,7 +154,7 @@ export default class DeepLAdapter {
       return g.name === glossaryName ? g : a;
     }, null)
     if (updateGlossary) {
-      let dbg = DBG_GLOSSARY;
+      let dbg = DBG.GLOSSARY;
       console.warn(msg, "[3]updateGlossary", glossaryName);
       dbg && console.log(msg, "[4]uploadGlossary");
       glossary = await DeepLAdapter.uploadGlossary({
@@ -166,7 +166,7 @@ export default class DeepLAdapter {
       dbg && console.warn(msg, '[5]using glossary', name, 
         glossaryId && glossaryId.substring(0,8));
     } else {
-      let dbg = DBG_GLOSSARY;
+      let dbg = DBG.GLOSSARY;
       dbg && console.log(msg, "[6]no glossary");
     }
     translateOpts = translateOpts
@@ -200,7 +200,7 @@ export default class DeepLAdapter {
 
   static async uploadGlossary(opts={}) {
     const msg = 'DeepLAdapter.uploadGlossary()';
-    const dbg = DBG_GLOSSARY;
+    const dbg = DBG.GLOSSARY;
     const dbgv = DBG_VERBOSE && dbg;
     let {
       srcLang,
@@ -258,10 +258,13 @@ export default class DeepLAdapter {
       let glossaryEntries = new deepl.GlossaryEntries({entries});
       let sourceLang = DeepLAdapter.deeplLang(srcLang);
       let targetLang = DeepLAdapter.deeplLang(dstLang);
-      console.warn(msg, "[6]createGlossary", {
-        fName, glossaryName, sourceLang, targetLang, nEntries});
       glossary = await translator.createGlossary(
         glossaryName, sourceLang, targetLang, glossaryEntries);
+      let { glossaryId } = glossary;
+      console.warn(msg, "[6]createGlossary", {
+        fName, glossaryName, sourceLang, targetLang, nEntries,
+        glossaryId
+      });
     }
 
     return glossary;

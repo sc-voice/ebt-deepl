@@ -9,6 +9,7 @@ import {
   SuttaTranslator,
 } from "../index.mjs";
 import { 
+  DBG,
   DBG_TEST_API,
 } from "../src/defines.mjs";
 
@@ -291,6 +292,15 @@ const {
     );
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
+    let xltTexts = [ `Aí, o Buda dirigiu-se aos bhikkhus,`, ]; 
+    let srcLang = 'en';
+    let dstLang = 'pt-pt';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    should(st).properties({ srcLang, dstLang, });
+    let postXlt = st.postTranslate(xltTexts);
+    should(postXlt[0]).equal(`Aí, o Buda dirigiu-se aos monges, `);
+  });
+  it("postTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [
       `${LQ1}${LQ2}Eu digo, ${LQ3}Você diz, `+
         `${LQ4}Eu disse!${RQ4}?${RQ3}.${RQ2}!${RQ1}`,
@@ -374,6 +384,39 @@ const {
       qp_fr.testcaseApostropheFR('français ')
     );
     dbg && console.log(msg, dstTexts);
+  });
+  it("TESTTESTtranslateTexts() the skillful EN", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    const dbg = DBG.TEST;
+    DeepLAdapter.setMockApi(false);
+    let srcTexts = [ 
+      'are these things skillful or unskillful?',
+      'succeed in the system of skillful teaching.',
+      'so the skillful person ',
+      'They are entirely a heap of the skillful. "',
+      'He gives up the unskillful and develops the skillful.',
+      'Whatever qualities are skillful, part of the skillful, all are rooted.',
+      '“One who desires merit, grounded in the skillful, ',
+    ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    dbg && console.log(msg, dstTexts);
+    let i = 0;
+    should(dstTexts[i++]).equal(
+      'estas coisas são hábeis ou não hábeis? ');
+    should(dstTexts[i++]).equal(
+      'tenha sucesso no sistema de ensino hábil. ');
+    should(dstTexts[i++]).equal(
+      'por isso, a pessoa hábil ');
+    should(dstTexts[i++]).equal(
+      'São inteiramente um amontoado de hábeis. " ');
+    should(dstTexts[i++]).equal(
+      'Abandona o inábil e desenvolve o hábil. ');
+    should(dstTexts[i++]).equal( 
+      'Quaisquer que sejam as qualidades hábeis, parte do hábil, todas estão enraizadas. ');
+    should(dstTexts[i++]).equal( 
+      '«Aquele que deseja o mérito, baseado no hábil, ');
   });
   it("translateTexts() visão incorrecta EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
