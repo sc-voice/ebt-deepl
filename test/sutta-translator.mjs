@@ -385,7 +385,28 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() the skillful EN", async()=>{
+  it("TESTTESTtranslateTexts() There are EN", async()=>{
+    const msg = 'test.SuttaTranslator.translate()';
+    const dbg = DBG.TEST;
+    //DeepLAdapter.setMockApi(false);
+    let srcTexts = [ 
+      'There Sāriputta addressed the mendicants',
+      'There the Blessed One is now staying',
+      'There is, brahmin.'
+    ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    dbg && console.log(msg, dstTexts);
+    let i = 0;
+    should(dstTexts[i++]).equal(
+      'Aí, Sāriputta dirigiu-se aos mendicantes ');
+    should(dstTexts[i++]).equal(
+      'Lá o Abençoado está agora a ficar ');
+    should(dstTexts[i++]).equal(
+      'Há, brâmane. ');
+  });
+  it("translateTexts() the skillful EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = DBG.TEST;
     //DeepLAdapter.setMockApi(false);

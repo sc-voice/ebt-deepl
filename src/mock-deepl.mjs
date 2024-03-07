@@ -131,6 +131,15 @@ class MockTranslator {
       ).replace(
         'One who desires merit, grounded in the skillful, ',
         'Aquele que deseja o mérito, baseado no hábil, '
+      ).replace(
+        'There Sāriputta addressed the mendicants',
+        'Aí, Sāriputta dirigiu-se aos mendicantes ',
+      ).replace(
+        'There the Blessed One is now staying',
+        'Lá o Abençoado está agora a ficar ',
+      ).replace(
+        'There is, brahmin.',
+        'Há, brâmane. '
       )
       ;
       return {

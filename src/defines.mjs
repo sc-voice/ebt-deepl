@@ -1,6 +1,6 @@
 export const DBG = {
   TEST: 0,
-  GLOSSARY: 0,
+  GLOSSARY: 1,
 }
 export const DBG_CREATE         = 0;
 export const DBG_FIND           = 0;
