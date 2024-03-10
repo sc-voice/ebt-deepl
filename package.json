@@ -19,7 +19,7 @@
     "deepl-node": "^1.11.0"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
+    "eslint": "^8.57.0",
     "install": "^0.13.0",
     "log-instance": "^1.6.0",
     "memo-again": "^0.8.0",

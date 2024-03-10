@@ -7,7 +7,7 @@ const cwd = process.cwd();
 
 import {
   DBG,
-  DBG_CREATE, DBG_VERBOSE, DBG_TRANSLATE,
+  DBG_CREATE, DBG_VERBOSE, 
   DBG_MOCK_API, 
 } from './defines.mjs'
 import * as deepl from 'deepl-node';
@@ -279,7 +279,7 @@ export default class DeepLAdapter { constructor(opts={}) {
 
   async translate(texts) {
     const msg = "DeeplTranslator.translate()";
-    const dbg = DBG_TRANSLATE;
+    const dbg = DBG.DEEPL_XLT;
     let { 
       translator, srcLang, dstLang, translateOpts
     } = this;
@@ -289,6 +289,7 @@ export default class DeepLAdapter { constructor(opts={}) {
     texts = texts.map(t=> t || EMPTY_TEXT);
     var result = await translator
       .translateText(texts, sourceLang, targetLang, translateOpts);
+    dbg && console.log(msg, result);
     result = result.map(r=>r.text === EMPTY_TEXT ? '' : r.text);
 
     return result;

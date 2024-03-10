@@ -47,15 +47,16 @@ class MockTranslator {
   async translateText(texts, sourceLang, targetLang, translateOpts) {
     const msg = "MockTranslator.translateText()";
     const dbg = 0 || DBG_VERBOSE;
+    const { LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4 } = QuoteParser;
     dbg && console.log(msg, {sourceLang, targetLang}, texts);
 
     return texts.map(text=>{
-      text = text
-      .replace(
+    dbg && console.log(msg, "TEST", text);
+      text = text && text.replace(
         '<w>Bhikkhus, I do not see a single thing that is so '+
           'very blameworthy as wrong view.',
         '<w>Bhikkhus, eu não vejo uma única coisa que seja '+
-          'tão censurável como uma visão incorreta. '
+          'tão culpável como uma visão incorreta. '
       ).replace(/\baus Anteilnahme an. /g, 'por compaixão.')
       .replace(/\bBei welchen drei\? /g, 'Quais são os três? ')
       .replace(/\bDas ist ein Moench, /g, 'Este é um bhikkhu ')
@@ -65,35 +66,35 @@ class MockTranslator {
       .replace(/\bUpaka/g, 'UPAKA')
       .replace(
         `I say, ‘You say, “I said UK!”?’.`,
-        `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`)
-      .replace(
-        '<w><x>I say, <y>You say, <z>I said FR!</z>?</y>.</x></w>',
-        `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`)
-      .replace(
-        '<w><x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
-        '<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>')
-      .replace(
+        `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`
+      ).replace(
+        `<w><x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`
+      ).replace(
+        `<w><x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?.${RQ3}${RQ2}${RQ1}`,
+      ).replace(
         `Der Pfeil des Verlangens`,
         'O dardo do anseio')
       .replace(
         '„Moench, du sammelst Almosen, bevor du isst;',
-        '"Bhikkhu, você esmola comida antes de comer;')
-      .replace(
+        '"Bhikkhu, você esmola comida antes de comer;'
+      ).replace(
         '“Bhikkhu, you seek alms before you eat;',
-        '"Bhikkhu, você esmola comida antes de comer;')
-      .replace(
-        '<x>I say, <y>You say, <z>I said FR!</z>?</y>.</x></w>',
-        `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`)
-      .replace(
-        '<x>I say, <y>You say, <z>I said PT!</z>?</y>.</x></w>',
-        '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>'
+        '"Bhikkhu, você esmola comida antes de comer;'
+      ).replace(
+        `<x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+      ).replace(
+        `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
         'Comment échapper à ce sentiment d’appartenance à la France ? › '
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
           '<x>Je comprends : <y>La renaissance est terminée '+
-            'en FR</y></x>?</w>'
+            `en FR${RQ3}${RQ2}?${RQ1}`
       ).replace(
         qp_fr_deepl.testcasePleasuresEN('French'),
           'comprendre la gratification, l\'inconvénient et '+
@@ -140,8 +141,25 @@ class MockTranslator {
       ).replace(
         'There is, brahmin.',
         'Há, brâmane. '
-      )
-      ;
+      ).replace(
+        '2. endeavor',
+        '2. esforzarse ',
+      ).replace(
+        '2. Endeavor',
+        '2. Endeavor ', // WHY!?
+      ).replace(
+        '2. padhānasutta', 
+        '2. padhānasutta ', 
+      ).replace(
+        '2. Padhānasutta', 
+        '2. Padhānasutta ', 
+      ).replace(
+        QuoteParser.testcaseThinkingEN("SPAN"),
+        'Pensando, <w>he hecho cosas SPAN por medio del cuerpo, la palabra y la mente </w>, se mortifican.',
+      ).replace(
+        'springtime',
+        'Primavera',
+      );
       return {
         text,
       }

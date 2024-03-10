@@ -24,7 +24,8 @@ const {
 } = pkgScvEsm;
 
 import {
-  DBG_CREATE, DBG_FIND, DBG_LOAD_SUTTA, DBG_TRANSLATE,
+  DBG,
+  DBG_CREATE, DBG_FIND, DBG_LOAD_SUTTA, 
   DBG_TRANSFORM,
 } from './defines.mjs'
 
@@ -180,6 +181,10 @@ export default class SuttaTranslator {
     return st;
   }
 
+  static isTitle(scid) { 
+    return /(.*:[-0-9.]+\.0|:0)/.test(scid); 
+  }
+
   static curlyQuoteText(text, state={}) {
     const msg = 'SuttaTranslator.curlyQuoteText()';
     const rex = /["']/g;
@@ -306,7 +311,7 @@ export default class SuttaTranslator {
 
   async translateTexts(srcTexts) {
     const msg = 'SuttaTranslator.translateTexts()';
-    const dbg = DBG_TRANSLATE;
+    const dbg = DBG.TRANSLATE;
     let { xltDeepL } = this;
     let preTexts = this.preTranslate(srcTexts);
     dbg && console.log(msg, '[1]preTexts', preTexts);
@@ -320,7 +325,7 @@ export default class SuttaTranslator {
 
   async translate(suid) {
     const msg = 'SuttaTranslator.translate()';
-    const dbg = DBG_TRANSLATE;
+    const dbg = DBG.TRANSLATE;
     const sref = SuttaRef.create(suid);
     const { sutta_uid, lang, author, segnum } = sref;
     let { 
@@ -342,13 +347,16 @@ export default class SuttaTranslator {
     if (segnum) {
       scids = [ `${sutta_uid}:${segnum}` ]
     }
-    let srcTexts = scids.map(scid=>srcSegs[scid]);
+    let srcTexts = scids.map(scid=>SuttaTranslator.isTitle(scid)
+      ? srcSegs[scid].toLowerCase()
+      : srcSegs[scid]
+    );
 
     dbg && console.log(msg, '[1]translate', 
       srcRef.toString(), `segs:${scids.length}`);
     let dstTexts = await this.translateTexts(srcTexts);
     let dstSegs = scids.reduce((a,scid,i)=>{
-      a[scid] = /:0/.test(scid)
+      a[scid] = SuttaTranslator.isTitle(scid)
         ? SuttaTranslator.titleCase(dstTexts[i])
         : dstTexts[i];
       return a;
@@ -386,7 +394,7 @@ export default class SuttaTranslator {
 
   postTranslate(xltTexts) {
     const msg = 'SuttaTranslator.postTranslate()';
-    const dbg = DBG_TRANSFORM;
+    const dbg = DBG.TRANSFORM;
     let { 
       dstTransform, appendWhitespace, qpPost, qpDst 
     } = this;

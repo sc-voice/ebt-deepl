@@ -7,6 +7,10 @@ import {
   DBG_VERBOSE, DBG_TEST_API
 } from '../src/defines.mjs';
 const dbgv = DBG_VERBOSE;
+const {
+  LQ1, LQ2, LQ3, LQ4,
+  RQ1, RQ2, RQ3, RQ4,
+} = QuoteParser;
 
 (typeof describe === 'function') && 
   describe("deepl-adapter", function() 
@@ -125,7 +129,7 @@ const dbgv = DBG_VERBOSE;
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`);
+      `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
   })
   it("translate() testcaseDepthEN PT", async () => {
     let srcLang = 'en';
@@ -137,7 +141,7 @@ const dbgv = DBG_VERBOSE;
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>`
+      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?.${RQ3}${RQ2}${RQ1}`
     );
   })
   it("translate() testcaseRebirthEN FR", async () => {
@@ -147,11 +151,11 @@ const dbgv = DBG_VERBOSE;
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
     let qp_en_deepl = new QuoteParser({lang: 'en-deepl'});
     let srcText = qp_en_deepl.testcaseRebirthEN('FR');
-    console.log('srcText', srcText);
+    //console.log('srcText', srcText);
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-    '<x>Je comprends : <y>La renaissance est terminée en FR</y></x>?</w>'
+    `<x>Je comprends : <y>La renaissance est terminée en FR${RQ3}${RQ2}?${RQ1}`
     )
   })
   it("translate() testcaseQ2EN FR", async () => {
@@ -164,11 +168,12 @@ const dbgv = DBG_VERBOSE;
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !</z>?.</y></x></w>`);
+      `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?${RQ3}.${RQ2}${RQ1}`);
   })
   it("translate() testcaseQ2EN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
+    let { RQ1,RQ2,RQ3,RQ4 } = QuoteParser;
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
     let srcText = QuoteParser.testcaseQ2EN('PT');
@@ -177,7 +182,20 @@ const dbgv = DBG_VERBOSE;
 
     // Closing XML element is passed through
     should(res[0]).equal(
-      '<x>Eu digo, <y>Você diz, <z>Eu disse PT!</z>?</y></x></w>');
+      `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
+  })
+  it("translate() testcaseThinkingEN ES", async () => {
+    let srcLang = 'en';
+    let dstLang = 'es';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let srcText = QuoteParser.testcaseThinkingEN('SPAN');
+    //console.log('srcText', srcText);
+    let res = await dlt.translate([srcText]);
+
+    // Closing XML element is passed through
+    should(res[0]).equal(
+      'Pensando, <w>he hecho cosas SPAN por medio del cuerpo, la palabra y la mente </w>, se mortifican.');
   })
   it("translate() en-uk quotes en/pt", async () => {
     let srcLang = 'en';

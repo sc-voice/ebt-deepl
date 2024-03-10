@@ -25,10 +25,10 @@ const LQ1 = '<w>';
 const LQ2 = '<x>';
 const LQ3 = '<y>';
 const LQ4 = '<z>';
-const RQ1 = '</w>'; 
-const RQ2 = '</x>';
-const RQ3 = '</y>';
-const RQ4 = '</z>';
+const RQ1 = ' </w>'; 
+const RQ2 = ' </x>';
+const RQ3 = ' </y>';
+const RQ4 = ' </z>';
 
 import {
   DBG_QUOTE, DBG_VERBOSE,
@@ -177,6 +177,18 @@ export default class QuoteParser {
       `?${RQ3}.`,
       `${RQ2}`,
       `${RQ1}`,
+    ].join('');
+  }
+
+  static testcaseThinkingEN(lang, opts={}) {
+    const {LQ1, RQ1, } = QuoteParser;
+    let {lQuote=LQ1, rQuote=RQ1 } = opts;
+
+    return [
+      `Thinking, `,
+      `${lQuote}I${APOS}ve done ${lang} `,
+      `things by way of body, speech, and mind`,
+      `${rQuote}, they${APOS}re mortified.`
     ].join('');
   }
 
