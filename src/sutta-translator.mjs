@@ -25,7 +25,7 @@ const {
 
 import {
   DBG,
-  DBG_CREATE, DBG_FIND, DBG_LOAD_SUTTA, 
+  DBG_CREATE, DBG_FIND, 
   DBG_TRANSFORM,
 } from './defines.mjs'
 
@@ -264,13 +264,15 @@ export default class SuttaTranslator {
 
   static async loadSutta(suttaRef, opts={}) {
     const msg = 'SuttaTranslator.loadSutta()';
-    const dbg = DBG_LOAD_SUTTA;
+    const dbg = DBG.LOAD_SUTTA;
+    const dbgv = DBG.VERBOSE && dbg;
     const { srcTransform, bilaraData, } = opts;
     if ( bilaraData == null) {
       let emsg = `${msg} bilaraData is required`;
       throw new Error(emsg);
     }
     let sref = SuttaRef.create(suttaRef);
+    let scids;
     let { sutta_uid, lang='pli', author='ms' } = sref;
       let { root, bilaraPathMap:bpm } = bilaraData;
       let bilaraPath = lang==='pli'
@@ -281,10 +283,17 @@ export default class SuttaTranslator {
       var rawText = (await fs.promises.readFile(filePath)).toString();
       var xfmText = SuttaTranslator
         .transformText(rawText, srcTransform);
-      dbg && console.log(msg, {rawText,xfmText});
+      dbgv && console.log(msg, '[1]', {rawText,xfmText});
       var segments = JSON.parse(xfmText);
+      scids = Object.keys(segments);
+      scids.forEach(scid=>{
+        if (SuttaTranslator.isTitle(scid)) {
+          segments[scid] = segments[scid].toLowerCase();
+          dbg && console.log(msg, '[2]toLowerCase', scid, segments[scid]);
+        }
+      });
     } catch(e) {
-      dbg && console.log(msg, '[1]not found:', sref, bilaraPath, e);
+      dbg && console.log(msg, '[3]ERROR:', sref, bilaraPath, e);
     }
 
     return {
@@ -294,6 +303,7 @@ export default class SuttaTranslator {
       bilaraPath,
       filePath,
       segments, 
+      scids,
     }
   }
 
@@ -338,19 +348,16 @@ export default class SuttaTranslator {
     let {
       segments: srcSegs,
       filePath: srcPath,
+      scids,
     } = await this.loadSutta(srcRef);
     if (srcSegs == null) {
       let emsg = new Error(`${msg} cannot load: ${srcRef}`);
       throw new Error(emsg);
     }
-    let scids = Object.keys(srcSegs);
     if (segnum) {
       scids = [ `${sutta_uid}:${segnum}` ]
     }
-    let srcTexts = scids.map(scid=>SuttaTranslator.isTitle(scid)
-      ? srcSegs[scid].toLowerCase()
-      : srcSegs[scid]
-    );
+    let srcTexts = scids.map(scid=>srcSegs[scid]);
 
     dbg && console.log(msg, '[1]translate', 
       srcRef.toString(), `segs:${scids.length}`);

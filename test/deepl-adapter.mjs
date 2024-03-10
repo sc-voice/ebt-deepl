@@ -258,4 +258,22 @@ const {
     should(glossaries).instanceOf(Array);
     DBG_TEST_API && should(glossaries.length).above(0);
   });
+  it("translate() DE", async () => {
+    let srcLang = 'de';
+    let dstLang = 'pt';
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+
+    // sujato
+    let res = await dlt.translate([
+      "Der Pfeil des Verlangens",
+      "„Moench, du sammelst Almosen, bevor du isst;",
+    ]);
+
+    should(res[0]).equal('O dardo do anseio');
+
+    // Compare with laera-quaresma:
+    // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
+    should(res[1]).equal(
+      '"Bhikkhu, você esmola comida antes de comer;');
+  });
 })

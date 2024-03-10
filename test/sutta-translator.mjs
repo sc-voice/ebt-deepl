@@ -119,7 +119,15 @@ const {
     let {
       segments,
     } = res;
-    should(segments['an3.49:0.3']).match(/Ātappakaraṇīyasutta/);
+    should(segments['an3.49:0.3']).match(/Ātappakaraṇīyasutta/i);
+  });
+  it("TESTTESTloadSutta() an2.1-10", async()=>{
+    let sutta_uid = 'an2.1-10/en/sujato';
+    let st = await st_en_es();
+    let res = await st.loadSutta(sutta_uid);
+    let { segments, } = res;
+    let seg = segments[`an2.2:1.0`];
+    should(segments[`an2.2:1.0`]).match(/2. endeavor/);
   });
   it("loadSutta() an3.49/de/sabbamitta", async()=>{
     let sutta_uid = 'an3.49/de/sabbamitta';
@@ -134,7 +142,7 @@ const {
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("TESTTESTtranslate() titles an3.94", async()=>{
+  it("translate() titles an3.94", async()=>{
     let sutta_uid = 'an3.94';
     let srcLang = 'en';
     let dstLang = 'pt';
@@ -174,7 +182,7 @@ const {
     should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu /);
     should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu /);
   });
-  it("TESTTESTtranslate() an5.44", async()=>{
+  it("translate() an5.44", async()=>{
     let sutta_uid = 'an5.44';
     let srcLang = 'de';
     let dstLang = 'pt';
@@ -249,7 +257,7 @@ const {
     );
     should(preXlt[1]).equal('Hello there');
   });
-  it("TESTTESTpreTranslate() en-uk quoted en/pr", async()=>{
+  it("preTranslate() en-uk quoted en/pr", async()=>{
     let text = QuoteParser.testcaseQ2EN('UKPT');
     let srcTexts = [text];
     //console.log(text);
@@ -262,7 +270,7 @@ const {
       `<x>I say, <y>You say, <z>I said UKPT! </z>? </y>. </x> </w>`
     );
   });
-  it("TESTTESTpreTranslate() en-uk quoted en/fr", async()=>{
+  it("preTranslate() en-uk quoted en/fr", async()=>{
     let text = QuoteParser.testcaseQ2EN('UKFR');
     let srcTexts = [text];
     //console.log(text);
@@ -275,7 +283,7 @@ const {
       `<x>I say, <y>You say, <z>I said UKFR! </z>? </y>. </x> </w>`
     );
   });
-  it("TESTTESTpreTranslate() testcaseFeelingsEN French", async()=>{
+  it("preTranslate() testcaseFeelingsEN French", async()=>{
     const msg = 'test.SuttaTranslator.preTranslate()';
     const dbg = 0;
     let srcLang = 'en';
@@ -291,7 +299,7 @@ const {
       `what's the escape from that French feeling? </x>`
     );
   });
-  it("TESTTESTtransformText() testcaseThinkinEN ES", async()=>{
+  it("transformText() testcaseThinkinEN ES", async()=>{
     const msg = 'test.SuttaTranslator.transformText()';
     const dbg = 1;
     let srcLang = 'en';
@@ -354,7 +362,7 @@ const {
       `“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!” `
     );
   });
-  it("TESTTESTtranslate() testcaseRebirthEN FR", async()=>{
+  it("translate() testcaseRebirthEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     let qp_en = new QuoteParser({lang:'en'});
     let sp = QuoteParser.THNSP;
@@ -469,21 +477,18 @@ const {
     should(SuttaTranslator.isTitle('an2.1-10:10-20.0')).equal(true);
     should(SuttaTranslator.isTitle('an2.1-10:10-20.1')).equal(false);
   });
-  it("TESTTESTtranslateTexts() quotes ES", async()=>{
+  it("translateTexts() quotes ES", async()=>{
     const msg = 'test.SuttaTranslator.translateTexts()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
-      //"‘I've done bad things by way of body, speech, and mind’, they're mortified.",
       QuoteParser.testcaseThinkingEN("SPAN"),
-      //"Thinking, ‘I have done bad things by way of body, speech, and mind’, they are mortified.",
     ];
     dbg && console.log(msg, srcTexts);
     let st = await st_en_es();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).equal(
      'Pensando, «he hecho cosas SPAN por medio del cuerpo, la palabra y la mente», se mortifican. ',
-      '2. padhānasutta ', 
     );
     dbg && console.log(msg, dstTexts);
   });
@@ -508,7 +513,7 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() visão incorrecta EN", async()=>{
+  it("translateTexts() visão incorrecta EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
