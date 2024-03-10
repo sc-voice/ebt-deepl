@@ -5,6 +5,7 @@ export const DBG = {
   TRANSLATE: 0,  // SuttaTranslator
   LOAD_SUTTA: 0,
   VERBOSE: 0,
+  TITLE: 1,
 }
 export const DBG_CREATE         = 0;
 export const DBG_FIND           = 0;

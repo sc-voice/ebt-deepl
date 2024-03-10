@@ -243,13 +243,18 @@ export default class SuttaTranslator {
   }
 
   static titleCase(text) {
-    let iLetter = text.search(/\w/);
-    if (iLetter < 0) {
-      return text;
+    const msg = "SuttaTranslator.titleCase()";
+    const dbg = DBG.TITLE;
+    let lText = text.toLowerCase();
+    let uText = text.toUpperCase();
+    for (let i=0; i<text.length; i++) {
+      let lc = lText.charAt(i);
+      let uc = uText.charAt(i);
+      if (lc !== uc) {
+        return lText.replace(lc,uc);
+      }
     }
-    return text.substring(0, iLetter) +
-      text.charAt(iLetter).toUpperCase() +
-      text.substring(iLetter+1);
+    return text;
   }
 
   static transformText(text, transform) {

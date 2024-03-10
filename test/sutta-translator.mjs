@@ -121,7 +121,7 @@ const {
     } = res;
     should(segments['an3.49:0.3']).match(/Ātappakaraṇīyasutta/i);
   });
-  it("TESTTESTloadSutta() an2.1-10", async()=>{
+  it("loadSutta() an2.1-10", async()=>{
     let sutta_uid = 'an2.1-10/en/sujato';
     let st = await st_en_es();
     let res = await st.loadSutta(sutta_uid);
@@ -141,6 +141,16 @@ const {
       segments,
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
+  });
+  it("titleCase()", ()=>{
+    should(SuttaTranslator.titleCase('the red fox'))
+      .equal('The red fox');
+    should(SuttaTranslator.titleCase('2. ESFUERZO'))
+      .equal('2. Esfuerzo');
+    should(SuttaTranslator.titleCase('2. esfuerzo'))
+      .equal('2. Esfuerzo');
+    should(SuttaTranslator.titleCase('2. āmantesi āmantesi'))
+      .equal('2. Āmantesi āmantesi');
   });
   it("translate() titles an3.94", async()=>{
     let sutta_uid = 'an3.94';
