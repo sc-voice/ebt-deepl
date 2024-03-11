@@ -25,10 +25,14 @@ const LQ1 = '<w>';
 const LQ2 = '<x>';
 const LQ3 = '<y>';
 const LQ4 = '<z>';
-const RQ1 = ' </w>'; 
-const RQ2 = ' </x>';
-const RQ3 = ' </y>';
-const RQ4 = ' </z>';
+const RQ1 = '</w>'; 
+const RQ2 = '</x>';
+const RQ3 = '</y>';
+const RQ4 = '</z>';
+const _RQ1 = ' </w>'; 
+const _RQ2 = ' </x>';
+const _RQ3 = ' </y>';
+const _RQ4 = ' </z>';
 
 import {
   DBG_QUOTE, DBG_VERBOSE,
@@ -180,9 +184,16 @@ export default class QuoteParser {
     ].join('');
   }
 
-  static testcaseThinkingEN(lang, opts={}) {
-    const {LQ1, RQ1, } = QuoteParser;
-    let {lQuote=LQ1, rQuote=RQ1 } = opts;
+  static testcaseSufferingEN(lang, opts={}) {
+    const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
+    return [
+      `They understand: ${LQ1}This is ${lang} suffering${RQ1}...`,
+    ].join('');
+  }
+
+  static testcaseThinking_EN(lang, opts={}) {
+    const {LQ1, _RQ1, } = QuoteParser;
+    let {lQuote=LQ1, rQuote=_RQ1 } = opts;
 
     return [
       `Thinking, `,
@@ -212,6 +223,10 @@ export default class QuoteParser {
   static get RQ2() { return RQ2; }
   static get RQ3() { return RQ3; }
   static get RQ4() { return RQ4; }
+  static get _RQ1() { return _RQ1; }
+  static get _RQ2() { return _RQ2; }
+  static get _RQ3() { return _RQ3; }
+  static get _RQ4() { return _RQ4; }
 
   // ...APOS...
   testcaseGratificationEN(lang) {

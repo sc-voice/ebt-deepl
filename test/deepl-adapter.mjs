@@ -10,6 +10,7 @@ const dbgv = DBG_VERBOSE;
 const {
   LQ1, LQ2, LQ3, LQ4,
   RQ1, RQ2, RQ3, RQ4,
+  _RQ1, _RQ2, _RQ3, _RQ4,
 } = QuoteParser;
 
 (typeof describe === 'function') && 
@@ -119,7 +120,7 @@ const {
     should(res[0]).equal(
       '"Bhikkhu, essa visão é incorrecta;');
   });
-  it("translate() testcaseDepthEN FR", async () => {
+  it("TESTTESTtranslate() testcaseDepthEN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -131,7 +132,7 @@ const {
     should(res[0]).equal(
       `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
   })
-  it("translate() testcaseDepthEN PT", async () => {
+  it("TESTTESTtranslate() testcaseDepthEN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     //DeepLAdapter.setMockApi(false);
@@ -141,10 +142,10 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?.${RQ3}${RQ2}${RQ1}`
+      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`
     );
   })
-  it("translate() testcaseRebirthEN FR", async () => {
+  it("TESTTESTtranslate() testcaseRebirthEN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -158,7 +159,7 @@ const {
     `<x>Je comprends : <y>La renaissance est terminée en FR${RQ3}${RQ2}?${RQ1}`
     )
   })
-  it("translate() testcaseQ2EN FR", async () => {
+  it("TESTTESTtranslate() testcaseQ2EN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -168,9 +169,9 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?${RQ3}.${RQ2}${RQ1}`);
+      `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
   })
-  it("translate() testcaseQ2EN PT", async () => {
+  it("TESTTESTtranslate() testcaseQ2EN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     let { RQ1,RQ2,RQ3,RQ4 } = QuoteParser;
@@ -182,20 +183,21 @@ const {
 
     // Closing XML element is passed through
     should(res[0]).equal(
-      `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
+      `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`);
   })
-  it("translate() testcaseThinkingEN ES", async () => {
+  it("TESTTESTtranslate() testcaseThinking_EN", async () => {
     let srcLang = 'en';
     let dstLang = 'es';
+    let { LQ1, _RQ1 } = QuoteParser;
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    let srcText = QuoteParser.testcaseThinkingEN('SPAN');
+    let srcText = QuoteParser.testcaseThinking_EN('SPAN');
     //console.log('srcText', srcText);
     let res = await dlt.translate([srcText]);
 
     // Closing XML element is passed through
     should(res[0]).equal(
-      'Pensando, <w>he hecho cosas SPAN por medio del cuerpo, la palabra y la mente </w>, se mortifican.');
+      `Pensando, ${LQ1}he hecho cosas SPAN por medio del cuerpo, la palabra y la mente${_RQ1}, se mortifican.`);
   })
   it("translate() en-uk quotes en/pt", async () => {
     let srcLang = 'en';
@@ -276,4 +278,17 @@ const {
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
+  it("TESTTESTtranslate() testcaseSufferingEN PT", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt-PT';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let srcText = QuoteParser.testcaseSufferingEN('PT');
+    //console.log('srcText:', srcText);
+    let res = await dlt.translate([srcText]);
+
+    should(res[0]).equal(
+      `Eles compreendem: ${LQ1}Este é o sofrimento de PT${RQ1}...`
+    );
+  })
 })

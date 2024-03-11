@@ -47,7 +47,11 @@ class MockTranslator {
   async translateText(texts, sourceLang, targetLang, translateOpts) {
     const msg = "MockTranslator.translateText()";
     const dbg = 0 || DBG_VERBOSE;
-    const { LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4 } = QuoteParser;
+    const { 
+      LQ1, LQ2, LQ3, LQ4, 
+      RQ1, RQ2, RQ3, RQ4,
+      _RQ1, _RQ2, _RQ3, _RQ4 
+    } = QuoteParser;
     dbg && console.log(msg, {sourceLang, targetLang}, texts);
 
     return texts.map(text=>{
@@ -72,7 +76,7 @@ class MockTranslator {
         `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`
       ).replace(
         `<w><x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?.${RQ3}${RQ2}${RQ1}`,
+        `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`,
       ).replace(
         `Der Pfeil des Verlangens`,
         'O dardo do anseio')
@@ -84,10 +88,13 @@ class MockTranslator {
         '"Bhikkhu, você esmola comida antes de comer;'
       ).replace(
         `<x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`,
       ).replace(
         `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`,
+      ).replace(
+        `<x>I say, <y>You say, <z>I said PT!${_RQ4}?${_RQ3}.${_RQ2}${_RQ1}`,
+        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${_RQ4}?${_RQ3}.${_RQ2}${_RQ1}`,
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
         'Comment échapper à ce sentiment d’appartenance à la France ? › '
@@ -154,11 +161,14 @@ class MockTranslator {
         '2. Padhānasutta', 
         '2. Padhānasutta ', 
       ).replace(
-        QuoteParser.testcaseThinkingEN("SPAN"),
+        QuoteParser.testcaseThinking_EN("SPAN"),
         'Pensando, <w>he hecho cosas SPAN por medio del cuerpo, la palabra y la mente </w>, se mortifican.',
       ).replace(
         'springtime',
         'Primavera',
+      ).replace(
+        QuoteParser.testcaseSufferingEN("PT"),
+        `Eles compreendem: ${LQ1}Este é o sofrimento de PT${RQ1}...`
       );
       return {
         text,
