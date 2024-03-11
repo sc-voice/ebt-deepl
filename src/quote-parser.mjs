@@ -92,6 +92,10 @@ export default class QuoteParser {
         closeQuotes = closeQuotes || 
           [ THNSP+RDGUIL, THNSP+RGUIL, RDQUOT, RSQUOT, ];
         break;
+      case 'es-deepl':
+          openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
+          closeQuotes = closeQuotes || [ _RQ1, _RQ2, _RQ3, _RQ4 ];
+        break;
       default: {
         if (lang.endsWith('-deepl')) {
           openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];

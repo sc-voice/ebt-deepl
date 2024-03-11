@@ -310,7 +310,6 @@ const {
     );
   });
   it("TESTTESTtransformText() testcaseThinkinEN ES", async()=>{
-    return; // TODO
     const msg = 'test.SuttaTranslator.transformText()';
     const dbg = 1;
     let srcLang = 'en';
@@ -322,14 +321,6 @@ const {
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).equal(
       'Pensando, «he hecho cosas SPAN por medio del cuerpo, la palabra y la mente», se mortifican. ')
-
-    //let text = SuttaTranslator.transformText(rawText, srcTransform);
-    //let srcTexts = [text];
-    //dbg && console.log(msg, srcTexts);
-    //let preXlt = st.preTranslate(srcTexts);
-    //should(preXlt[0]).equal(
-      //`what's the escape from that French feeling?</x>`
-    //);
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [ `Aí, o Buda dirigiu-se aos bhikkhus,`, ]; 
@@ -489,7 +480,6 @@ const {
     should(SuttaTranslator.isTitle('an2.1-10:10-20.1')).equal(false);
   });
   it("TESTTESTtranslateTexts() quotes ES", async()=>{
-    return; // TODO
     const msg = 'test.SuttaTranslator.translateTexts()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
