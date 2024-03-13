@@ -8,10 +8,7 @@ import {
   QuoteParser,
   SuttaTranslator,
 } from "../index.mjs";
-import { 
-  DBG,
-  DBG_TEST_API,
-} from "../src/defines.mjs";
+import { DBG, } from "../src/defines.mjs";
 
 const LDQUOT = '“';
 const RDQUOT = '”';
@@ -29,11 +26,13 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
 const {
   LQ1, LQ2, LQ3, LQ4,
   RQ1, RQ2, RQ3, RQ4,
+  _RQ1, _RQ2, _RQ3, _RQ4,
+  LDGUIL, RDGUIL, ELLIPSIS, ELL,
 } = QuoteParser;
 
 (typeof describe==='function') && describe(MODULE, function() {
   before(()=>{
-    DeepLAdapter.setMockApi(!DBG_TEST_API);
+    DeepLAdapter.setMockApi(!DBG.TEST_API);
   });
   var _st_de_pt;
   async function st_en_pt() {
@@ -251,6 +250,27 @@ const {
     should.deepEqual(SuttaTranslator.curlyQuoteSegments(segs), 
       segsExpected);
   });
+  it("transformText() ellipsis en/es", async()=>{
+    const msg = 'test.transformText() ellipsis';
+    const dbg = 0;
+    let srcLang = 'en';
+    let dstLang = 'es';
+    let tcOpts = {
+      lQuote: LDQUOT,
+      rQuote: RDQUOT,
+      ellipsis: ELLIPSIS,
+    }
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    let srcText = QuoteParser.testcaseEllipsisEN("ES",tcOpts); 
+    let preXlt = SuttaTranslator.transformText(srcText, st.srcTransform);
+    dbg && console.log(msg, srcText, preXlt[0]);
+    should(preXlt).equal([
+      'They understand: ',
+      `${LDQUOT}This is ES${RDQUOT}${ELL}`,
+      `${LDQUOT}This is suffering${RDQUOT}${ELL}`,
+      `${LDQUOT}This is the origin${RDQUOT}.`,
+    ].join(''));
+  });
   it("preTranslate() en-us quoted en/pr", async()=>{
     let srcTexts = [
       `“‘I say, “You say, ‘I said!’?”.’!”`, // en-us
@@ -281,6 +301,8 @@ const {
     );
   });
   it("preTranslate() en-uk quoted en/fr", async()=>{
+    const msg = "test.SuttaTranslator@303";
+    //DeepLAdapter.setMockApi(false);
     let text = QuoteParser.testcaseQ2EN('UKFR');
     let srcTexts = [text];
     //console.log(text);
@@ -309,9 +331,9 @@ const {
       `what's the escape from that French feeling?</x>`
     );
   });
-  it("TESTTESTtransformText() testcaseThinkinEN ES", async()=>{
-    const msg = 'test.SuttaTranslator.transformText()';
-    const dbg = 1;
+  it("transformText() testcaseThinkinEN ES", async()=>{
+    const msg = 'testcaseTHinkingEN ES';
+    const dbg = 0;
     let srcLang = 'en';
     let dstLang = 'es';
     //DeepLAdapter.setMockApi(false);
@@ -320,7 +342,55 @@ const {
     let { srcTransform } = st;
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).equal(
-      'Pensando, «he hecho cosas SPAN por medio del cuerpo, la palabra y la mente», se mortifican. ')
+      'Pensando, «He hecho cosas SPAN por medio del cuerpo, '+
+      'la palabra y la mente», se mortifican. ')
+  });
+  it("preTranslate() ellipsis en/es", async()=>{
+    const msg = 'test.preTranslate() ellipsis';
+    const dbg = 0;
+    let srcLang = 'en';
+    let dstLang = 'es';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    let tcOpts = {
+      lQuote: LDQUOT,
+      rQuote: RDQUOT,
+      ellipsis: ELL,
+    }
+    let srcTexts = [ 
+      QuoteParser.testcaseEllipsisEN("ES", tcOpts) 
+    ];
+    let preXlt = st.preTranslate(srcTexts);
+    dbg && console.log(msg, srcTexts[0], preXlt[0]);
+    should(preXlt[0]).equal([
+      'They understand: ',
+      `${LQ1}This is ES${RQ1}${ELL}`,
+      `${LQ1}This is suffering${RQ1}${ELL}`,
+      `${LQ1}This is the origin${RQ1}.`,
+    ].join(''));
+  });
+  it("postTranslate() ellipsis en/es", async()=>{
+    const msg = 'test.postTranslate() ellipsis';
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let srcLang = 'en';
+    let dstLang = 'es';
+    let st = await SuttaTranslator.create({srcLang, dstLang});
+    let tcOpts = {
+      lQuote: LQ1,
+      rQuote: RQ1,
+      ellipsis: ELL,
+    }
+    let srcTexts = [ 
+      QuoteParser.testcaseEllipsisEN("ES", tcOpts) 
+    ];
+    let preXlt = st.postTranslate(srcTexts);
+    dbg && console.log(msg, srcTexts[0], preXlt[0]);
+    should(preXlt[0]).equal([
+      'They understand: ',
+      `${LDGUIL}This is ES${RDGUIL} ${ELLIPSIS} `,
+      `${LDGUIL}This is suffering${RDGUIL} ${ELLIPSIS} `,
+      `${LDGUIL}This is the origin${RDGUIL}. `,
+    ].join(''));
   });
   it("postTranslate() quoted en/pt-pt", async()=>{
     let xltTexts = [ `Aí, o Buda dirigiu-se aos bhikkhus,`, ]; 
@@ -366,6 +436,7 @@ const {
   });
   it("translate() testcaseRebirthEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
+    //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
     let sp = QuoteParser.THNSP;
     let srcTexts = [ qp_en.testcaseRebirthEN('FR') ];
@@ -418,7 +489,7 @@ const {
   });
   it("translateTexts() There are EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
-    const dbg = DBG.TEST;
+    const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
       'There Sāriputta addressed the mendicants',
@@ -438,8 +509,8 @@ const {
       'Há, brâmane. ');
   });
   it("translateTexts() the skillful EN", async()=>{
-    const msg = 'test.SuttaTranslator.translate()';
-    const dbg = DBG.TEST;
+    const msg = 'test.SuttaTranslator.translateTexts()';
+    const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
       'are these things skillful or unskillful?',
@@ -479,7 +550,7 @@ const {
     should(SuttaTranslator.isTitle('an2.1-10:10-20.0')).equal(true);
     should(SuttaTranslator.isTitle('an2.1-10:10-20.1')).equal(false);
   });
-  it("TESTTESTtranslateTexts() quotes ES", async()=>{
+  it("translateTexts() quotes ES", async()=>{
     const msg = 'test.SuttaTranslator.translateTexts()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
@@ -490,13 +561,13 @@ const {
     let st = await st_en_es();
     let dstTexts = await st.translateTexts(srcTexts);
     should(dstTexts[0]).equal(
-     `Pensando, «he hecho cosas SPAN por medio del cuerpo, la palabra y la mente», se mortifican. `,
+     `Pensando, «He hecho cosas SPAN por medio del cuerpo, la palabra y la mente», se mortifican. `,
     );
     dbg && console.log(msg, dstTexts);
   });
   it("translateTexts() titles ES", async()=>{
     const msg = 'test.SuttaTranslator.translateTexts()';
-    const dbg = 1;
+    const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
       '2. padhānasutta', 
@@ -514,6 +585,28 @@ const {
       '2. Endeavor ', // WHY!?
     );
     dbg && console.log(msg, dstTexts);
+  });
+  it("translateTexts() ellipsis ES", async()=>{
+    const msg = 'test.SuttaTranslator@585';
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let tcOpts = {
+      lQuote: LDQUOT,
+      rQuote: RDQUOT,
+      ellipsis: ELL,
+    }
+    let srcTexts = [ 
+      QuoteParser.testcaseEllipsisEN('ES',tcOpts)
+    ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_es();
+    let dstTexts = await st.translateTexts(srcTexts);
+    dbg && console.log(msg, dstTexts);
+    should(dstTexts[0]).equal([
+      `Ellos comprenden: «Esto es ES» … `,
+      `«Esto es sufrimiento» … `,
+      `«Este es el origen». `,
+    ].join(''));
   });
   it("translateTexts() visão incorrecta EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';

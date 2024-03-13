@@ -3,14 +3,13 @@ import {
   DeepLAdapter,
   QuoteParser,
 } from '../index.mjs';
-import {
-  DBG_VERBOSE, DBG_TEST_API
-} from '../src/defines.mjs';
-const dbgv = DBG_VERBOSE;
+import { DBG, } from '../src/defines.mjs';
+const dbgv = DBG.VERBOSE;
 const {
   LQ1, LQ2, LQ3, LQ4,
   RQ1, RQ2, RQ3, RQ4,
   _RQ1, _RQ2, _RQ3, _RQ4,
+  ELLIPSIS, ELL,
 } = QuoteParser;
 
 (typeof describe === 'function') && 
@@ -19,7 +18,7 @@ const {
   this.timeout(30*1000);
 
   before(()=>{
-    DeepLAdapter.setMockApi(!DBG_TEST_API);
+    DeepLAdapter.setMockApi(!DBG.TEST_API);
   });
 
   it("create() default", async() => {
@@ -63,7 +62,6 @@ const {
       translator,
       translateOpts,
     });
-    console.log(Object.keys(glossary));
     should(glossaryName).equal('ebt_en_pt_ebt-deepl');
     should(glossary.name).equal('ebt_en_pt_ebt-deepl');
     should(glossary.ready).equal(true);
@@ -87,6 +85,7 @@ const {
     );
   });
   it("translate() EN=>PT", async () => {
+    //DeepLAdapter.setMockApi(false);
     let srcLang = 'en';
     let dstLang = 'pt';
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
@@ -120,7 +119,7 @@ const {
     should(res[0]).equal(
       '"Bhikkhu, essa visão é incorrecta;');
   });
-  it("TESTTESTtranslate() testcaseDepthEN FR", async () => {
+  it("translate() testcaseDepthEN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -132,7 +131,7 @@ const {
     should(res[0]).equal(
       `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
   })
-  it("TESTTESTtranslate() testcaseDepthEN PT", async () => {
+  it("translate() testcaseDepthEN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     //DeepLAdapter.setMockApi(false);
@@ -145,7 +144,7 @@ const {
       `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`
     );
   })
-  it("TESTTESTtranslate() testcaseRebirthEN FR", async () => {
+  it("translate() testcaseRebirthEN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -159,7 +158,7 @@ const {
     `<x>Je comprends : <y>La renaissance est terminée en FR${RQ3}${RQ2}?${RQ1}`
     )
   })
-  it("TESTTESTtranslate() testcaseQ2EN FR", async () => {
+  it("translate() testcaseQ2EN FR", async () => {
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -171,7 +170,7 @@ const {
     should(res[0]).equal(
       `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
   })
-  it("TESTTESTtranslate() testcaseQ2EN PT", async () => {
+  it("translate() testcaseQ2EN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt';
     let { RQ1,RQ2,RQ3,RQ4 } = QuoteParser;
@@ -185,7 +184,7 @@ const {
     should(res[0]).equal(
       `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`);
   })
-  it("TESTTESTtranslate() testcaseThinking_EN", async () => {
+  it("translate() testcaseThinking_EN", async () => {
     let srcLang = 'en';
     let dstLang = 'es';
     let { LQ1, _RQ1 } = QuoteParser;
@@ -197,7 +196,8 @@ const {
 
     // Closing XML element is passed through
     should(res[0]).equal(
-      `Pensando, ${LQ1}he hecho cosas SPAN por medio del cuerpo, la palabra y la mente${_RQ1}, se mortifican.`);
+      `Pensando, ${LQ1}He hecho cosas SPAN por medio del cuerpo, `+
+      `la palabra y la mente${RQ1}, se mortifican.`);
   })
   it("translate() en-uk quotes en/pt", async () => {
     let srcLang = 'en';
@@ -258,7 +258,7 @@ const {
       dbgv && console.log(`test/deepl glossary ${i}`, g);
     }, null);
     should(glossaries).instanceOf(Array);
-    DBG_TEST_API && should(glossaries.length).above(0);
+    DBG.TEST_API && should(glossaries.length).above(0);
   });
   it("translate() DE", async () => {
     let srcLang = 'de';
@@ -278,17 +278,47 @@ const {
     should(res[1]).equal(
       '"Bhikkhu, você esmola comida antes de comer;');
   });
-  it("TESTTESTtranslate() testcaseSufferingEN PT", async () => {
+  it("translate() testcaseEllipsisEN PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt-PT';
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    let srcText = QuoteParser.testcaseSufferingEN('PT');
+    let prefix = "They understand: ";
+    let lQuote = LQ1;
+    let rQuote = RQ1;
+    let ellipsis = ELL;
+    let tcOpts = { prefix, lQuote, rQuote, ellipsis };
+    let srcText = QuoteParser.testcaseEllipsisEN('PT', tcOpts);
     //console.log('srcText:', srcText);
     let res = await dlt.translate([srcText]);
 
-    should(res[0]).equal(
-      `Eles compreendem: ${LQ1}Este é o sofrimento de PT${RQ1}...`
-    );
+    should(res[0]).equal([
+      `Eles compreendem: <w>Isto é PT</w><ell/>`,
+      `<w>Isto é sofrimento</w><ell/>`,
+      `<w>Isto é a origem</w>.`,
+    ].join(''));
+  })
+  it("translate() testcaseEllipsisEN ES", async () => {
+    const msg = "test.DeepLAdapter@297";
+    const dbg = 0;
+    let srcLang = 'en';
+    let dstLang = 'es';
+    //DeepLAdapter.setMockApi(false);
+    let prefix = "They understand: ";
+    let lQuote = LQ1;
+    let rQuote = RQ1;
+    let ellipsis = ELL;
+    let tcOpts = { prefix, lQuote, rQuote, ellipsis };
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let srcText = QuoteParser.testcaseEllipsisEN('ES',tcOpts);
+    dbg && console.log(msg, 'srcText:', srcText);
+    let res = await dlt.translate([srcText]);
+
+    should(res[0]).equal([
+      `Ellos comprenden: `, `<w>Esto es ES</w>`, 
+      ellipsis, `<w>Esto es sufrimiento</w>`, 
+      ellipsis, `<w>Este es el origen</w>`, 
+      `.`,
+    ].join(''));
   })
 })

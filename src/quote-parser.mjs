@@ -16,6 +16,7 @@ const NBSP   = '\u00a0'; // non-breaking space
 const THNSP  = '\u2009'; // thin space
 const LDQUOT = '“'; // Left double quote
 const RDQUOT = '”'; // Right double quote
+const ELLIPSIS = '…';
 
 const FR_QUOTES = '«\|»\|“\|”\|‘\|’';
 const RE_POST_APOS = /^\w/;
@@ -33,15 +34,14 @@ const _RQ1 = ' </w>';
 const _RQ2 = ' </x>';
 const _RQ3 = ' </y>';
 const _RQ4 = ' </z>';
+const ELL = '<ell/>';
 
-import {
-  DBG_QUOTE, DBG_VERBOSE,
-} from './defines.mjs';
+import { DBG, } from './defines.mjs';
 
 export default class QuoteParser {
   constructor(opts={}) {
     const msg = 'QuoteParser.ctor()';
-    const dbg = DBG_QUOTE;
+    const dbg = DBG.QUOTE;
     let {
       lang = 'en',
       openQuotes,
@@ -92,10 +92,10 @@ export default class QuoteParser {
         closeQuotes = closeQuotes || 
           [ THNSP+RDGUIL, THNSP+RGUIL, RDQUOT, RSQUOT, ];
         break;
-      case 'es-deepl':
-          openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
-          closeQuotes = closeQuotes || [ _RQ1, _RQ2, _RQ3, _RQ4 ];
-        break;
+      //case 'es-deepl':
+        //openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
+        //closeQuotes = closeQuotes || [ _RQ1, _RQ2, _RQ3, _RQ4 ];
+        //break;
       default: {
         if (lang.endsWith('-deepl')) {
           openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
@@ -141,6 +141,7 @@ export default class QuoteParser {
       maxLevel,
       quotes,
     });
+    dbg && console.log(msg, lang);
   }
 
   static loadApostrophe(lang) {
@@ -188,16 +189,33 @@ export default class QuoteParser {
     ].join('');
   }
 
-  static testcaseSufferingEN(lang, opts={}) {
-    const {LQ1, LQ2, LQ3, LQ4, RQ1, RQ2, RQ3, RQ4} = QuoteParser;
+  static testcaseEllipsisEN(lang, opts=QuoteParser) {
+    const {
+      prefix='They understand: ',
+      lQuote=LDQUOT, 
+      rQuote=RDQUOT, 
+      ellipsis=` ${ELLIPSIS} `,
+    } = opts;
     return [
-      `They understand: ${LQ1}This is ${lang} suffering${RQ1}...`,
+      prefix,
+      lQuote,
+      `This is ${lang}`,
+      rQuote,
+      ellipsis,
+      lQuote,
+      'This is suffering',
+      rQuote,
+      ellipsis,
+      lQuote,
+      'This is the origin',
+      rQuote,
+      '.',
     ].join('');
   }
 
   static testcaseThinking_EN(lang, opts={}) {
-    const {LQ1, _RQ1, } = QuoteParser;
-    let {lQuote=LQ1, rQuote=_RQ1 } = opts;
+    const {LQ1, RQ1, } = QuoteParser;
+    let {lQuote=LQ1, rQuote=RQ1 } = opts;
 
     return [
       `Thinking, `,
@@ -208,6 +226,8 @@ export default class QuoteParser {
   }
 
   static APOS() { return APOS; }
+  static get ELLIPSIS() { return ELLIPSIS; }
+  static get ELL() { return ELL; }
   static get LDQUOT() { return LDQUOT; }
   static get RDQUOT() { return RDQUOT; }
   static get LSQUOT() { return LSQUOT; }
@@ -308,8 +328,8 @@ export default class QuoteParser {
 
   scan(text, level=this.level) {
     const msg = 'QuoteParser.scan()';
-    const dbg = DBG_QUOTE;
-    const dbgv = DBG_VERBOSE && dbg;
+    const dbg = DBG.QUOTE;
+    const dbgv = DBG.VERBOSE && dbg;
     let { 
       rexQuotes, openQuotes, closeQuotes, maxLevel,
     } = this;
@@ -348,7 +368,7 @@ export default class QuoteParser {
 
   parse(text, level) {
     const msg = 'QuoteParser.parse()';
-    const dbg = DBG_QUOTE;
+    const dbg = DBG.QUOTE;
     let dState = this.scan(text, level);
     if (dbg) {
       console.log(msg, dState);
@@ -389,7 +409,7 @@ export default class QuoteParser {
 
   convertQuotes(text='', qpSwap, level=this.level) {
     const msg = 'QuoteParser.convertQuotes()';
-    const dbg = 0 || DBG_VERBOSE;
+    const dbg = 0 || DBG.VERBOSE;
     let { 
       openQuotes:srcOpen, 
       closeQuotes:srcClose, 
@@ -463,7 +483,7 @@ export default class QuoteParser {
 
   quotationLevel(text='') {
     const msg = 'QuoteParser.quotationLevel()';
-    const dbg = 0 || DBG_VERBOSE;
+    const dbg = 0 || DBG.VERBOSE;
     let { maxLevel, rexSplit, openQuotes, closeQuotes } = this;
     let parts = text.split(rexSplit);
     dbg && console.log(msg, '[1]parts', parts);

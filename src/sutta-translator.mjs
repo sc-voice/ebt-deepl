@@ -25,8 +25,7 @@ const {
 
 import {
   DBG,
-  DBG_CREATE, DBG_FIND, 
-  DBG_TRANSFORM,
+  DBG_FIND, 
 } from './defines.mjs'
 
 var creating = false;
@@ -53,7 +52,7 @@ export default class SuttaTranslator {
 
   static async create(opts={}) {
     const msg = 'SuttaTranslator.create()';
-    const dbg = DBG_CREATE || DBG_TRANSFORM;
+    const dbg = DBG.SUTTA_XLT;
     let {
       appendWhitespace=true, // SC requirement
       dstLang=DST_LANG,
@@ -66,7 +65,7 @@ export default class SuttaTranslator {
       bilaraData = await new BilaraData({
         name: 'ebt-data',
       }).initialize(),
-      updateGlossary,
+      updateGlossary=false,
     } = opts;
 
     srcLang = srcLang.toLowerCase();
@@ -75,16 +74,16 @@ export default class SuttaTranslator {
     let dstLang2 = dstLang.split('-')[0];
 
     if (srcTransform == null || typeof srcTransform === 'string') {
-      let xfmName = srcTransform || `src_${srcLang2}.json`;
-      let xfmPath = path.join(__dirname, 'glossary', xfmName);
+      let srcXfmName = srcTransform || `src_${srcLang2}.json`;
+      let xfmPath = path.join(__dirname, 'glossary', srcXfmName);
+      dbg && console.log(msg, '[1]srcXfmName', srcXfmName);
       let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
       if (xfmBuf) {
-        dbg && console.log(msg, '[1]srcTransform', xfmName);
         let xfm = JSON.parse(xfmBuf);
         let xfmKeys = Object.keys(xfm);
         srcTransform = xfmKeys.reduce((a,key)=>{
           a.push({
-            rex: new RegExp(`\\b${key}`, 'g'),
+            rex: new RegExp(`${key}`, 'g'),
             rep: xfm[key],
           });
           return a;
@@ -93,9 +92,10 @@ export default class SuttaTranslator {
     }
 
     if (dstTransform == null || typeof dstTransform === 'string') {
-      let xfmName = dstTransform || 
+      let dstXfmName = dstTransform || 
         `dst_${srcLang2}_${dstLang}.json`;
-      let xfmPath = path.join(__dirname, 'glossary', xfmName);
+      let xfmPath = path.join(__dirname, 'glossary', dstXfmName);
+      dbg && console.log(msg, '[2]dstXfmName', dstXfmName);
       let xfmBuf =  await fs.promises.readFile(xfmPath).catch(e=>null)
       if (xfmBuf) {
         let xfm = JSON.parse(xfmBuf);
@@ -107,8 +107,6 @@ export default class SuttaTranslator {
           });
           return a;
         }, []);
-        dbg && console.log(msg, '[1]dstTransform', xfmName, 
-          dstTransform);
       }
     }
 
@@ -120,7 +118,8 @@ export default class SuttaTranslator {
         dstAuthor,
         updateGlossary,
       }
-      dbg && console.log(msg, '[2]DeepLAdapter.create', optsDeepL);
+      dbg && console.log(msg, '[3]DeepLAdapter.create', 
+        `${srcLang}/${srcAuthor} => ${dstLang}/${dstAuthor}`);
       xltDeepL = await DeepLAdapter.create(optsDeepL);
     }
 
@@ -136,12 +135,6 @@ export default class SuttaTranslator {
       dstLang2,
       dstAuthor,
       bilaraData,
-    }
-    switch (srcLang) {
-      case 'en': {
-        stOpts.qpSrc = new QuoteParser({lang:'en-us'});
-        stOpts.qpPre = new QuoteParser({lang:'en-deepl'});
-      } break;
     }
     switch (dstLang) {
       case 'pt-pt': 
@@ -162,17 +155,34 @@ export default class SuttaTranslator {
         stOpts.qpPost = new QuoteParser({lang:'fr-deepl'});
         stOpts.qpDst = new QuoteParser({lang:'fr'});
         break;
+      case 'es':
+        stOpts.qpPost = new QuoteParser({lang:`${dstLang2}-deepl`});
+        stOpts.qpDst = new QuoteParser({lang:dstLang});
+        break;
       default:
         stOpts.qpPost = new QuoteParser({lang:`${dstLang2}-deepl`});
         stOpts.qpDst = new QuoteParser({lang:dstLang});
         break;
     }
+    if (stOpts.qpSrc == null) {
+      switch (srcLang) {
+        case 'en': {
+          stOpts.qpSrc = new QuoteParser({lang:'en-us'});
+          stOpts.qpPre = new QuoteParser({lang:'en-deepl'});
+        } break;
+      }
+    }
 
     let st;
     try {
       creating = true;
-      dbg && console.log(msg, '[3]SuttaTranslator', 
-        `${srcLang}/${srcAuthor} => ${dstLang}/${dstAuthor}`);
+      dbg && console.log(msg, '[4]quotes', [
+        stOpts.qpSrc ? stOpts.qpSrc.lang : "n/a",
+        stOpts.qpPre ? stOpts.qpPre.lang : "n/a",
+        "DEEPL",
+        stOpts.qpPost ? stOpts.qpPost.lang : "n/a",
+        stOpts.qpDst ? stOpts.qpDst.lang : "n/a",
+      ].join("=>"));
       st = new SuttaTranslator(stOpts);
     } finally {
       creating = false;
@@ -257,11 +267,18 @@ export default class SuttaTranslator {
     return text;
   }
 
-  static transformText(text, transform) {
+  static transformText(text, transform=[]) {
+    const msg = "SuttaTranslator.transformText()";
+    const dbg = DBG.TRANSFORM;
+    const dbgv = DBG.VERBOSE;
     let xfmText = text;
+    dbgv && console.log(msg, '[1]transform', transform);
     if (transform) {
       transform.forEach(xfm=>{
-        xfmText = xfmText.replaceAll(xfm.rex, xfm.rep)
+        xfmText = xfmText.replaceAll(xfm.rex, xfm.rep);
+        if (dbg && text !== xfmText) {
+          console.log(msg, '[2]replaceAll', xfm.rep);
+        }
       });
     }
     return xfmText;

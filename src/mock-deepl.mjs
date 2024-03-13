@@ -1,13 +1,21 @@
 import {
-  DBG_MOCK_API, DBG_VERBOSE,
+  DBG,
+  DBG_MOCK_API, 
 } from './defines.mjs';
 
 import { default as QuoteParser } from './quote-parser.mjs';
 
+const { 
+  LQ1, LQ2, LQ3, LQ4, 
+  RQ1, RQ2, RQ3, RQ4,
+  _RQ1, _RQ2, _RQ3, _RQ4,
+  ELLIPSIS, ELL,
+} = QuoteParser;
+
 class MockGlossary {
   constructor(args) {
     const msg = 'MockGlossary.ctor()';
-    const dbg = DBG_VERBOSE;
+    const dbg = DBG.VERBOSE;
     let [
       name,
       sourceLang,
@@ -32,7 +40,7 @@ const qp_fr_deepl = new QuoteParser({lang:'fr-deepl'});
 class MockTranslator {
   constructor(authKey) {
     const msg = 'MockTranslator.ctor()';
-    const dbg = DBG_VERBOSE;
+    const dbg = DBG.VERBOSE;
     dbg && console.log(msg, `authKey: ${authKey.substring(0,4)}...`);
   }
 
@@ -46,12 +54,7 @@ class MockTranslator {
 
   async translateText(texts, sourceLang, targetLang, translateOpts) {
     const msg = "MockTranslator.translateText()";
-    const dbg = 0 || DBG_VERBOSE;
-    const { 
-      LQ1, LQ2, LQ3, LQ4, 
-      RQ1, RQ2, RQ3, RQ4,
-      _RQ1, _RQ2, _RQ3, _RQ4 
-    } = QuoteParser;
+    const dbg = 0 || DBG.VERBOSE;
     dbg && console.log(msg, {sourceLang, targetLang}, texts);
 
     return texts.map(text=>{
@@ -161,14 +164,34 @@ class MockTranslator {
         '2. Padhānasutta', 
         '2. Padhānasutta ', 
       ).replace(
-        QuoteParser.testcaseThinking_EN("SPAN"),
-        'Pensando, <w>he hecho cosas SPAN por medio del cuerpo, la palabra y la mente </w>, se mortifican.',
+        QuoteParser.testcaseThinking_EN("SPAN"), [
+          `Pensando, `,
+          `<w>He hecho cosas SPAN por medio `,
+          `del cuerpo, la palabra y la mente</w>, `,
+          `se mortifican.`,
+        ].join('')
       ).replace(
         'springtime',
         'Primavera',
       ).replace(
-        QuoteParser.testcaseSufferingEN("PT"),
-        `Eles compreendem: ${LQ1}Este é o sofrimento de PT${RQ1}...`
+        QuoteParser.testcaseEllipsisEN("PT", {
+          prefix: 'They understand: ',
+          lQuote:LQ1,
+          rQuote:RQ1,
+          ellipsis:ELL
+        }),
+        'Eles compreendem: <w>Isto é PT</w><ell/><w>Isto é sofrimento</w><ell/><w>Isto é a origem</w>.'
+      ).replace(
+        QuoteParser.testcaseEllipsisEN("ES", {
+          lQuote:LQ1,
+          rQuote:RQ1,
+          ellipsis:ELL
+        }),[
+          `Ellos comprenden: `, `<w>Esto es ES</w>`, 
+          ELL, `<w>Esto es sufrimiento</w>`, 
+          ELL, `<w>Este es el origen</w>`, 
+          `.`,
+        ].join('')
       );
       return {
         text,

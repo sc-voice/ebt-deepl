@@ -4,7 +4,7 @@ import {
   QuoteParser 
 } from "../index.mjs";
 import { 
-  DBG_QUOTE,
+  DBG,
 } from '../src/defines.mjs';
 const { 
   LDQUOT, RDQUOT, LSQUOT, RSQUOT, LDGUIL, RDGUIL, NBSP,

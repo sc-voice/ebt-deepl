@@ -7,7 +7,6 @@ const cwd = process.cwd();
 
 import {
   DBG,
-  DBG_CREATE, DBG_VERBOSE, 
   DBG_MOCK_API, 
 } from './defines.mjs'
 import * as deepl from 'deepl-node';
@@ -15,7 +14,7 @@ import { default as MockDeepL } from './mock-deepl.mjs';
 
 const EMPTY_TEXT = "911911911";
 const TRANSLATE_OPTS = {
-  tagHandling: 'xml',
+  tag_handling: 'xml',
   formality: 'more',
 }
 
@@ -120,7 +119,7 @@ export default class DeepLAdapter { constructor(opts={}) {
 
   static async create(opts={}) {
     const msg = 'DeepLAdapter.create()';
-    const dbg = DBG.GLOSSARY || DBG_CREATE;
+    const dbg = DBG.GLOSSARY;
     let {
       authFile=path.join(cwd,'local/deepl.auth'),
       srcLang,
@@ -154,7 +153,6 @@ export default class DeepLAdapter { constructor(opts={}) {
       return g.name === glossaryName ? g : a;
     }, null)
     if (updateGlossary) {
-      let dbg = DBG.GLOSSARY;
       console.warn(msg, "[3]updateGlossary", glossaryName);
       dbg && console.log(msg, "[4]uploadGlossary");
       glossary = await DeepLAdapter.uploadGlossary({
@@ -201,7 +199,7 @@ export default class DeepLAdapter { constructor(opts={}) {
   static async uploadGlossary(opts={}) {
     const msg = 'DeepLAdapter.uploadGlossary()';
     const dbg = DBG.GLOSSARY;
-    const dbgv = DBG_VERBOSE && dbg;
+    const dbgv = DBG.VERBOSE && dbg;
     let {
       srcLang,
       srcLang2,
@@ -261,7 +259,7 @@ export default class DeepLAdapter { constructor(opts={}) {
       glossary = await translator.createGlossary(
         glossaryName, sourceLang, targetLang, glossaryEntries);
       let { glossaryId } = glossary;
-      console.warn(msg, "[6]createGlossary", {
+      dbg && console.log(msg, "[6]createGlossary", {
         fName, glossaryName, sourceLang, targetLang, nEntries,
         glossaryId
       });
@@ -287,11 +285,15 @@ export default class DeepLAdapter { constructor(opts={}) {
     let sourceLang = DeepLAdapter.deeplLang(srcLang); 
     let targetLang = DeepLAdapter.deeplLang(dstLang);
     texts = texts.map(t=> t || EMPTY_TEXT);
-    var result = await translator
+    var results = await translator
       .translateText(texts, sourceLang, targetLang, translateOpts);
-    dbg && console.log(msg, result);
-    result = result.map(r=>r.text === EMPTY_TEXT ? '' : r.text);
+    if (dbg) {
+      results.forEach((result,i)=>{
+        console.log(msg, '\n  ', texts[i], '\n  ', results[i]?.text);
+      });
+    }
+    results = results.map(r=>r.text === EMPTY_TEXT ? '' : r.text);
 
-    return result;
+    return results;
   }
 }
