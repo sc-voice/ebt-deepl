@@ -8,7 +8,6 @@ const dbgv = DBG.VERBOSE;
 const {
   LQ1, LQ2, LQ3, LQ4,
   RQ1, RQ2, RQ3, RQ4,
-  _RQ1, _RQ2, _RQ3, _RQ4,
   ELLIPSIS, ELL,
 } = QuoteParser;
 
@@ -187,7 +186,7 @@ const {
   it("translate() testcaseThinking_EN", async () => {
     let srcLang = 'en';
     let dstLang = 'es';
-    let { LQ1, _RQ1 } = QuoteParser;
+    let { LQ1, RQ1 } = QuoteParser;
     //DeepLAdapter.setMockApi(false);
     let dlt = await DeepLAdapter.create({srcLang, dstLang});
     let srcText = QuoteParser.testcaseThinking_EN('SPAN');

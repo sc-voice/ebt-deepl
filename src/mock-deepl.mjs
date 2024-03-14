@@ -8,7 +8,6 @@ import { default as QuoteParser } from './quote-parser.mjs';
 const { 
   LQ1, LQ2, LQ3, LQ4, 
   RQ1, RQ2, RQ3, RQ4,
-  _RQ1, _RQ2, _RQ3, _RQ4,
   ELLIPSIS, ELL,
 } = QuoteParser;
 
@@ -96,8 +95,8 @@ class MockTranslator {
         `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
         `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
-        `<x>I say, <y>You say, <z>I said PT!${_RQ4}?${_RQ3}.${_RQ2}${_RQ1}`,
-        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${_RQ4}?${_RQ3}.${_RQ2}${_RQ1}`,
+        `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
         'Comment échapper à ce sentiment d’appartenance à la France ? › '

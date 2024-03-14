@@ -30,10 +30,6 @@ const RQ1 = '</w>';
 const RQ2 = '</x>';
 const RQ3 = '</y>';
 const RQ4 = '</z>';
-const _RQ1 = ' </w>'; 
-const _RQ2 = ' </x>';
-const _RQ3 = ' </y>';
-const _RQ4 = ' </z>';
 const ELL = '<ell/>';
 
 import { DBG, } from './defines.mjs';
@@ -92,10 +88,6 @@ export default class QuoteParser {
         closeQuotes = closeQuotes || 
           [ THNSP+RDGUIL, THNSP+RGUIL, RDQUOT, RSQUOT, ];
         break;
-      //case 'es-deepl':
-        //openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
-        //closeQuotes = closeQuotes || [ _RQ1, _RQ2, _RQ3, _RQ4 ];
-        //break;
       default: {
         if (lang.endsWith('-deepl')) {
           openQuotes = openQuotes || [ LQ1, LQ2, LQ3, LQ4 ];
@@ -247,10 +239,6 @@ export default class QuoteParser {
   static get RQ2() { return RQ2; }
   static get RQ3() { return RQ3; }
   static get RQ4() { return RQ4; }
-  static get _RQ1() { return _RQ1; }
-  static get _RQ2() { return _RQ2; }
-  static get _RQ3() { return _RQ3; }
-  static get _RQ4() { return _RQ4; }
 
   // ...APOS...
   testcaseGratificationEN(lang) {

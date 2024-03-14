@@ -26,7 +26,6 @@ const bilaraData = await new BilaraData({name:'ebt-data'}).initialize();
 const {
   LQ1, LQ2, LQ3, LQ4,
   RQ1, RQ2, RQ3, RQ4,
-  _RQ1, _RQ2, _RQ3, _RQ4,
   LDGUIL, RDGUIL, ELLIPSIS, ELL,
 } = QuoteParser;
 
