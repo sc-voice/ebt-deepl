@@ -83,7 +83,7 @@ const {
       'l\'origine des agrégats de l\'envie'
     );
   });
-  it("TESTTESTtranslate() EN=>PT", async () => {
+  it("translate() EN=>PT", async () => {
     //DeepLAdapter.setMockApi(false);
     let srcLang = 'en';
     let dstLang = 'pt';

@@ -288,7 +288,6 @@ export default class QuoteParser {
   // ... RQ2
   testcaseFeelingsEN(lang) {
     const apos = this.apostrophe;
-    const [ LQ1, LQ2, LQ3, LQ4 ] = this.openQuotes;
     const [ RQ1, RQ2, RQ3, RQ4 ] = this.closeQuotes;
     return [
       `what${apos}s the escape from that ${lang} feeling?${RQ2}`  

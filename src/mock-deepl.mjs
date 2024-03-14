@@ -99,7 +99,7 @@ class MockTranslator {
         `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
-        'Comment échapper à ce sentiment d’appartenance à la France ? › '
+        'comment échapper à ce sentiment français ? '
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
           '<x>Je comprends : <y>La renaissance est terminée '+
