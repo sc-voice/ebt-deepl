@@ -76,10 +76,10 @@ class MockTranslator {
         `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`
       ).replace(
         `<w><x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`
+        `<w><x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`
       ).replace(
         `<w><x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`,
+        `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         `Der Pfeil des Verlangens`,
         'O dardo do anseio')
@@ -88,13 +88,13 @@ class MockTranslator {
         '"Bhikkhu, você esmola comida antes de comer;'
       ).replace(
         '“Bhikkhu, you seek alms before you eat;',
-        '"Bhikkhu, você esmola comida antes de comer;'
+        '"Bhikkhu, você procura esmola comida antes de comer;'
       ).replace(
         `<x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`,
+        `<x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`
       ).replace(
         `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`,
+        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         `<x>I say, <y>You say, <z>I said PT!${_RQ4}?${_RQ3}.${_RQ2}${_RQ1}`,
         `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${_RQ4}?${_RQ3}.${_RQ2}${_RQ1}`,

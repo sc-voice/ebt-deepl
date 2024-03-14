@@ -84,7 +84,7 @@ const {
       'l\'origine des agrégats de l\'envie'
     );
   });
-  it("translate() EN=>PT", async () => {
+  it("TESTTESTtranslate() EN=>PT", async () => {
     //DeepLAdapter.setMockApi(false);
     let srcLang = 'en';
     let dstLang = 'pt';
@@ -101,7 +101,7 @@ const {
     // Compare with laera-quaresma:
     // '“Bhikkhu, você esmola comida antes de comer (desfrutar); ';
     should(res[1]).equal(
-      '"Bhikkhu, você esmola comida antes de comer;');
+      '"Bhikkhu, você procura esmola comida antes de comer;');
   });
   it("translate() incorrectly EN>PT", async () => {
     let srcLang = 'en';
@@ -129,7 +129,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
+      `<w><x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
   })
   it("translate() testcaseDepthEN PT", async () => {
     let srcLang = 'en';
@@ -141,7 +141,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`
+      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`
     );
   })
   it("translate() testcaseRebirthEN FR", async () => {
@@ -168,7 +168,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<x>Je dis, <y>Vous dites, <z>J'ai dit FR !${RQ4}?.${RQ3}${RQ2}${RQ1}`);
+      `<x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
   })
   it("translate() testcaseQ2EN PT", async () => {
     let srcLang = 'en';
@@ -182,7 +182,7 @@ const {
 
     // Closing XML element is passed through
     should(res[0]).equal(
-      `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}${RQ2}${RQ1}`);
+      `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
   })
   it("translate() testcaseThinking_EN", async () => {
     let srcLang = 'en';

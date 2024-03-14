@@ -448,7 +448,7 @@ const {
       /‹ Je comprends : “La renaissance est terminée en FR” ›\?\u2009?»/
     );
   });
-  it("translate() testcaseFeelingsEN FR", async()=>{
+  it("TESTTESTtranslate() testcaseFeelingsEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     //DeepLAdapter.setMockApi(false);
     let qp_en = new QuoteParser({lang:'en'});
