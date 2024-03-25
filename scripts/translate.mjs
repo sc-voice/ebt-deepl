@@ -7,12 +7,13 @@ const __dirname = path.dirname(__filename);
 import { BilaraData } from 'scv-bilara'
 import { default as SuttaTranslator } from "../src/sutta-translator.mjs"
 import pkgScvEsm  from "scv-esm";
-const { SuttaRef, AuthorsV2 } = pkgScvEsm;
+const { Tipitaka, SuttaRef, AuthorsV2 } = pkgScvEsm;
 const cwd = process.cwd();
 
 const EBT_DEEPL = 'ebt-deepl';
 
 let out = "all";
+let showNextTipitaka = false;
 let suid;
 let srcLang1 = 'en';
 let srcAuthor1;
@@ -25,19 +26,10 @@ let dstReplace = false;
 let refLang;
 let refAuthor;
 let [nodePath, scriptPath, ...args] = process.argv;
+let script = scriptPath.split('/').pop();
+const msg = `${script}:\t`;
 let category = 'sutta';
 let listGlossary1 = false;
-
-// For SC-Voice.net
-let ebtData = await new BilaraData({
-  name:'ebt-data',
-}).initialize();
-
-// For bilara-data pre-translation pull requests
-let bdDeepL = await new BilaraData({
-  name: 'bilara-data-deepl',
-  branch: 'unpublished'
-}).initialize();
 
 function help() {
   console.log(`
@@ -76,6 +68,9 @@ DESCRIPTION
 
     -lg1, --list-glossary1
         List glossary entries for first translation source.
+
+    -nt, --next-tipitaka
+        Return sutta_uid of next sutta in Tipitaka
 
     -oa, --out-all
         Output Pali, source1, source2, reference, translation1,
@@ -167,6 +162,8 @@ for (var i = 0; i < args.length; i++) {
     refLang = args[++i];
   } else if (arg === '-ra' || arg === '--ref-author') {
     refAuthor = args[++i];
+  } else if (arg === '-nt' || arg === '--next-tipitaka') {
+    showNextTipitaka = true;
   } else if (arg === '-oa' || arg === '--out-all') {
     out = 'all';
   } else if (arg === '-oj1' || arg === '--out-json1') {
@@ -196,10 +193,28 @@ for (var i = 0; i < args.length; i++) {
   }
 }
 
+let tipitaka = new Tipitaka();
+let nextSuid = tipitaka.nextSuid(suid);
+if (showNextTipitaka) {
+  console.log(msg, {nextSuid});
+  process.exit(0);
+}
+
 srcAuthor1 = srcAuthor1 || AuthorsV2.langAuthor(srcLang1);
 srcAuthor2 = srcAuthor2 || srcLang2 && AuthorsV2.langAuthor(srcLang2);
 refLang = refLang || dstLang;
 refAuthor = refAuthor || AuthorsV2.langAuthor(refLang);
+
+// For SC-Voice.net
+let ebtData = await new BilaraData({
+  name:'ebt-data',
+}).initialize();
+
+// For bilara-data pre-translation pull requests
+let bdDeepL = await new BilaraData({
+  name: 'bilara-data-deepl',
+  branch: 'unpublished'
+}).initialize();
 
 let xlts = [
   await SuttaTranslator.create({
@@ -448,12 +463,14 @@ switch (out) {
     break;
   case 'oe1':
     outBilaraData(xltsOut[0], ebtData);
+    console.log(msg, {nextSuid});
     break;
   case 'oe2':
     if (!srcAuthor2) {
       throw new Error(`${out} requires srcAuthor2`);
     }
     outBilaraData(xltsOut[1], ebtData);
+    console.log(msg, {nextSuid});
     break;
   case 'oj1':
     outJson(xltsOut[0]);
