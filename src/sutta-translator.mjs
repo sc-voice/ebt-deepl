@@ -6,6 +6,8 @@ const __dirname = path.dirname(__filename);
 
 import { default as DeepLAdapter } from "./deepl-adapter.mjs"
 import { default as QuoteParser } from "./quote-parser.mjs"
+import scvBilara from "scv-bilara";
+const { Pali } = scvBilara;
 import pkgMemoAgain from "memo-again"
 const {
   Files
@@ -38,6 +40,7 @@ const LDQUOT = '“';
 const RDQUOT = '”';
 const LSQUOT = '‘';
 const RSQUOT = '’';
+var PALI_WORDS;
 
 export default class SuttaTranslator {
   constructor(opts={}) {
@@ -72,6 +75,8 @@ export default class SuttaTranslator {
     dstLang = dstLang.toLowerCase();
     let srcLang2 = srcLang.split('-')[0];
     let dstLang2 = dstLang.split('-')[0];
+
+    await SuttaTranslator.paliWords();
 
     if (srcTransform == null || typeof srcTransform === 'string') {
       let srcXfmName = srcTransform || `src_${srcLang2}.json`;
@@ -252,6 +257,13 @@ export default class SuttaTranslator {
     return segsOut;
   }
 
+  static async paliWords() {
+    if (PALI_WORDS == null) {
+      PALI_WORDS = await Pali.wordSet();
+    }
+    return PALI_WORDS;
+  }
+
   static titleCase(text) {
     const msg = "SuttaTranslator.titleCase()";
     const dbg = DBG.TITLE;
@@ -261,10 +273,20 @@ export default class SuttaTranslator {
       let lc = lText.charAt(i);
       let uc = uText.charAt(i);
       if (lc !== uc) {
-        return lText.replace(lc,uc);
+        text = lText.replace(lc,uc);
+        break;
       }
     }
-    return text;
+    let words = text.split(' ');
+    let title = words.reduce((a,word)=>{
+      if (PALI_WORDS.contains(word)) {
+        let c = word.charAt(0);
+        word = word.replace(c,c.toUpperCase());
+        dbg && console.log(msg, '[1]Pali', word);
+      }
+      return a ? `${a} ${word}` : word;
+    }, undefined);
+    return title;
   }
 
   static transformText(text, transform=[]) {

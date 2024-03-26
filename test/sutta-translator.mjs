@@ -140,15 +140,24 @@ const {
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("titleCase()", ()=>{
+  it("TESTTESTtitleCase()", async()=>{
+    let paliWords = await SuttaTranslator.paliWords();
+
+    // Multiple words
     should(SuttaTranslator.titleCase('the red fox'))
       .equal('The red fox');
+
+    // Pali
+    should(SuttaTranslator.titleCase('About Pacetana'))
+      .equal('About Pacetana');
+
+    // Numbers
     should(SuttaTranslator.titleCase('2. ESFUERZO'))
       .equal('2. Esfuerzo');
     should(SuttaTranslator.titleCase('2. esfuerzo'))
       .equal('2. Esfuerzo');
-    should(SuttaTranslator.titleCase('2. āmantesi āmantesi'))
-      .equal('2. Āmantesi āmantesi');
+    should(SuttaTranslator.titleCase('2. About Pacetana'))
+      .equal('2. About Pacetana');
   });
   it("translate() titles an3.94", async()=>{
     let sutta_uid = 'an3.94';
