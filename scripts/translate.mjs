@@ -194,7 +194,7 @@ for (var i = 0; i < args.length; i++) {
 }
 
 let tipitaka = new Tipitaka();
-let nextSuid = tipitaka.nextSuid(suid);
+let nextSuid = suid && tipitaka.nextSuid(suid);
 if (showNextTipitaka) {
   console.log(msg, {nextSuid});
   process.exit(0);

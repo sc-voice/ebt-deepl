@@ -102,6 +102,23 @@ const {
     should(res[1]).equal(
       '"Bhikkhu, você procura esmola comida antes de comer;');
   });
+  it("TESTTESTtranslate() dark/bright EN>PT", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt-PT';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+
+    // sujato
+    let res = await dlt.translate([
+      "And what are dark and bright deeds?",
+      "On the side of dark and bright",
+    ]);
+
+    should.deepEqual(res, [
+      'E o que são acções sombrias e luminosas?',
+      'Do lado do sombrio e do luminoso',
+    ]);
+  });
   it("translate() incorrectly EN>PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt-PT';

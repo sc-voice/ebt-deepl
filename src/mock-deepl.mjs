@@ -191,6 +191,12 @@ class MockTranslator {
           ELL, `<w>Este es el origen</w>`, 
           `.`,
         ].join('')
+      ).replace(
+        "And what are dark and bright deeds?",
+        'E o que são acções sombrias e luminosas?',
+      ).replace(
+        "On the side of dark and bright",
+        'Do lado do sombrio e do luminoso',
       );
       return {
         text,
