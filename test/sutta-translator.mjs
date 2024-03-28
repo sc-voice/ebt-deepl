@@ -140,16 +140,18 @@ const {
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("TESTTESTtitleCase()", async()=>{
+  it("titleCase()", async()=>{
     let paliWords = await SuttaTranslator.paliWords();
+
+    // Pali
+    should(SuttaTranslator.titleCase('De cabeça para baixo'))
+      .equal('De cabeça para baixo');
+    should(SuttaTranslator.titleCase('About Pacetana'))
+      .equal('About Pacetana');
 
     // Multiple words
     should(SuttaTranslator.titleCase('the red fox'))
       .equal('The red fox');
-
-    // Pali
-    should(SuttaTranslator.titleCase('About Pacetana'))
-      .equal('About Pacetana');
 
     // Numbers
     should(SuttaTranslator.titleCase('2. ESFUERZO'))
@@ -619,7 +621,7 @@ const {
     ].join(''));
   });
   it("translateTexts() visão incorrecta EN", async()=>{
-    const msg = 'test.SuttaTranslator.translate()';
+    const msg = 'test.SuttaTranslator.translateTexts()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 

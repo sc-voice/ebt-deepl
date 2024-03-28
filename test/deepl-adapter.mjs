@@ -102,7 +102,7 @@ const {
     should(res[1]).equal(
       '"Bhikkhu, você procura esmola comida antes de comer;');
   });
-  it("TESTTESTtranslate() dark/bright EN>PT", async () => {
+  it("translate() dark/bright EN>PT", async () => {
     let srcLang = 'en';
     let dstLang = 'pt-PT';
     //DeepLAdapter.setMockApi(false);

@@ -279,7 +279,7 @@ export default class SuttaTranslator {
     }
     let words = text.split(' ');
     let title = words.reduce((a,word)=>{
-      if (PALI_WORDS.contains(word)) {
+      if (word.length>4 && PALI_WORDS.contains(word)) {
         let c = word.charAt(0);
         word = word.replace(c,c.toUpperCase());
         dbg && console.log(msg, '[1]Pali', word);
