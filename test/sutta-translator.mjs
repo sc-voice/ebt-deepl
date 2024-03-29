@@ -140,10 +140,12 @@ const {
     } = res;
     should(segments['an3.49:2.1']).match(/ein Moench,/);
   });
-  it("titleCase()", async()=>{
+  it("TESTTESTtitleCase()", async()=>{
     let paliWords = await SuttaTranslator.paliWords();
 
     // Pali
+    should(SuttaTranslator.titleCase('É por isso que durmo descansado'))
+      .equal('É por isso que durmo descansado');
     should(SuttaTranslator.titleCase('De cabeça para baixo'))
       .equal('De cabeça para baixo');
     should(SuttaTranslator.titleCase('About Pacetana'))
@@ -471,6 +473,22 @@ const {
     should(dstTexts[0]).match(
       'comment échapper à ce sentiment français ? '
     );
+  });
+  it("TESTTESTtranslate() Durmo PT", async()=>{
+    const msg = 'test.SuttaTranslator@478';
+    //DeepLAdapter.setMockApi(false);
+    let qp_en = new QuoteParser({lang:'en'});
+    let srcTexts = [ 
+      '<wit/>', //'Why is that?',
+      'That is why I sleep at ease. ',
+    ];
+    //console.log(msg, srcTexts);
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should.deepEqual(dstTexts, [
+      'Porque é que é assim? ', // vs. excessively brief "Porque?"
+      `É por isso que durmo descansado. `,
+    ]);
   });
   it("translate() testcasePleasuresEN FR", async()=>{
     const msg = 'test.SuttaTranslator.translate()';

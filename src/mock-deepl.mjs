@@ -197,6 +197,9 @@ class MockTranslator {
       ).replace(
         "On the side of dark and bright",
         'Do lado do sombrio e do luminoso',
+      ).replace(
+        'That is why I sleep at ease. ',
+        `É por isso que durmo descansado. `,
       );
       return {
         text,
