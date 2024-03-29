@@ -285,6 +285,7 @@ export default class DeepLAdapter { constructor(opts={}) {
     let sourceLang = DeepLAdapter.deeplLang(srcLang); 
     let targetLang = DeepLAdapter.deeplLang(dstLang);
     texts = texts.map(t=> t || EMPTY_TEXT);
+    dbg && console.log(msg, '[1]translateOpts',  translateOpts);
     var results = await translator
       .translateText(texts, sourceLang, targetLang, translateOpts);
     if (dbg) {

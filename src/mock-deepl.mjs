@@ -11,6 +11,9 @@ const {
   ELLIPSIS, ELL,
 } = QuoteParser;
 
+const lQuote = LQ1;
+const rQuote = RQ1;
+
 class MockGlossary {
   constructor(args) {
     const msg = 'MockGlossary.ctor()';
@@ -59,9 +62,9 @@ class MockTranslator {
     return texts.map(text=>{
     dbg && console.log(msg, "TEST", text);
       text = text && text.replace(
-        '<w>Bhikkhus, I do not see a single thing that is so '+
+        `${LQ1}Bhikkhus, I do not see a single thing that is so `+
           'very blameworthy as wrong view.',
-        '<w>Bhikkhus, eu não vejo uma única coisa que seja '+
+        `${LQ1}Bhikkhus, eu não vejo uma única coisa que seja `+
           'tão culpável como uma visão incorreta. '
       ).replace(/\baus Anteilnahme an. /g, 'por compaixão.')
       .replace(/\bBei welchen drei\? /g, 'Quais são os três? ')
@@ -74,11 +77,8 @@ class MockTranslator {
         `I say, ‘You say, “I said UK!”?’.`,
         `Eu digo: "Está a dizer: "Eu disse Reino Unido!"?`
       ).replace(
-        `<w><x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<w><x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`
-      ).replace(
-        `<w><x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ1}${LQ2}I say, ${LQ3}You say, ${LQ4}I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ1}${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         `Der Pfeil des Verlangens`,
         'O dardo do anseio')
@@ -88,22 +88,25 @@ class MockTranslator {
       ).replace(
         '“Bhikkhu, you seek alms before you eat;',
         '"Bhikkhu, você procura esmola comida antes de comer;'
+      //).replace(
+        //`${LQ1}${LQ2}I say, ${LQ3}You say, ${LQ4}I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        //`${LQ1}${LQ2}Je dis, ${LQ3}Vous dites, ${LQ4}Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`
       ).replace(
-        `<x>I say, <y>You say, <z>I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`
+        `${LQ2}I say, ${LQ3}You say, ${LQ4}I said FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ2}Je dis, ${LQ3}Vous dites, ${LQ4}Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}.`
       ).replace(
-        `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ2}I say, ${LQ3}You say, ${LQ4}I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
-        `<x>I say, <y>You say, <z>I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
-        `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ2}I say, ${LQ3}You say, ${LQ4}I said PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
+        `${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`,
       ).replace(
         qp_fr_deepl.testcaseFeelingsEN('French'),
         'comment échapper à ce sentiment français ? '
       ).replace(
         qp_fr_deepl.testcaseRebirthEN('FR'),
-          '<x>Je comprends : <y>La renaissance est terminée '+
-            `en FR${RQ3}${RQ2}?${RQ1}`
+          `${LQ2} Je comprends : ${LQ3}La renaissance est terminée `+
+            `en FR${RQ3}${RQ2}?${RQ1}.`
       ).replace(
         qp_fr_deepl.testcasePleasuresEN('French'),
           'comprendre la gratification, l\'inconvénient et '+
@@ -165,8 +168,8 @@ class MockTranslator {
       ).replace(
         QuoteParser.testcaseThinking_EN("SPAN"), [
           `Pensando, `,
-          `<w>He hecho cosas SPAN por medio `,
-          `del cuerpo, la palabra y la mente</w>, `,
+          `${LQ1}He hecho cosas SPAN por medio `,
+          `del cuerpo, la palabra y la mente${RQ1}, `,
           `se mortifican.`,
         ].join('')
       ).replace(
@@ -175,31 +178,46 @@ class MockTranslator {
       ).replace(
         QuoteParser.testcaseEllipsisEN("PT", {
           prefix: 'They understand: ',
-          lQuote:LQ1,
-          rQuote:RQ1,
+          lQuote,
+          rQuote,
           ellipsis:ELL
         }),
-        'Eles compreendem: <w>Isto é PT</w><ell/><w>Isto é sofrimento</w><ell/><w>Isto é a origem</w>.'
+        `Eles compreendem: ${LQ1}Isto é PT${RQ1}<ell/>${LQ1}Isto é sofrimento${RQ1}<ell/>${LQ1}Isto é a origem${RQ1}.`
       ).replace(
         QuoteParser.testcaseEllipsisEN("ES", {
-          lQuote:LQ1,
-          rQuote:RQ1,
+          lQuote,
+          rQuote,
           ellipsis:ELL
         }),[
-          `Ellos comprenden: `, `<w>Esto es ES</w>`, 
-          ELL, `<w>Esto es sufrimiento</w>`, 
-          ELL, `<w>Este es el origen</w>`, 
+          `Comprenden: `, `${LQ1}Esto es ES${RQ1}`, 
+          ELL, `${LQ1}Esto es sufrimiento${RQ1}`, 
+          ELL, `${LQ1}Este es el origen${RQ1}`, 
           `.`,
         ].join('')
       ).replace(
         "And what are dark and bright deeds?",
-        'E o que são acções sombrias e luminosas?',
+        'E o que são actos sombrios e luminosos?',
       ).replace(
         "On the side of dark and bright",
         'Do lado do sombrio e do luminoso',
       ).replace(
         'That is why I sleep at ease. ',
-        `É por isso que durmo descansado. `,
+        `É por isso que durmo tranquilo. `,
+      ).replace(
+        QuoteParser.testcaseQuotesEN({lang:'mind/PT', lQuote}),
+        `${LQ1}Ouça e aplique bem a sua mente/PT, eu falarei.`,
+      ).replace(
+        QuoteParser.testcaseQuotesEN({lang:'mind/PT', rQuote}),
+        `Ouça e aplique bem a sua mente/PT, eu falarei.${RQ1}`,
+      ).replace(
+        QuoteParser.testcaseQuotesEN({lang:'mind/PT', lQuote, rQuote}),
+        `${LQ1}Ouça e aplique bem a sua mente/PT, eu falarei.${RQ1}`,
+      ).replace(
+        QuoteParser.testcaseDonationEN({
+          lang: 'religious/PT',
+          rQuote:QuoteParser.RQ1,
+        }),
+        `Estes são dois tipos de pessoas no mundo que são dignas de um donativo religioso/PT, e é aí que deve dar um presente.${RQ1} `
       );
       return {
         text,

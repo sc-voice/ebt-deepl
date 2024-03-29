@@ -22,14 +22,14 @@ const FR_QUOTES = '«\|»\|“\|”\|‘\|’';
 const RE_POST_APOS = /^\w/;
 
 // Deepl 
-const LQ1 = '<w>'; 
-const LQ2 = '<x>';
-const LQ3 = '<y>';
-const LQ4 = '<z>';
-const RQ1 = '</w>'; 
-const RQ2 = '</x>';
-const RQ3 = '</y>';
-const RQ4 = '</z>';
+const LQ1 = '<l1/>'; 
+const LQ2 = '<l2/>';
+const LQ3 = '<l3/>';
+const LQ4 = '<l4/>';
+const RQ1 = '<r1/>‡'; // DeepL deletes trailing XML elements
+const RQ2 = '<r2/>‡'; // DeepL deletes trailing XML elements
+const RQ3 = '<r3/>‡'; // DeepL deletes trailing XML elements
+const RQ4 = '<r4/>‡'; // DeepL deletes trailing XML elements
 const ELL = '<ell/>';
 
 import { DBG, } from './defines.mjs';
@@ -177,6 +177,24 @@ export default class QuoteParser {
       `${RQ2}`,
       `${RQ1}`,
     ].join('');
+  }
+
+  static testcaseQuotesEN(opts={}) {
+    let {
+      lang='mind',
+      lQuote='',
+      rQuote='',
+    } = opts;
+    return `${lQuote}Listen and apply your ${lang} well, I will speak.${rQuote}`;o
+  }
+
+  static testcaseDonationEN(opts={}) {
+    let {
+      lang='religious',
+      lQuote='',
+      rQuote='',
+    } = opts;
+    return `${lQuote}These are two kinds of people in the world who are worthy of a ${lang} donation, and that's where you should give a gift.${rQuote} `;
   }
 
   static testcaseEllipsisEN(lang, opts=QuoteParser) {

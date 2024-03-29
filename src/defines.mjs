@@ -9,7 +9,7 @@ export const DBG = {
   SUTTA_XLT: 0,
   TITLE: 0,
   TRANSFORM: 0,
-  TEST_API: 0,
+  TEST_API: 0, // use real API
 }
 export const DBG_FIND           = 0;
 export const DBG_MOCK_API       = 0; // use mock API

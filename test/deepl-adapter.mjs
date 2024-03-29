@@ -83,6 +83,32 @@ const {
       'l\'origine des agrégats de l\'envie'
     );
   });
+  it("translate() testcaseQuotes PT", async () => {
+    const msg = "test.DeepLAadapter@87";
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let srcLang = 'en';
+    let dstLang = 'pt';
+    let RQ1 = QuoteParser.RQ1;
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let lQuote = QuoteParser.LQ1;
+    let rQuote = QuoteParser.RQ1;
+    let lang = 'mind/PT';
+    let srcTexts = [
+      QuoteParser.testcaseQuotesEN({lang, lQuote}),
+      QuoteParser.testcaseQuotesEN({lang, rQuote}),
+      QuoteParser.testcaseQuotesEN({lang, lQuote, rQuote}),
+    ];
+
+    dbg && console.log(msg, '[1]srcTexts', srcTexts);
+    let res = await dlt.translate(srcTexts);
+
+    should.deepEqual(res, [
+      `${LQ1}Ouça e aplique bem a sua mente/PT, eu falarei.`,
+      `Ouça e aplique bem a sua mente/PT, eu falarei.${RQ1}`,
+      `${LQ1}Ouça e aplique bem a sua mente/PT, eu falarei.${RQ1}`,
+    ]);
+  });
   it("translate() EN=>PT", async () => {
     //DeepLAdapter.setMockApi(false);
     let srcLang = 'en';
@@ -103,6 +129,7 @@ const {
       '"Bhikkhu, você procura esmola comida antes de comer;');
   });
   it("translate() dark/bright EN>PT", async () => {
+    const msg = 'test.DeepLTranslator@132';
     let srcLang = 'en';
     let dstLang = 'pt-PT';
     //DeepLAdapter.setMockApi(false);
@@ -115,7 +142,7 @@ const {
     ]);
 
     should.deepEqual(res, [
-      'E o que são acções sombrias e luminosas?',
+      'E o que são actos sombrios e luminosos?',
       'Do lado do sombrio e do luminoso',
     ]);
   });
@@ -136,6 +163,7 @@ const {
       '"Bhikkhu, essa visão é incorrecta;');
   });
   it("translate() testcaseDepthEN FR", async () => {
+    const msg = 'test.DeepLTranslator@167';
     let srcLang = 'en';
     let dstLang = 'fr';
     //DeepLAdapter.setMockApi(false);
@@ -145,7 +173,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
+      `${LQ1}${LQ2}Je dis, ${LQ3}Vous dites, ${LQ4}Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}.`);
   })
   it("translate() testcaseDepthEN PT", async () => {
     let srcLang = 'en';
@@ -157,7 +185,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<w><x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`
+      `${LQ1}${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`
     );
   })
   it("translate() testcaseRebirthEN FR", async () => {
@@ -171,7 +199,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-    `<x>Je comprends : <y>La renaissance est terminée en FR${RQ3}${RQ2}?${RQ1}`
+    `${LQ2} Je comprends : ${LQ3}La renaissance est terminée en FR${RQ3}${RQ2}?${RQ1}.`
     )
   })
   it("translate() testcaseQ2EN FR", async () => {
@@ -184,7 +212,7 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal(
-      `<x>Je dis, <y>Vous dites, <z>Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
+      `${LQ2}Je dis, ${LQ3}Vous dites, ${LQ4}Je dis FR!${RQ4}?${RQ3}.${RQ2}${RQ1}.`);
   })
   it("translate() testcaseQ2EN PT", async () => {
     let srcLang = 'en';
@@ -198,7 +226,7 @@ const {
 
     // Closing XML element is passed through
     should(res[0]).equal(
-      `<x>Eu digo, <y>Você diz, <z>Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
+      `${LQ2}Eu digo, ${LQ3}Você diz, ${LQ4}Eu disse PT!${RQ4}?${RQ3}.${RQ2}${RQ1}`);
   })
   it("translate() testcaseThinking_EN", async () => {
     let srcLang = 'en';
@@ -309,9 +337,9 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal([
-      `Eles compreendem: <w>Isto é PT</w><ell/>`,
-      `<w>Isto é sofrimento</w><ell/>`,
-      `<w>Isto é a origem</w>.`,
+      `Eles compreendem: ${LQ1}Isto é PT${RQ1}<ell/>`,
+      `${LQ1}Isto é sofrimento${RQ1}<ell/>`,
+      `${LQ1}Isto é a origem${RQ1}.`,
     ].join(''));
   })
   it("translate() testcaseEllipsisEN ES", async () => {
@@ -331,9 +359,9 @@ const {
     let res = await dlt.translate([srcText]);
 
     should(res[0]).equal([
-      `Ellos comprenden: `, `<w>Esto es ES</w>`, 
-      ellipsis, `<w>Esto es sufrimiento</w>`, 
-      ellipsis, `<w>Este es el origen</w>`, 
+      `Comprenden: `, `${LQ1}Esto es ES${RQ1}`, 
+      ellipsis, `${LQ1}Esto es sufrimiento${RQ1}`, 
+      ellipsis, `${LQ1}Este es el origen${RQ1}`, 
       `.`,
     ].join(''));
   })
