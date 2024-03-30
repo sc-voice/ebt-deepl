@@ -213,6 +213,13 @@ class MockTranslator {
         QuoteParser.testcaseQuotesEN({lang:'mind/PT', lQuote, rQuote}),
         `${LQ1}Ouça e aplique bem a sua mente/PT, eu falarei.${RQ1}`,
       ).replace(
+        QuoteParser.testcaseMisterEN({
+          lang: 'messenger/PT',
+          lQuote:QuoteParser.LQ3,
+          rQuote:QuoteParser.RQ3,
+        }),
+        `‘Senhor, vocíª ní£o viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
+      ).replace(
         QuoteParser.testcaseDonationEN({
           lang: 'religious/PT',
           rQuote:QuoteParser.RQ1,

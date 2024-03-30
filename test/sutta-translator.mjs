@@ -654,7 +654,7 @@ const {
     ]);
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() testcaseDonationEN PT", async()=>{
+  it("translateTexts() testcaseDonationEN PT", async()=>{
     const msg = 'test.SuttaTranslator@658';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
@@ -704,5 +704,24 @@ const {
     should(postXlt[0]).equal(
       'É impossível, monges, é incorreto. ',
     );
+  });
+  it("TESTTESTtranslateTexts() testcaseMister  PT", async()=>{
+    const msg = 'test.SuttaTranslator@789';
+    const dbg = 0;
+    //DeepLAdapter.setMockApi(false);
+    let srcTexts = [ 
+      QuoteParser.testcaseMisterEN({
+        lang: 'messenger/PT',
+        lQuote:QuoteParser.LQ3,
+        rQuote:QuoteParser.RQ3,
+      }),
+    ];
+    dbg && console.log(msg, srcTexts);
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should.deepEqual(dstTexts, [
+      `‘Senhor, vocíª ní£o viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
+    ]);
+    dbg && console.log(msg, dstTexts);
   });
 })

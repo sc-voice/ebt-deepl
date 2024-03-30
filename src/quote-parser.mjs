@@ -179,6 +179,19 @@ export default class QuoteParser {
     ].join('');
   }
 
+  static testcaseMisterEN(opts={}) {
+    let {
+      lang='messenger',
+      lQuote='',
+      rQuote='',
+    } = opts;
+    return [
+      lQuote,
+      `Mister, did you not see the first ${lang} of the DEVA1s that appeared among human beings\?`,
+      rQuote,
+    ].join('');
+  }
+
   static testcaseQuotesEN(opts={}) {
     let {
       lang='mind',
