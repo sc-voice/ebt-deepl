@@ -26,10 +26,10 @@ const LQ1 = '<l1/>';
 const LQ2 = '<l2/>';
 const LQ3 = '<l3/>';
 const LQ4 = '<l4/>';
-const RQ1 = '<r1/>‡'; // DeepL deletes trailing XML elements
-const RQ2 = '<r2/>‡'; // DeepL deletes trailing XML elements
-const RQ3 = '<r3/>‡'; // DeepL deletes trailing XML elements
-const RQ4 = '<r4/>‡'; // DeepL deletes trailing XML elements
+const RQ1 = '<r1/>'; // DeepL deletes trailing XML elements
+const RQ2 = '<r2/>'; // DeepL deletes trailing XML elements
+const RQ3 = '<r3/>'; // DeepL deletes trailing XML elements
+const RQ4 = '<r4/>'; // DeepL deletes trailing XML elements
 const ELL = '<ell/>';
 
 import { DBG, } from './defines.mjs';
@@ -184,10 +184,11 @@ export default class QuoteParser {
       lang='messenger',
       lQuote='',
       rQuote='',
+      gods='gods',
     } = opts;
     return [
       lQuote,
-      `Mister, did you not see the first ${lang} of the DEVA1s that appeared among human beings\?`,
+      `Mister, did you not see the first ${lang} of the ${gods} that appeared among human beings\?`,
       rQuote,
     ].join('');
   }
@@ -204,10 +205,16 @@ export default class QuoteParser {
   static testcaseDonationEN(opts={}) {
     let {
       lang='religious',
+      people='kinds of people',
       lQuote='',
       rQuote='',
+      apos="'",
     } = opts;
-    return `${lQuote}These are two kinds of people in the world who are worthy of a ${lang} donation, and that's where you should give a gift.${rQuote} `;
+    return [
+      `${lQuote}These are two ${people} in the world`,
+      `who are worthy of a ${lang} donation,`,
+      `and that${apos}s where you should give a gift.${rQuote} `,
+    ].join(' ');
   }
 
   static testcaseEllipsisEN(lang, opts=QuoteParser) {

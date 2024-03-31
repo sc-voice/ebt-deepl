@@ -1,12 +1,12 @@
 export const DBG = {
   TEST: 0,
   GLOSSARY: 0,
-  DEEPL_XLT: 0,  // DeepLAdaptor
-  TRANSLATE: 0,  // SuttaTranslator
+  MOCK_XLT: 0,
+  DEEPL_XLT: 0,
+  SUTTA_XLT: 0,  
   LOAD_SUTTA: 0,
   QUOTE: 0,
   VERBOSE: 0,
-  SUTTA_XLT: 0,
   TITLE: 0,
   TRANSFORM: 0,
   TEST_API: 0, // use real API

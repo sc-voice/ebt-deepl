@@ -325,10 +325,7 @@ export default class SuttaTranslator {
     try {
       var filePath = path.join(root, bilaraPath);
       var rawText = (await fs.promises.readFile(filePath)).toString();
-      var xfmText = SuttaTranslator
-        .transformText(rawText, srcTransform);
-      dbgv && console.log(msg, '[1]', {rawText,xfmText});
-      var segments = JSON.parse(xfmText);
+      var segments = JSON.parse(rawText);
       scids = Object.keys(segments);
       scids.forEach(scid=>{
         if (SuttaTranslator.isTitle(scid)) {
@@ -365,7 +362,7 @@ export default class SuttaTranslator {
 
   async translateTexts(srcTexts) {
     const msg = 'SuttaTranslator.translateTexts()';
-    const dbg = DBG.TRANSLATE;
+    const dbg = DBG.SUTTA_XLT;
     let { xltDeepL } = this;
     let preTexts = this.preTranslate(srcTexts);
     dbg && console.log(msg, '[1]preTexts', preTexts);
@@ -379,7 +376,7 @@ export default class SuttaTranslator {
 
   async translate(suid) {
     const msg = 'SuttaTranslator.translate()';
-    const dbg = DBG.TRANSLATE;
+    const dbg = DBG.SUTTA_XLT;
     const sref = SuttaRef.create(suid);
     const { sutta_uid, lang, author, segnum } = sref;
     let { 
@@ -430,15 +427,19 @@ export default class SuttaTranslator {
   preTranslate(srcTexts) {
     const msg = 'SuttaTranslator.preTranslate()';
     const dbg = 0;
-    let { qpSrc, qpPre } = this;
+    let { srcTransform, qpSrc, qpPre } = this;
     if (qpSrc == null) {
       dbg && console.log(msg, '[1]no_qpSrc');
       return srcTexts;
     }
     return srcTexts.map((srcText,i)=>{
       let level = qpSrc.quotationLevel(srcText);
-      let dstText =  qpSrc.convertQuotes(srcText, qpPre, level);
-      dbg && console.log(msg, `[2]convertQuotes${level}`, dstText);
+      var xfmText = SuttaTranslator
+        .transformText(srcText, srcTransform);
+      dbg && console.log(msg, `[2]srcTransform`, xfmText);
+      let dstText =  qpSrc.convertQuotes(xfmText, qpPre, level);
+      //let dstText =  qpSrc.convertQuotes(srcText, qpPre, level);
+      dbg && console.log(msg, `[3]convertQuotes${level}`, dstText);
       return dstText;
     });
   }

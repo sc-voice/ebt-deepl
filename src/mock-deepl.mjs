@@ -39,6 +39,18 @@ class MockGlossary {
 const qp_en_deepl = new QuoteParser({lang:'en-deepl'});
 const qp_fr_deepl = new QuoteParser({lang:'fr-deepl'});
 
+function compare(a,b) {
+  const msg = "MockDeepL.compare()";
+  let len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    let ai = a.charAt(i);
+    let bi = b.charAt(i);
+    if (ai !== bi) {
+      console.log(msg, {i, ai, bi});
+    }
+  }
+}
+
 class MockTranslator {
   constructor(authKey) {
     const msg = 'MockTranslator.ctor()';
@@ -56,11 +68,20 @@ class MockTranslator {
 
   async translateText(texts, sourceLang, targetLang, translateOpts) {
     const msg = "MockTranslator.translateText()";
-    const dbg = 0 || DBG.VERBOSE;
-    dbg && console.log(msg, {sourceLang, targetLang}, texts);
+    const dbg = DBG.MOCK_XLT;
+    const dbgv = dbg && DBG.VERBOSE;
 
     return texts.map(text=>{
-    dbg && console.log(msg, "TEST", text);
+      dbg && console.log(msg, `"${text}"`);
+      
+      if (0) { // use this to debug
+        let actualText = QuoteParser.testcaseDonationEN({
+          lang: 'religious-PT',
+          rQuote:QuoteParser.RQ1,
+        })
+        compare(actualText, text);
+      }
+
       text = text && text.replace(
         `${LQ1}Bhikkhus, I do not see a single thing that is so `+
           'very blameworthy as wrong view.',
@@ -145,14 +166,14 @@ class MockTranslator {
         'One who desires merit, grounded in the skillful, ',
         'Aquele que deseja o mérito, baseado no hábil, '
       ).replace(
-        'There Sāriputta addressed the mendicants',
-        'Aí, Sāriputta dirigiu-se aos mendicantes ',
+        'There Sāriputta addressed the bhikkhus',
+        'Aí Sāriputta dirigiu-se aos monges ',
       ).replace(
         'There the Blessed One is now staying',
         'Lá o Abençoado está agora a ficar ',
       ).replace(
-        'There is, brahmin.',
-        'Há, brâmane. '
+        'There exists, brahmin.',
+        'Existe, brâmane. '
       ).replace(
         '2. endeavor',
         '2. esforzarse ',
@@ -213,18 +234,23 @@ class MockTranslator {
         QuoteParser.testcaseQuotesEN({lang:'mind/PT', lQuote, rQuote}),
         `${LQ1}Ouça e aplique bem a sua mente/PT, eu falarei.${RQ1}`,
       ).replace(
+        QuoteParser.testcaseDonationEN({
+          lang: 'religious-PT',
+          rQuote:QuoteParser.RQ1,
+          people:'people',
+        }),
+        `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT, e é aí que deve dar um presente.${RQ1} `
+      ).replace(
         QuoteParser.testcaseMisterEN({
           lang: 'messenger/PT',
           lQuote:QuoteParser.LQ3,
           rQuote:QuoteParser.RQ3,
+          gods: 'DEVA1s',
         }),
-        `‘Senhor, vocíª ní£o viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
+        `‘Senhor, você não viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
       ).replace(
-        QuoteParser.testcaseDonationEN({
-          lang: 'religious/PT',
-          rQuote:QuoteParser.RQ1,
-        }),
-        `Estes são dois tipos de pessoas no mundo que são dignas de um donativo religioso/PT, e é aí que deve dar um presente.${RQ1} `
+        `These are two people in the world who are worthy of a religious-PT donation.${RQ1}`,
+        `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT.${RQ1}`,
       );
       return {
         text,

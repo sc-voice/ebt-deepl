@@ -365,4 +365,18 @@ const {
       `.`,
     ].join(''));
   })
+  it("translate() trailing xml", async () => {
+    let srcLang = 'en';
+    let dstLang = 'pt-pt';
+    //DeepLAdapter.setMockApi(false);
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+
+    let res = await dlt.translate([
+      `These are two people in the world who are worthy of a religious-PT donation.${RQ1}`
+    ]);
+
+    should.deepEqual(res, [
+      `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT.${RQ1}`
+    ]);
+  });
 })

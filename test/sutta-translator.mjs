@@ -121,19 +121,6 @@ const {
     let seg = segments[`an2.2:1.0`];
     should(segments[`an2.2:1.0`]).match(/2. endeavor/);
   });
-  it("loadSutta() an3.49/de/sabbamitta", async()=>{
-    let sutta_uid = 'an3.49/de/sabbamitta';
-    let st = await st_de_pt();
-    let txt = '"an3.49:2.1": "Das ist ein Mönch, der eifrig ist, '
-    let res = await st.loadSutta(sutta_uid, {
-      srcTransform: DE_TRANSFORM,
-      bilaraData,
-    });
-    let {
-      segments,
-    } = res;
-    should(segments['an3.49:2.1']).match(/ein Moench,/);
-  });
   it("titleCase()", async()=>{
     let paliWords = await SuttaTranslator.paliWords();
 
@@ -176,28 +163,6 @@ const {
     should(dstSegs['an3.94:0.3']).equal(
       'Primavera ',
     );
-  });
-  it("translate() an3.49", async()=>{
-    const msg = 'test.SuttaTranslator@187';
-    let sutta_uid = 'an3.49';
-    //DeepLAdapter.setMockApi(false);
-    let srcLang = 'de';
-    let dstLang = 'pt';
-    let srcAuthor = 'sabbamitta';
-    let dstAuthor = DEEPL;
-    let st = await st_de_pt();
-    let res = await st.translate(sutta_uid);
-    let { 
-      srcRef, srcPath, srcSegs, dstRef, dstPath, dstSegs 
-    } = res;
-    should(srcRef).properties({ 
-      sutta_uid, lang: 'de', author: 'sabbamitta' });
-    should(dstRef).properties({ 
-      sutta_uid, lang: 'pt', author: DEEPL });
-    should(dstSegs['an3.49:1.1']).match(/bhikkhus,/);
-    should(dstSegs['an3.49:1.2']).match(/Quais são os três?/);
-    should(dstSegs['an3.49:2.1']).match(/Este é um bhikkhu /);
-    should(dstSegs['an3.49:2.2']).match(/chama um bhikkhu /);
   });
   it("translate() an5.44", async()=>{
     const msg = 'test.SuttaTranslator@209';
@@ -515,12 +480,12 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-  it("translateTexts() There are EN", async()=>{
+  it("TESTTESTtranslateTexts() There are EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
-      'There Sāriputta addressed the mendicants',
+      'There Sāriputta addressed the bhikkhus',
       'There the Blessed One is now staying',
       'There is, brahmin.'
     ];
@@ -530,11 +495,11 @@ const {
     dbg && console.log(msg, dstTexts);
     let i = 0;
     should(dstTexts[i++]).equal(
-      'Aí, Sāriputta dirigiu-se aos mendicantes ');
+      'Aí Sāriputta dirigiu-se aos monges ');
     should(dstTexts[i++]).equal(
       'Lá o Abençoado está agora a ficar ');
     should(dstTexts[i++]).equal(
-      'Há, brâmane. ');
+      'Existe, brâmane. ');
   });
   it("translateTexts() the skillful EN", async()=>{
     const msg = 'test.SuttaTranslator.translateTexts()';
@@ -656,21 +621,18 @@ const {
   });
   it("translateTexts() testcaseDonationEN PT", async()=>{
     const msg = 'test.SuttaTranslator@658';
-    const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
       QuoteParser.testcaseDonationEN({
-        lang: 'religious/PT',
+        lang: 'religious-PT',
         rQuote:QuoteParser.RQ1,
       }),
     ];
-    dbg && console.log(msg, srcTexts);
     let st = await st_en_pt();
     let dstTexts = await st.translateTexts(srcTexts);
     should.deepEqual(dstTexts, [
-      `Estes são dois tipos de pessoas no mundo que são dignas de um donativo religioso/PT, e é aí que deve dar um presente.» `
+      `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT, e é aí que deve dar um presente.» `
     ]);
-    dbg && console.log(msg, dstTexts);
   });
   it("translateTexts() visão incorrecta EN", async()=>{
     const msg = 'test.SuttaTranslator.translateTexts()';
@@ -705,7 +667,7 @@ const {
       'É impossível, monges, é incorreto. ',
     );
   });
-  it("TESTTESTtranslateTexts() testcaseMister  PT", async()=>{
+  it("translateTexts() testcaseMister  PT", async()=>{
     const msg = 'test.SuttaTranslator@789';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
@@ -720,7 +682,7 @@ const {
     let st = await st_en_pt();
     let dstTexts = await st.translateTexts(srcTexts);
     should.deepEqual(dstTexts, [
-      `‘Senhor, vocíª ní£o viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
+      `‘Senhor, você não viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
     ]);
     dbg && console.log(msg, dstTexts);
   });

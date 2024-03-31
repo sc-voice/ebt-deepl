@@ -278,6 +278,7 @@ export default class DeepLAdapter { constructor(opts={}) {
   async translate(texts) {
     const msg = "DeeplTranslator.translate()";
     const dbg = DBG.DEEPL_XLT;
+    const dbgv = dbg && DBG.VERBOSE;
     let { 
       translator, srcLang, dstLang, translateOpts
     } = this;
@@ -285,12 +286,14 @@ export default class DeepLAdapter { constructor(opts={}) {
     let sourceLang = DeepLAdapter.deeplLang(srcLang); 
     let targetLang = DeepLAdapter.deeplLang(dstLang);
     texts = texts.map(t=> t || EMPTY_TEXT);
-    dbg && console.log(msg, '[1]translateOpts',  translateOpts);
+    dbgv && console.log(msg, '[1]translateOpts',  translateOpts);
     var results = await translator
       .translateText(texts, sourceLang, targetLang, translateOpts);
     if (dbg) {
       results.forEach((result,i)=>{
-        console.log(msg, '\n  ', texts[i], '\n  ', results[i]?.text);
+        console.log(msg, 
+          `\n[${i}<] `, texts[i], 
+          `\n[${i}>] `, results[i]?.text);
       });
     }
     results = results.map(r=>r.text === EMPTY_TEXT ? '' : r.text);
