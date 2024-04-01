@@ -251,6 +251,14 @@ class MockTranslator {
       ).replace(
         `These are two people in the world who are worthy of a religious-PT donation.${RQ1}`,
         `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT.${RQ1}`,
+      ).replace(
+        QuoteParser.testcaseMisterEN({
+          lang: 'messenger/PT',
+          lQuote:QuoteParser.LQ2,
+          rQuote:QuoteParser.RQ2,
+          gods: 'DEVA1s',
+        }),
+      `${LQ2}Senhor, não viu o primeiro mensageiro/PT dos DEVA1s que apareceu entre os seres humanos?${RQ2}`,
       );
       return {
         text,

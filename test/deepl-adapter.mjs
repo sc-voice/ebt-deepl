@@ -9,6 +9,8 @@ const {
   LQ1, LQ2, LQ3, LQ4,
   RQ1, RQ2, RQ3, RQ4,
   ELLIPSIS, ELL,
+  LSQUOT, RSQUOT,
+  LDQUOT, RDQUOT,
 } = QuoteParser;
 
 (typeof describe === 'function') && 
@@ -365,7 +367,10 @@ const {
       `.`,
     ].join(''));
   })
-  it("translate() trailing xml", async () => {
+  it("TESTTESTtranslate() trailing xml", async () => {
+    const msg = "test.DeepLAdapter@371";
+    let dbg = DBG.DEEPL_XLT;
+    dbg && console.log(msg);
     let srcLang = 'en';
     let dstLang = 'pt-pt';
     //DeepLAdapter.setMockApi(false);
@@ -377,6 +382,27 @@ const {
 
     should.deepEqual(res, [
       `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT.${RQ1}`
+    ]);
+  });
+  it("translate() trailing xml", async () => {
+    const msg = "test.DeepLAdapter@388";
+    let dbg = DBG.DEEPL_XLT;
+    dbg && console.log(msg);
+    //DeepLAdapter.setMockApi(false);
+    let srcLang = 'en';
+    let dstLang = 'pt-pt';
+    let dlt = await DeepLAdapter.create({srcLang, dstLang});
+    let gods = 'DEVA1s';
+    let lQuote = LQ2;
+    let rQuote = RQ2;
+    let lang = 'messenger/PT';
+
+    let res = await dlt.translate([
+      QuoteParser.testcaseMisterEN({ lQuote, rQuote, gods, lang }),
+    ]);
+
+    should.deepEqual(res, [
+      `${lQuote}Senhor, não viu o primeiro mensageiro/PT dos ${gods} que apareceu entre os seres humanos?${rQuote}`,
     ]);
   });
 })
