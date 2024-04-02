@@ -368,7 +368,7 @@ const {
       `.`,
     ].join(''));
   })
-  it("TESTTESTtranslate() trailing xml", async () => {
+  it("translate() trailing xml", async () => {
     const msg = "test.DeepLAdapter@371";
     let dbg = DBG.DEEPL_XLT;
     dbg && console.log(msg);
@@ -433,7 +433,7 @@ const {
       rQuote,
     ]);
   });
-  it("TESTTESTtranslate() trailing xml sick", async () => {
+  it("translate() trailing xml sick", async () => {
     const msg = "test.DeepLAdapter@388";
     //DBG.DEEPL_XLT = true;
     let dbg = DBG.DEEPL_XLT;

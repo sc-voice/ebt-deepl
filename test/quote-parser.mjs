@@ -223,21 +223,77 @@ const MODULE = 'quote-parser';
     dbg && console.log(msg, qp_pre.rexSplit, preText);
     should(qp_pre.quotationLevel(preText)).equal(1);
   });
-  it("TESTTESTquotationLevel() LQ1...RQ1?RQ2", ()=>{
+  it("syncQuoteLevel() ok", ()=>{
     const msg = 'test.QuoteParser@227';
-    return console.log(msg, "TODO");
-    DBG.QUOTE = true;
     const dbg = DBG.QUOTE;
-    dbg && console.log(msg);
-
-    let qp_en = new QuoteParser({lang:'en'});
-    let enText = `${LDQUOT}Hello there${RDQUOT}?${RSQUOT}`;
-    dbg && console.log(msg, qp_en.rexSplit, enText);
-    should(qp_en.quotationLevel(enText, 0)).equal(1);
-
-    //let qp_pre = new QuoteParser({lang:'en-deepl'});
-    //let preText = qp_pre.testcaseReligionsEN('French');
-    //dbg && console.log(msg, qp_pre.rexSplit, preText);
-    //should(qp_pre.quotationLevel(preText)).equal(1);
+    let qp = new QuoteParser({lang:'en'});
+    dbg && console.log(msg, '[1]rexSplit', qp.rexSplit);
+    let [ lq1, lq2, lq3, lq4 ] = qp.openQuotes;
+    let [ rq1, rq2, rq3, rq4 ] = qp.closeQuotes;
+    let tests = [
+      `a`, // 0,1,2,3
+      `${lq1}a${rq1}`, // 0,2
+      `${lq2}a${rq2}`, // 1,3
+      `a${rq2}`, // 2,4
+      `${lq3}a${rq3}?${rq2}`, // 2
+      `${lq2}a${rq2}${rq1}`, // 1,2
+    ];
+    let i = -1;
+    dbg && console.log(msg, `[2]`, tests[++i]);
+    should(qp.syncQuoteLevel(tests[i], 0)).equal(0);
+    should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
+    dbg && console.log(msg, `[3]`, tests[++i]);
+    should(qp.syncQuoteLevel(tests[i], 0)).equal(0);
+    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
+    dbg && console.log(msg, `[4]`, tests[++i]);
+    should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
+    dbg && console.log(msg, `[5]`, tests[++i]);
+    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 4)).equal(4);
+    dbg && console.log(msg, `[6]`, tests[++i]);
+    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
+    dbg && console.log(msg, `[7]`, tests[++i]);
+    should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
+  });
+  it("TESTTESTsyncQuoteLevel() errors", ()=>{
+    const msg = 'test.QuoteParser@263';
+    const dbg = DBG.QUOTE;
+    let qp = new QuoteParser({lang:'en'});
+    dbg && console.log(msg, '[1]rexSplit', qp.rexSplit);
+    let [ lq1, lq2, lq3, lq4 ] = qp.openQuotes;
+    let [ rq1, rq2, rq3, rq4 ] = qp.closeQuotes;
+    let tests = [
+      `${lq1}a${rq1}`, // 0,2
+      `${lq2}a${rq2}`, // 1,3
+      `a${rq2}`, // 2,4
+      `${lq3}a${rq3}?${rq2}`, // 2
+      `${lq2}a${rq2}${rq1}`, // 1,2
+    ];
+    let i = 0;
+    console.log(msg, "***** BEGIN syncQuoteLevel() error test");
+    dbg && console.log(msg, `[2]`, tests[i]);
+    should(qp.syncQuoteLevel(tests[i], 1)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3)).equal(0);
+    should(qp.syncQuoteLevel(tests[i], 4)).equal(2);
+    i++
+    dbg && console.log(msg, `[3]`, tests[i]);
+    should(qp.syncQuoteLevel(tests[i], 0)).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 2)).equal(3);
+    should(qp.syncQuoteLevel(tests[i], 4)).equal(1);
+    i++
+    dbg && console.log(msg, `[4]`, tests[i]);
+    should(qp.syncQuoteLevel(tests[i], 0)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 1)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3)).equal(2);
+    i++
+    dbg && console.log(msg, `[5]`, tests[i]);
+    should(qp.syncQuoteLevel(tests[i], 0)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 1)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3)).equal(2);
+    console.log(msg, "***** END syncQuoteLevel() error test");
   });
 })

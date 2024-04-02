@@ -542,6 +542,49 @@ export default class QuoteParser {
     return aposParts.join(swapApos);
   }
 
+  #syncQuoteLevel(text='', startLevel=0) {
+    const msg = 'QuoteParser.#syncQuoteLevel()';
+    const dbg = DBG.QUOTE;
+    let level = startLevel;
+    let syncLevel = startLevel;
+    let levelError = 0;
+    let { maxLevel, rexSplit, openQuotes, closeQuotes } = this;
+    let parts = text.split(rexSplit);
+    if (parts.length === 1) {
+      dbg && console.log(msg, '[2]no-quotes', parts);
+      return level;
+    }
+    for (let i=1; i<parts.length; i+=2) {
+      let part = parts[i]; // parts with odd indices are quotes
+
+      if (part === openQuotes[level]) { // sync ok
+        level++;
+      } else if (part === closeQuotes[level-1]) {
+        level--;
+      } else { // sync fail
+        let emsg = `${msg} ERROR [${startLevel}?${text}]`;
+        return new Error(emsg);
+      }
+    }
+    return syncLevel;
+  }
+
+  syncQuoteLevel(text='', startLevel=0) {
+    const msg = 'QuoteParser.syncQuoteLevel()';
+    const dbg = DBG.QUOTE;
+    let { maxLevel } = this;
+    let level = this.#syncQuoteLevel(text, startLevel);
+    if (level instanceof Error) {
+      let e = level;
+      for (let i=1; (level instanceof Error) && i<maxLevel; i++) {
+        let tryLevel = (startLevel + i) % maxLevel;
+        level = this.#syncQuoteLevel(text, tryLevel);
+      }
+      console.log(msg, '[1]SYNC?', `level ${startLevel}=>${level}`, text);
+    }
+    return level;
+  }
+
   quotationLevel(text='') {
     const msg = 'QuoteParser.quotationLevel()';
     const dbg = 0 || DBG.VERBOSE;

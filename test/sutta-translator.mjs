@@ -480,7 +480,7 @@ const {
     );
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() There are EN", async()=>{
+  it("translateTexts() There are EN", async()=>{
     const msg = 'test.SuttaTranslator.translate()';
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
