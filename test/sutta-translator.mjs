@@ -686,4 +686,23 @@ const {
     ]);
     dbg && console.log(msg, dstTexts);
   });
+  it("TESTTESTtranslateTexts() testcaseMister  PT", async()=>{
+    const msg = "test.SuttaTranslator@690";
+    return console.log(msg, "TODO");
+    DBG.SUTTA_XLT = true;
+    const dbg = DBG.SUTTA_XLT;
+    dbg && console.log(msg);
+    let opts={
+      lQuote1: LDQUOT,
+      rQuote1: RDQUOT,
+      rQuote2: RSQUOT,
+      lang: 'PT sickness',
+    }
+    let srcTexts = [ QuoteParser.testcaseSickEN(opts), ];
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should.deepEqual(dstTexts, [
+      `‘Senhor, você não viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
+    ]);
+  });
 })

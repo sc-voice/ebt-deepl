@@ -292,8 +292,8 @@ export default class DeepLAdapter { constructor(opts={}) {
     if (dbg) {
       results.forEach((result,i)=>{
         console.log(msg, 
-          `\n[${i}<] `, texts[i], 
-          `\n[${i}>] `, results[i]?.text);
+          `\n[${i}<] `, `${texts[i]}$`, 
+          `\n[${i}>] `, `${results[i]?.text}$`);
       });
     }
     results = results.map(r=>r.text === EMPTY_TEXT ? '' : r.text);

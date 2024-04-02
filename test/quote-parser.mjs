@@ -223,4 +223,21 @@ const MODULE = 'quote-parser';
     dbg && console.log(msg, qp_pre.rexSplit, preText);
     should(qp_pre.quotationLevel(preText)).equal(1);
   });
+  it("TESTTESTquotationLevel() LQ1...RQ1?RQ2", ()=>{
+    const msg = 'test.QuoteParser@227';
+    return console.log(msg, "TODO");
+    DBG.QUOTE = true;
+    const dbg = DBG.QUOTE;
+    dbg && console.log(msg);
+
+    let qp_en = new QuoteParser({lang:'en'});
+    let enText = `${LDQUOT}Hello there${RDQUOT}?${RSQUOT}`;
+    dbg && console.log(msg, qp_en.rexSplit, enText);
+    should(qp_en.quotationLevel(enText, 0)).equal(1);
+
+    //let qp_pre = new QuoteParser({lang:'en-deepl'});
+    //let preText = qp_pre.testcaseReligionsEN('French');
+    //dbg && console.log(msg, qp_pre.rexSplit, preText);
+    //should(qp_pre.quotationLevel(preText)).equal(1);
+  });
 })

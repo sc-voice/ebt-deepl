@@ -259,6 +259,26 @@ class MockTranslator {
           gods: 'DEVA1s',
         }),
       `${LQ2}Senhor, não viu o primeiro mensageiro/PT dos DEVA1s que apareceu entre os seres humanos?${RQ2}`,
+      ).replace(
+        QuoteParser.testcaseElderlyEN({ 
+          lQuote:LQ2, rQuote:RQ2, lang:' PT' }),
+        LQ2+
+        `Senhor PT, não viu entre os seres humanos `+
+        `uma mulher ou um homem idoso - com oitenta, `+
+        `noventa ou cem anos - dobrado, torto, apoiado `+
+        `num bordão, a tremer ao andar, doente, fora de moda, `+
+        `com os dentes partidos, o cabelo grisalho e escasso `+
+        `ou calvo, a pele enrugada e os membros manchados?`+
+        RQ2,
+      ).replace(
+        QuoteParser.testcaseSickEN({ lang: 'PT sickness' }),
+        LQ1+
+        'Eu também estou sujeito a ficar doente. '+
+        'Não estou isento da doença de PT. É melhor fazer o '+
+        'bem através do corpo, da fala e da mente'+
+        RQ1+
+        '?'+
+        RQ2
       );
       return {
         text,

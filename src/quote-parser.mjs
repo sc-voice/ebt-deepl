@@ -26,10 +26,10 @@ const LQ1 = '<l1/>';
 const LQ2 = '<l2/>';
 const LQ3 = '<l3/>';
 const LQ4 = '<l4/>';
-const RQ1 = '<r1/>.'; // DeepL deletes trailing XML elements
-const RQ2 = '<r2/>.'; // DeepL deletes trailing XML elements
-const RQ3 = '<r3/>.'; // DeepL deletes trailing XML elements
-const RQ4 = '<r4/>.'; // DeepL deletes trailing XML elements
+const RQ1 = ' <r1/>'; // DeepL deletes trailing XML elements
+const RQ2 = ' <r2/>'; // DeepL deletes trailing XML elements
+const RQ3 = ' <r3/>'; // DeepL deletes trailing XML elements
+const RQ4 = ' <r4/>'; // DeepL deletes trailing XML elements
 const ELL = '<ell/>';
 
 import { DBG, } from './defines.mjs';
@@ -179,6 +179,44 @@ export default class QuoteParser {
     ].join('');
   }
 
+  static testcaseElderlyEN(opts={}) {
+    let {
+      lang='messenger',
+      lQuote='',
+      rQuote='',
+      gods='gods',
+    } = opts;
+    return [
+      lQuote,
+      `Mister, did you not see among human beings an `,
+      `elderly woman or a man—eighty, ninety, or a hundred `,
+      `years old—bent double, crooked, leaning on a staff, `,
+      `trembling as they walk, ailing, past their prime, `,
+      `with teeth broken, hair grey and scanty or bald, `,
+      `skin wrinkled, and limbs blotchy?`,
+      rQuote,
+    ].join('');
+  }
+
+  static testcaseSickEN(opts={}) {
+    let {
+      lang='sickness',
+      lQuote1='',
+      rQuote1='',
+      rQuote2='',
+      apos="'",
+    } = opts;
+    return [
+      lQuote1,
+      `I, too, am liable to become sick. I${apos}m not exempt `,
+      `from ${lang}. I${apos}d better do good by way of body, `,
+      `speech, and mind`,
+      rQuote1,
+      '?',
+      rQuote2,
+    ].join('');
+  }
+
   static testcaseMisterEN(opts={}) {
     let {
       lang='messenger',
@@ -188,7 +226,7 @@ export default class QuoteParser {
     } = opts;
     return [
       lQuote,
-      `Mister, did you not see the first ${lang} of the ${gods} that appeared among human beings\?`,
+      `Mister, did you not see the first ${lang} of the ${gods} that appeared among human beings?`,
       rQuote,
     ].join('');
   }
