@@ -426,17 +426,19 @@ export default class SuttaTranslator {
 
   preTranslate(srcTexts) {
     const msg = 'SuttaTranslator.preTranslate()';
-    const dbg = 0;
+    const dbg = DBG.PRE_XLT;
     let { srcTransform, qpSrc, qpPre } = this;
     if (qpSrc == null) {
       dbg && console.log(msg, '[1]no_qpSrc');
       return srcTexts;
     }
+    let level = 0;
     return srcTexts.map((srcText,i)=>{
-      let level = qpSrc.quotationLevel(srcText);
+      //level = qpSrc.quotationLevel(srcText);
+      level = qpSrc.syncQuoteLevel(srcText, level);
       var xfmText = SuttaTranslator
         .transformText(srcText, srcTransform);
-      dbg && console.log(msg, `[2]srcTransform`, xfmText);
+      dbg && console.log(msg, `[2]srcTransform`, xfmText, level);
       let dstText =  qpSrc.convertQuotes(xfmText, qpPre, level);
       //let dstText =  qpSrc.convertQuotes(srcText, qpPre, level);
       dbg && console.log(msg, `[3]convertQuotes${level}`, dstText);

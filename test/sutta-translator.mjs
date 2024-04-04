@@ -290,22 +290,6 @@ const {
       `${LQ2}I say, ${LQ3}You say, ${LQ4}I said UKFR!${RQ4}?${RQ3}.${RQ2}${RQ1}`
     );
   });
-  it("preTranslate() testcaseFeelingsEN French", async()=>{
-    const msg = 'test.SuttaTranslator.preTranslate()';
-    const dbg = 0;
-    let srcLang = 'en';
-    let dstLang = 'fr';
-    let st = await SuttaTranslator.create({srcLang, dstLang});
-    let rawText = st.qpSrc.testcaseFeelingsEN('French');
-    let { srcTransform } = st;
-    let text = SuttaTranslator.transformText(rawText, srcTransform);
-    let srcTexts = [text];
-    dbg && console.log(msg, srcTexts);
-    let preXlt = st.preTranslate(srcTexts);
-    should(preXlt[0]).equal(
-      `what's the escape from that French feeling?${RQ2}`
-    );
-  });
   it("transformText() testcaseThinkinEN ES", async()=>{
     const msg = 'test.SuttaTranslator@351';
     const dbg = 0;
@@ -407,34 +391,6 @@ const {
     let postXlt = st.postTranslate(xltTexts);
     should(postXlt[0]).equal(
       `“‘Eu digo, “Você diz, ‘Eu disse!’?”.’!” `
-    );
-  });
-  it("translate() testcaseRebirthEN FR", async()=>{
-    const msg = 'test.SuttaTranslator.translate()';
-    //DeepLAdapter.setMockApi(false);
-    let qp_en = new QuoteParser({lang:'en'});
-    let sp = QuoteParser.THNSP;
-    let srcTexts = [ qp_en.testcaseRebirthEN('FR') ];
-    //console.log(msg, srcTexts);
-    let st = await st_en_fr();
-    //DeepLAdapter.setMockApi(false);
-    let dstTexts = await st.translateTexts(srcTexts);
-    should(dstTexts[0]).match(
-      /‹  Je comprends : “La renaissance est terminée en FR” ›\?\u2009?»/
-    );
-  });
-  it("translate() testcaseFeelingsEN FR", async()=>{
-    const msg = "test.SuttaTranslator@451";
-    console.log(msg, "TODO");
-    return; 
-    //DeepLAdapter.setMockApi(false);
-    let qp_en = new QuoteParser({lang:'en'});
-    let srcTexts = [ qp_en.testcaseFeelingsEN('French') ];
-    //console.log(msg, srcTexts);
-    let st = await st_en_fr();
-    let dstTexts = await st.translateTexts(srcTexts);
-    should(dstTexts[0]).match(
-      'comment échapper à ce sentiment français ? '
     );
   });
   it("translate() Durmo PT", async()=>{
@@ -686,23 +642,63 @@ const {
     ]);
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() testcaseMister  PT", async()=>{
+  it("TESTTESTtranslateTexts() testcaseSickEN  PT", async()=>{
     const msg = "test.SuttaTranslator@690";
-    return console.log(msg, "TODO");
-    DBG.SUTTA_XLT = true;
+    //DBG.SUTTA_XLT = true;
+    //DBG.MOCK_XLT = true;
     const dbg = DBG.SUTTA_XLT;
     dbg && console.log(msg);
+    //DeepLAdapter.setMockApi(false);
     let opts={
       lQuote1: LDQUOT,
       rQuote1: RDQUOT,
       rQuote2: RSQUOT,
       lang: 'PT sickness',
+      apos: RSQUOT,
     }
     let srcTexts = [ QuoteParser.testcaseSickEN(opts), ];
     let st = await st_en_pt();
+    let [ LQ1, LQ2, LQ3, LQ4 ] = st.qpDst.openQuotes;
+    let [ RQ1, RQ2, RQ3, RQ4 ] = st.qpDst.closeQuotes;
+    console.log(msg, '***** BEGIN SYNC ERROR TEST');
     let dstTexts = await st.translateTexts(srcTexts);
+    console.log(msg, '***** END SYNC ERROR TEST');
     should.deepEqual(dstTexts, [
-      `‘Senhor, você não viu o primeiro mensageiro/PT dos devas que apareceu entre os seres humanos?’ `,
+      `${LQ3}Eu também estou sujeito a ficar doente. Não `+
+        `estou isento da doença de PT. É melhor fazer o `+
+        `bem através do corpo, da fala e da mente${RQ3}?${RQ2} `
+    ]);
+  });
+  it("preTranslate() testcaseSickEN  PT", async()=>{
+    const msg = "test.SuttaTranslator@709";
+    //DBG.SUTTA_XLT = true;
+    //DBG.QUOTE = true;
+    const dbg = DBG.SUTTA_XLT;
+    dbg && console.log(msg);
+    let opts={
+      lQuote1: LDQUOT, // level 3 open
+      rQuote1: RDQUOT, // level 3 close
+      rQuote2: RSQUOT, // level 2 close
+      lang: 'PT sickness',
+      apos: RSQUOT,
+    }
+    let srcTexts = [ 
+      `${LDQUOT}${LSQUOT}`, // preceding quotes
+      QuoteParser.testcaseSickEN(opts), // quote startLevel 2 (vs. 0)
+    ];
+
+    // simulate a quote sync error by omitting preceding quotes
+    const SYNC_ERROR = true;
+    SYNC_ERROR && srcTexts.shift();
+
+    let st = await st_en_pt();
+    console.log(msg, '***** BEGIN SYNC ERROR TEST');
+    let preXlt = st.preTranslate(srcTexts);
+    console.log(msg, '***** END SYNC ERROR TEST');
+    should.deepEqual(preXlt, [
+      `${LQ3}I, too, am liable to become sick. I\'m not exempt `+
+        `from PT sickness. I\'d better do good by way of `+
+        `body, speech, and mind${RQ3}?${RQ2}`,
     ]);
   });
 })

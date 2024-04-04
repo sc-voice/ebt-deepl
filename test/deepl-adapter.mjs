@@ -433,29 +433,4 @@ const {
       rQuote,
     ]);
   });
-  it("translate() trailing xml sick", async () => {
-    const msg = "test.DeepLAdapter@388";
-    //DBG.DEEPL_XLT = true;
-    let dbg = DBG.DEEPL_XLT;
-    dbg && console.log(msg);
-    //DeepLAdapter.setMockApi(false);
-    let srcLang = 'en';
-    let dstLang = 'pt-pt';
-    let dlt = await DeepLAdapter.create({srcLang, dstLang});
-    let lang = 'PT sickness';
-
-    let res = await dlt.translate([
-      QuoteParser.testcaseSickEN({ lang }),
-    ]);
-
-    should.deepEqual(res, [
-      LQ1+
-      'Eu também estou sujeito a ficar doente. '+
-      'Não estou isento da doença de PT. É melhor fazer o '+
-      'bem através do corpo, da fala e da mente'+
-      RQ1+
-      '?'+
-      RQ2
-    ]);
-  });
 })

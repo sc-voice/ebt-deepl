@@ -259,7 +259,7 @@ const MODULE = 'quote-parser';
     should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
     should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
   });
-  it("TESTTESTsyncQuoteLevel() errors", ()=>{
+  it("syncQuoteLevel() errors", ()=>{
     const msg = 'test.QuoteParser@263';
     const dbg = DBG.QUOTE;
     let qp = new QuoteParser({lang:'en'});

@@ -8,7 +8,8 @@ import { default as QuoteParser } from './quote-parser.mjs';
 const { 
   LQ1, LQ2, LQ3, LQ4, 
   RQ1, RQ2, RQ3, RQ4,
-  ELLIPSIS, ELL,
+  ELLIPSIS, ELL, APOS,
+  LDQUOT, RDQUOT, LSQUOT, RSQUOT,
 } = QuoteParser;
 
 const lQuote = LQ1;
@@ -42,13 +43,16 @@ const qp_fr_deepl = new QuoteParser({lang:'fr-deepl'});
 function compare(a,b) {
   const msg = "MockDeepL.compare()";
   let len = Math.max(a.length, b.length);
+  let ok = true;
   for (let i = 0; i < len; i++) {
     let ai = a.charAt(i);
     let bi = b.charAt(i);
     if (ai !== bi) {
+      ok = false;
       console.log(msg, {i, ai, bi});
     }
   }
+  return ok;
 }
 
 class MockTranslator {
@@ -75,11 +79,20 @@ class MockTranslator {
       dbg && console.log(msg, `"${text}"`);
       
       if (0) { // use this to debug
-        let actualText = QuoteParser.testcaseDonationEN({
-          lang: 'religious-PT',
-          rQuote:QuoteParser.RQ1,
-        })
-        compare(actualText, text);
+        let opts={
+          lQuote1: LQ3,
+          rQuote1: RQ3,
+          rQuote2: RQ2,
+          lang: 'PT sickness',
+          apos: APOS,
+        }
+        let expected = QuoteParser.testcaseSickEN(opts);
+        console.log(msg, {text, expected});
+        if (compare(text, expected)) {
+          dbg && console.log(msg, '[1]compare-ok');
+        } else {
+          dbg && console.log(msg, '[2]COMPARE?');
+        }
       }
 
       text = text && text.replace(
@@ -271,12 +284,18 @@ class MockTranslator {
         `ou calvo, a pele enrugada e os membros manchados?`+
         RQ2,
       ).replace(
-        QuoteParser.testcaseSickEN({ lang: 'PT sickness' }),
-        LQ1+
+        QuoteParser.testcaseSickEN({ 
+          lQuote1: LQ3,
+          rQuote1: RQ3,
+          rQuote2: RQ2,
+          lang: 'PT sickness',
+          apos: APOS,
+        }),
+        LQ3+
         'Eu também estou sujeito a ficar doente. '+
         'Não estou isento da doença de PT. É melhor fazer o '+
         'bem através do corpo, da fala e da mente'+
-        RQ1+
+        RQ3+
         '?'+
         RQ2
       );

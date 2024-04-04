@@ -2,6 +2,7 @@ export const DBG = {
   TEST: 0,
   GLOSSARY: 0,
   MOCK_XLT: 0,
+  PRE_XLT: 0,
   DEEPL_XLT: 0,
   SUTTA_XLT: 0,  
   LOAD_SUTTA: 0,

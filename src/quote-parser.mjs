@@ -291,7 +291,7 @@ export default class QuoteParser {
     ].join('');
   }
 
-  static APOS() { return APOS; }
+  static get APOS() { return APOS; }
   static get ELLIPSIS() { return ELLIPSIS; }
   static get ELL() { return ELL; }
   static get LDQUOT() { return LDQUOT; }
@@ -551,18 +551,28 @@ export default class QuoteParser {
     let { maxLevel, rexSplit, openQuotes, closeQuotes } = this;
     let parts = text.split(rexSplit);
     if (parts.length === 1) {
-      dbg && console.log(msg, '[2]no-quotes', parts);
+      dbg && console.log(msg, '[1]no-quotes', parts);
       return level;
     }
     for (let i=1; i<parts.length; i+=2) {
       let part = parts[i]; // parts with odd indices are quotes
+      let context = [parts[i-1], part, parts[i+1]];
 
       if (part === openQuotes[level]) { // sync ok
         level++;
+        dbg && console.log(msg, `[2]open${level}`, context);
       } else if (part === closeQuotes[level-1]) {
-        level--;
+        if (this.isApostrophe(context)) {
+          dbg && console.log(msg, `[3]apos`, context);
+        } else {
+          dbg && console.log(msg, `[4]close${level}`, context);
+          level--;
+        }
+      } else if (this.isApostrophe(context)) {
+        dbg && console.log(msg, `[5]apos`, context);
       } else { // sync fail
         let emsg = `${msg} ERROR [${startLevel}?${text}]`;
+        dbg && console.log(msg, `[6]SYNC?`, {startLevel, i, context, }); 
         return new Error(emsg);
       }
     }
@@ -574,13 +584,19 @@ export default class QuoteParser {
     const dbg = DBG.QUOTE;
     let { maxLevel } = this;
     let level = this.#syncQuoteLevel(text, startLevel);
-    if (level instanceof Error) {
-      let e = level;
+    let error = level instanceof Error ? level : undefined;
+    if (error) {
       for (let i=1; (level instanceof Error) && i<maxLevel; i++) {
         let tryLevel = (startLevel + i) % maxLevel;
         level = this.#syncQuoteLevel(text, tryLevel);
       }
-      console.log(msg, '[1]SYNC?', `level ${startLevel}=>${level}`, text);
+      if (typeof level === 'number') {
+        console.log(msg, '[1]SYNC?', `level ${startLevel}=>${level}`,
+          `\n  |${text}|`);
+      } else {
+        console.log(msg, '[2]SYNC?!', `level ${startLevel}=>ERROR`);
+        throw error;
+      }
     }
     return level;
   }
