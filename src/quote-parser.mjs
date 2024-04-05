@@ -545,7 +545,7 @@ export default class QuoteParser {
   #checkQuoteLevel(text='', startLevel=0) {
     const msg = 'QuoteParser.checkQuoteLevel()';
     const dbg = DBG.QUOTE;
-    let level = startLevel;
+    let endLevel = startLevel;
     let syncLevel = startLevel;
     let levelError = 0;
     let { maxLevel, rexSplit, openQuotes, closeQuotes } = this;
@@ -556,15 +556,15 @@ export default class QuoteParser {
       let part = parts[i]; // parts with odd indices are quotes
       let context = [parts[i-1], part, parts[i+1]];
 
-      if (part === openQuotes[level]) { // sync ok
-        level++;
-        dbg && console.log(msg, `[2]open${level}`, context);
-      } else if (part === closeQuotes[level-1]) {
+      if (part === openQuotes[endLevel]) { // sync ok
+        endLevel++;
+        dbg && console.log(msg, `[2]open${endLevel}`, context);
+      } else if (part === closeQuotes[endLevel-1]) {
         if (this.isApostrophe(context)) {
           dbg && console.log(msg, `[3]apos`, context);
         } else {
-          dbg && console.log(msg, `[4]close${level}`, context);
-          level--;
+          dbg && console.log(msg, `[4]close${endLevel}`, context);
+          endLevel--;
         }
       } else if (this.isApostrophe(context)) {
         dbg && console.log(msg, `[5]apos`, context);
@@ -577,6 +577,7 @@ export default class QuoteParser {
     return {
       error,
       startLevel,
+      endLevel,
     }
   }
 
