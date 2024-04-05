@@ -573,19 +573,21 @@ export default class QuoteParser {
         return new Error(emsg);
       }
     }
-    return syncLevel;
+    return startLevel;
   }
 
   syncQuoteLevel(text='', startLevel=0) {
     const msg = 'QuoteParser.syncQuoteLevel()';
     const dbg = DBG.QUOTE;
     let { maxLevel } = this;
-    let level = this.checkQuoteLevel(text, startLevel);
+    let check = this.checkQuoteLevel(text, startLevel);
+    let level = check;
     let error = level instanceof Error ? level : undefined;
     if (error) {
       for (let i=1; error && i<maxLevel; i++) {
         let tryLevel = (startLevel + i) % maxLevel;
-        level = this.checkQuoteLevel(text, tryLevel);
+        let check = this.checkQuoteLevel(text, tryLevel);
+        level = check;
         error = level instanceof Error ? level : undefined;
       }
       if (typeof level === 'number') {
