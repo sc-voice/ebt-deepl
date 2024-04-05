@@ -542,18 +542,15 @@ export default class QuoteParser {
     return aposParts.join(swapApos);
   }
 
-  #syncQuoteLevel(text='', startLevel=0) {
-    const msg = 'QuoteParser.#syncQuoteLevel()';
+  checkQuoteLevel(text='', startLevel=0) {
+    const msg = 'QuoteParser.checkQuoteLevel()';
     const dbg = DBG.QUOTE;
     let level = startLevel;
     let syncLevel = startLevel;
     let levelError = 0;
     let { maxLevel, rexSplit, openQuotes, closeQuotes } = this;
     let parts = text.split(rexSplit);
-    if (parts.length === 1) {
-      dbg && console.log(msg, '[1]no-quotes', parts);
-      return level;
-    }
+
     for (let i=1; i<parts.length; i+=2) {
       let part = parts[i]; // parts with odd indices are quotes
       let context = [parts[i-1], part, parts[i+1]];
@@ -583,12 +580,13 @@ export default class QuoteParser {
     const msg = 'QuoteParser.syncQuoteLevel()';
     const dbg = DBG.QUOTE;
     let { maxLevel } = this;
-    let level = this.#syncQuoteLevel(text, startLevel);
+    let level = this.checkQuoteLevel(text, startLevel);
     let error = level instanceof Error ? level : undefined;
     if (error) {
-      for (let i=1; (level instanceof Error) && i<maxLevel; i++) {
+      for (let i=1; error && i<maxLevel; i++) {
         let tryLevel = (startLevel + i) % maxLevel;
-        level = this.#syncQuoteLevel(text, tryLevel);
+        level = this.checkQuoteLevel(text, tryLevel);
+        error = level instanceof Error ? level : undefined;
       }
       if (typeof level === 'number') {
         console.log(msg, '[1]SYNC?', `level ${startLevel}=>${level}`,
