@@ -331,10 +331,10 @@ const MODULE = 'quote-parser';
     ];
     i = -1;
     ++i;
-    dbg && console.log(msg, `[2]`, testsOpen[i]);
+    dbg && console.log(msg, `[1]`, testsOpen[i]);
     should(qp.syncQuoteLevel(testsOpen[i], 1).endLevel).equal(2);
     ++i
-    dbg && console.log(msg, `[1]`, testsOpen[i]);
+    dbg && console.log(msg, `[2]`, testsOpen[i]);
     should(qp.syncQuoteLevel(testsOpen[i], 0).endLevel).equal(1);
     should(qp.syncQuoteLevel(testsOpen[i], 2).endLevel).equal(3);
     ++i;
