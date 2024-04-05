@@ -223,7 +223,7 @@ const MODULE = 'quote-parser';
     dbg && console.log(msg, qp_pre.rexSplit, preText);
     should(qp_pre.quotationLevel(preText)).equal(1);
   });
-  it("TESTTESTsyncQuoteLevel() ok", ()=>{
+  it("syncQuoteLevel() startLevel", ()=>{
     const msg = 'test.QuoteParser@227';
     const dbg = DBG.QUOTE;
     let qp = new QuoteParser({lang:'en'});
@@ -259,8 +259,94 @@ const MODULE = 'quote-parser';
     should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(1);
     should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(3);
   });
-  it("TESTTESTsyncQuoteLevel() errors", ()=>{
+  it("syncQuoteLevel() endLevel same", ()=>{
     const msg = 'test.QuoteParser@263';
+    const dbg = DBG.QUOTE;
+    let qp = new QuoteParser({lang:'en'});
+    dbg && console.log(msg, '[1]rexSplit', qp.rexSplit);
+    let [ lq1, lq2, lq3, lq4 ] = qp.openQuotes;
+    let [ rq1, rq2, rq3, rq4 ] = qp.closeQuotes;
+    let i;
+
+    let testsSame = [ // Same quote level
+      `a`, // 0,1,2,3
+      `${lq1}a${rq1}`, // 0,2
+      `${lq2}a${rq2}`, // 1,3
+    ];
+    i = 0;
+    dbg && console.log(msg, `[2]`, testsSame[i]);
+    should(qp.syncQuoteLevel(testsSame[i], 0).endLevel).equal(0);
+    should(qp.syncQuoteLevel(testsSame[i], 1).endLevel).equal(1);
+    should(qp.syncQuoteLevel(testsSame[i], 2).endLevel).equal(2);
+    should(qp.syncQuoteLevel(testsSame[i], 3).endLevel).equal(3);
+    ++i;
+    dbg && console.log(msg, `[3]`, testsSame[i]);
+    should(qp.syncQuoteLevel(testsSame[i], 0).endLevel).equal(0);
+    should(qp.syncQuoteLevel(testsSame[i], 2).endLevel).equal(2);
+    ++i;
+    dbg && console.log(msg, `[4]`, testsSame[i]);
+    should(qp.syncQuoteLevel(testsSame[i], 1).endLevel).equal(1);
+    should(qp.syncQuoteLevel(testsSame[i], 3).endLevel).equal(3);
+  });
+  it("syncQuoteLevel() endLevel close", ()=>{
+    const msg = 'test.QuoteParser@292';
+    const dbg = DBG.QUOTE;
+    let qp = new QuoteParser({lang:'en'});
+    dbg && console.log(msg, '[1]rexSplit', qp.rexSplit);
+    let [ lq1, lq2, lq3, lq4 ] = qp.openQuotes;
+    let [ rq1, rq2, rq3, rq4 ] = qp.closeQuotes;
+    let i;
+
+    let testsClose = [ // Close quote to lower level
+      `a${rq2}`, // 2,4
+      `${lq3}a${rq3}?${rq2}`, // 2
+      `${lq2}a${rq2}${rq1}`, // 1,2
+    ];
+    i = 0;
+    dbg && console.log(msg, `[1]`, testsClose[i]);
+    should(qp.syncQuoteLevel(testsClose[i], 2).endLevel).equal(1);
+    should(qp.syncQuoteLevel(testsClose[i], 4).endLevel).equal(3);
+    ++i;
+    dbg && console.log(msg, `[2]`, testsClose[i]);
+    should(qp.syncQuoteLevel(testsClose[i], 2).endLevel).equal(1);
+    ++i;
+    dbg && console.log(msg, `[3]`, testsClose[i]);
+    should(qp.syncQuoteLevel(testsClose[i], 1).endLevel).equal(0);
+    should(qp.syncQuoteLevel(testsClose[i], 3).endLevel).equal(2);
+  });
+  it("TESTTESTsyncQuoteLevel() endLevel open", ()=>{
+    const msg = 'test.QuoteParser@292';
+    const dbg = DBG.QUOTE;
+    let qp = new QuoteParser({lang:'en'});
+    dbg && console.log(msg, '[1]rexSplit', qp.rexSplit);
+    let [ lq1, lq2, lq3, lq4 ] = qp.openQuotes;
+    let [ rq1, rq2, rq3, rq4 ] = qp.closeQuotes;
+    let i;
+
+    let testsOpen = [ // Close quote to lower level
+      `${lq2}${lq3}a${rq3}?`, // 1
+      `${lq1}`, // 0,2
+      `${lq2}a${rq2}${rq1}`, // 1,2
+      `${lq2}a${lq3}${lq4}`, // 1
+    ];
+    i = -1;
+    ++i;
+    dbg && console.log(msg, `[2]`, testsOpen[i]);
+    should(qp.syncQuoteLevel(testsOpen[i], 1).endLevel).equal(2);
+    ++i
+    dbg && console.log(msg, `[1]`, testsOpen[i]);
+    should(qp.syncQuoteLevel(testsOpen[i], 0).endLevel).equal(1);
+    should(qp.syncQuoteLevel(testsOpen[i], 2).endLevel).equal(3);
+    ++i;
+    dbg && console.log(msg, `[3]`, testsOpen[i]);
+    should(qp.syncQuoteLevel(testsOpen[i], 1).endLevel).equal(0);
+    should(qp.syncQuoteLevel(testsOpen[i], 3).endLevel).equal(2);
+    ++i;
+    dbg && console.log(msg, `[4]`, testsOpen[i]);
+    should(qp.syncQuoteLevel(testsOpen[i], 1).endLevel).equal(4);
+  });
+  it("syncQuoteLevel() errors", ()=>{
+    const msg = 'test.QuoteParser@318';
     const dbg = DBG.QUOTE;
     let qp = new QuoteParser({lang:'en'});
     dbg && console.log(msg, '[1]rexSplit', qp.rexSplit);
