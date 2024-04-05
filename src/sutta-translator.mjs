@@ -434,8 +434,6 @@ export default class SuttaTranslator {
     }
     let level = 0;
     return srcTexts.map((srcText,i)=>{
-      //level = qpSrc.quotationLevel(srcText);
-
       let check = qpSrc.syncQuoteLevel(srcText, level);
       level = check.startLevel;
       var xfmText = SuttaTranslator
@@ -444,6 +442,7 @@ export default class SuttaTranslator {
       let dstText =  qpSrc.convertQuotes(xfmText, qpPre, level);
       //let dstText =  qpSrc.convertQuotes(srcText, qpPre, level);
       dbg && console.log(msg, `[3]convertQuotes${level}`, dstText);
+      level = check.endLevel;
       return dstText;
     });
   }
@@ -458,8 +457,10 @@ export default class SuttaTranslator {
       return xltTexts;
     }
 
+    let level;
     return xltTexts.map((xltText,i)=>{
-      let level = qpPost.quotationLevel(xltText);
+      let check = qpPost.syncQuoteLevel(xltText);
+      level = check.startLevel;
       let quoteText = qpPost.convertQuotes(xltText, qpDst, level);
       let outText = SuttaTranslator
         .transformText(quoteText, dstTransform);
@@ -470,6 +471,7 @@ export default class SuttaTranslator {
       if (appendWhitespace && !xltText.endsWith(' ')) {
         outText = outText + ' ';
       }
+      level = check.endLevel;
       return outText;
     });
   }

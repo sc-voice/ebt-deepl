@@ -184,45 +184,6 @@ const MODULE = 'quote-parser';
     should(qp_en.convertQuotes(enText, qp_en_deepl, 2))
     .equal(preText);
   });
-  it("quotationLevel() en us/uk", ()=>{
-    let usText =  `“I say: ‘completed’”? `;
-    let ukText =  `‘I say: “completed”’? `;
-    let qp_us = new QuoteParser({lang:'en-us'});
-    let qp_uk = new QuoteParser({lang:'en-uk'});
-
-    should(qp_us.quotationLevel(usText)).equal(0);
-    should(qp_uk.quotationLevel(ukText)).equal(0);
-    should(qp_us.quotationLevel(ukText)).equal(1);
-    should(qp_uk.quotationLevel(usText)).equal(1);
-  });
-  it("quotationLevel() testcaseFeelingsEN FR", ()=>{
-    const msg = 'test.QuoteParser.quotationLevel()';
-    const dbg = 0;
-
-    let qp_en = new QuoteParser({lang:'en'});
-    let enText = qp_en.testcaseFeelingsEN('French');
-    dbg && console.log(msg, enText);
-    should(qp_en.quotationLevel(enText)).equal(2);
-
-    let qp_pre = new QuoteParser({lang:'en-deepl'});
-    let preText = qp_pre.testcaseFeelingsEN('French');
-    dbg && console.log(msg, preText);
-    should(qp_pre.quotationLevel(preText)).equal(2);
-  });
-  it("quotationLevel() testcaseReligionsEN FR", ()=>{
-    const msg = 'test.QuoteParser.quotationLevel()';
-    const dbg = 0;
-
-    let qp_en = new QuoteParser({lang:'en'});
-    let enText = qp_en.testcaseReligionsEN('French');
-    should(qp_en.quotationLevel(enText)).equal(1);
-    dbg && console.log(msg, qp_en.rexSplit, enText);
-
-    let qp_pre = new QuoteParser({lang:'en-deepl'});
-    let preText = qp_pre.testcaseReligionsEN('French');
-    dbg && console.log(msg, qp_pre.rexSplit, preText);
-    should(qp_pre.quotationLevel(preText)).equal(1);
-  });
   it("syncQuoteLevel() startLevel", ()=>{
     const msg = 'test.QuoteParser@227';
     const dbg = DBG.QUOTE;

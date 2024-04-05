@@ -605,37 +605,4 @@ export default class QuoteParser {
     return check;
   }
 
-  quotationLevel(text='') {
-    const msg = 'QuoteParser.quotationLevel()';
-    const dbg = 0 || DBG.VERBOSE;
-    let { maxLevel, rexSplit, openQuotes, closeQuotes } = this;
-    let parts = text.split(rexSplit);
-    dbg && console.log(msg, '[1]parts', parts);
-    if (parts.length === 1) {
-      dbg && console.log(msg, '[2]no-quotes', parts);
-      return 0;
-    }
-    for (let i=1; i<parts.length; i+=2) {
-      let part = parts[i]; // parts with odd indices are quotes
-
-      for (let j=0; j<maxLevel; j++) {
-        if (part === openQuotes[j]) {
-          dbg && console.log(msg, `[3]level${j} openQuotes`, part);
-          return j;
-        }
-        if (part === closeQuotes[j]) {
-          let context = [parts[i-1], part, parts[i+1]];
-          if (this.isApostrophe(context)) {
-            dbg && console.log(msg, `[4]apos`, context);
-          } else {
-            dbg && console.log(msg, `[5]level${j} closeQuotes`, context);
-            return j+1;
-          }
-        }
-      }
-      dbg && console.log(msg, '[4]no-match?', {part});
-    }
-    return 0;
-  }
-
 }
