@@ -602,7 +602,7 @@ export default class QuoteParser {
         `level ${startLevel}=>${check.startLevel}`,
         `\n  |${text}|`);
     }
-    return check.startLevel;
+    return check;
   }
 
   quotationLevel(text='') {

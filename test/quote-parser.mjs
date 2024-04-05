@@ -223,7 +223,7 @@ const MODULE = 'quote-parser';
     dbg && console.log(msg, qp_pre.rexSplit, preText);
     should(qp_pre.quotationLevel(preText)).equal(1);
   });
-  it("syncQuoteLevel() ok", ()=>{
+  it("TESTTESTsyncQuoteLevel() ok", ()=>{
     const msg = 'test.QuoteParser@227';
     const dbg = DBG.QUOTE;
     let qp = new QuoteParser({lang:'en'});
@@ -240,26 +240,26 @@ const MODULE = 'quote-parser';
     ];
     let i = -1;
     dbg && console.log(msg, `[2]`, tests[++i]);
-    should(qp.syncQuoteLevel(tests[i], 0)).equal(0);
-    should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
-    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
+    should(qp.syncQuoteLevel(tests[i], 0).startLevel).equal(0);
+    should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 2).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(3);
     dbg && console.log(msg, `[3]`, tests[++i]);
-    should(qp.syncQuoteLevel(tests[i], 0)).equal(0);
-    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 0).startLevel).equal(0);
+    should(qp.syncQuoteLevel(tests[i], 2).startLevel).equal(2);
     dbg && console.log(msg, `[4]`, tests[++i]);
-    should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
-    should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
+    should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(3);
     dbg && console.log(msg, `[5]`, tests[++i]);
-    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 4)).equal(4);
+    should(qp.syncQuoteLevel(tests[i], 2).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 4).startLevel).equal(4);
     dbg && console.log(msg, `[6]`, tests[++i]);
-    should(qp.syncQuoteLevel(tests[i], 2)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 2).startLevel).equal(2);
     dbg && console.log(msg, `[7]`, tests[++i]);
-    should(qp.syncQuoteLevel(tests[i], 1)).equal(1);
-    should(qp.syncQuoteLevel(tests[i], 3)).equal(3);
+    should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(3);
   });
-  it("syncQuoteLevel() errors", ()=>{
+  it("TESTTESTsyncQuoteLevel() errors", ()=>{
     const msg = 'test.QuoteParser@263';
     const dbg = DBG.QUOTE;
     let qp = new QuoteParser({lang:'en'});
@@ -276,24 +276,24 @@ const MODULE = 'quote-parser';
     let i = 0;
     console.log(msg, "***** BEGIN syncQuoteLevel() error test");
     dbg && console.log(msg, `[2]`, tests[i]);
-    should(qp.syncQuoteLevel(tests[i], 1)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 3)).equal(0);
-    should(qp.syncQuoteLevel(tests[i], 4)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(0);
+    should(qp.syncQuoteLevel(tests[i], 4).startLevel).equal(2);
     i++
     dbg && console.log(msg, `[3]`, tests[i]);
-    should(qp.syncQuoteLevel(tests[i], 0)).equal(1);
-    should(qp.syncQuoteLevel(tests[i], 2)).equal(3);
-    should(qp.syncQuoteLevel(tests[i], 4)).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 0).startLevel).equal(1);
+    should(qp.syncQuoteLevel(tests[i], 2).startLevel).equal(3);
+    should(qp.syncQuoteLevel(tests[i], 4).startLevel).equal(1);
     i++
     dbg && console.log(msg, `[4]`, tests[i]);
-    should(qp.syncQuoteLevel(tests[i], 0)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 1)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 3)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 0).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(2);
     i++
     dbg && console.log(msg, `[5]`, tests[i]);
-    should(qp.syncQuoteLevel(tests[i], 0)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 1)).equal(2);
-    should(qp.syncQuoteLevel(tests[i], 3)).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 0).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 1).startLevel).equal(2);
+    should(qp.syncQuoteLevel(tests[i], 3).startLevel).equal(2);
     console.log(msg, "***** END syncQuoteLevel() error test");
   });
 })

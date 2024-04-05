@@ -435,7 +435,9 @@ export default class SuttaTranslator {
     let level = 0;
     return srcTexts.map((srcText,i)=>{
       //level = qpSrc.quotationLevel(srcText);
-      level = qpSrc.syncQuoteLevel(srcText, level);
+
+      let check = qpSrc.syncQuoteLevel(srcText, level);
+      level = check.startLevel;
       var xfmText = SuttaTranslator
         .transformText(srcText, srcTransform);
       dbg && console.log(msg, `[2]srcTransform`, xfmText, level);
