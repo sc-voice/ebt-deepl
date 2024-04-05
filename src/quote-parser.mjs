@@ -584,25 +584,26 @@ export default class QuoteParser {
     const msg = 'QuoteParser.syncQuoteLevel()';
     const dbg = DBG.QUOTE;
     let { maxLevel } = this;
-    let check = this.checkQuoteLevel(text, startLevel);
-    let level = check.startLevel;
-    let error = check.error;
+    let { 
+      startLevel:syncLevel,
+      error,
+    } = this.checkQuoteLevel(text, startLevel);
     if (error) {
       for (let i=1; error && i<maxLevel; i++) {
         let tryLevel = (startLevel + i) % maxLevel;
         let check = this.checkQuoteLevel(text, tryLevel);
-        level = check.startLevel;
+        syncLevel = check.startLevel;
         error = check.error;
       }
-      if (typeof level === 'number') {
-        console.log(msg, '[1]SYNC?', `level ${startLevel}=>${level}`,
+      if (typeof syncLevel === 'number') {
+        console.log(msg, '[1]SYNC?', `level ${startLevel}=>${syncLevel}`,
           `\n  |${text}|`);
       } else {
         console.log(msg, '[2]SYNC?!', `level ${startLevel}=>ERROR`);
         throw error;
       }
     }
-    return level;
+    return syncLevel;
   }
 
   quotationLevel(text='') {
