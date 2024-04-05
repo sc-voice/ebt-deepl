@@ -542,7 +542,7 @@ export default class QuoteParser {
     return aposParts.join(swapApos);
   }
 
-  checkQuoteLevel(text='', startLevel=0) {
+  #checkQuoteLevel(text='', startLevel=0) {
     const msg = 'QuoteParser.checkQuoteLevel()';
     const dbg = DBG.QUOTE;
     let level = startLevel;
@@ -584,23 +584,24 @@ export default class QuoteParser {
     const msg = 'QuoteParser.syncQuoteLevel()';
     const dbg = DBG.QUOTE;
     let { maxLevel } = this;
-    let check  = this.checkQuoteLevel(text, startLevel);
-    let syncLevel = check.startLevel;
+    let check  = this.#checkQuoteLevel(text, startLevel);
     if (check.error) {
       for (let i=1; check.error && i<maxLevel; i++) {
         let tryLevel = (startLevel + i) % maxLevel;
-        check = this.checkQuoteLevel(text, tryLevel);
-        syncLevel = check.startLevel;
+        check = this.#checkQuoteLevel(text, tryLevel);
       }
-      if (typeof syncLevel === 'number') {
-        console.log(msg, '[1]SYNC?', `level ${startLevel}=>${syncLevel}`,
-          `\n  |${text}|`);
-      } else {
-        console.log(msg, '[2]SYNC?!', `level ${startLevel}=>ERROR`);
+      if (check.error) {
+        // Could not synchronize quotes. Source document error
+        console.log(msg, '[1]SYNC?!', `level ${startLevel}=>ERROR`);
         throw check.error;
       }
+
+      // Synchronized, but source document might be in error
+      console.log(msg, '[2]SYNC?', 
+        `level ${startLevel}=>${check.startLevel}`,
+        `\n  |${text}|`);
     }
-    return syncLevel;
+    return check.startLevel;
   }
 
   quotationLevel(text='') {
