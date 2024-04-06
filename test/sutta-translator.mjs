@@ -577,7 +577,7 @@ const {
     ]);
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() testcaseDonationEN PT", async()=>{
+  it("translateTexts() testcaseDonationEN PT", async()=>{
     const msg = 'test.SuttaTranslator@658';
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
@@ -703,6 +703,21 @@ const {
       `${LQ3}I, too, am liable to become sick. I\'m not exempt `+
         `from PT sickness. I\'d better do good by way of `+
         `body, speech, and mind${RQ3}?${RQ2}`,
+    ]);
+  });
+  it("TESTTESTtranslateTexts() testcaseDonationEN PT", async()=>{
+    const msg = 'test.SuttaTranslator@658';
+    //DeepLAdapter.setMockApi(false);
+    DBG.QUOTE = true; // TODO
+    let srcTexts = [ 
+      QuoteParser.LDQUOT,
+      'when warned by the gods’ messengers: ',
+    ];
+    let st = await st_en_pt();
+    let dstTexts = await st.translateTexts(srcTexts);
+    should.deepEqual(dstTexts, [
+      `${QuoteParser.LDGUIL} `,
+      `quando avisados pelos mensageiros dos devas: `,
     ]);
   });
 })

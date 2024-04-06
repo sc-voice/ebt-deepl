@@ -52,6 +52,7 @@ function compare(a,b) {
       console.log(msg, {i, ai, bi});
     }
   }
+  console.log(msg, ok);
   return ok;
 }
 
@@ -79,20 +80,9 @@ class MockTranslator {
       dbg && console.log(msg, `"${text}"`);
       
       if (0) { // use this to debug
-        let opts={
-          lQuote1: LQ3,
-          rQuote1: RQ3,
-          rQuote2: RQ2,
-          lang: 'PT sickness',
-          apos: APOS,
-        }
-        let expected = QuoteParser.testcaseSickEN(opts);
+        let expected = `when warned by the DEVA1s' messengers: `;
         console.log(msg, {text, expected});
-        if (compare(text, expected)) {
-          dbg && console.log(msg, '[1]compare-ok');
-        } else {
-          dbg && console.log(msg, '[2]COMPARE?');
-        }
+        compare(text, expected);
       }
 
       text = text && text.replace(
@@ -298,6 +288,9 @@ class MockTranslator {
         RQ3+
         '?'+
         RQ2
+      ).replace(
+        `when warned by the DEVA1s' messengers: `,
+        `quando avisados pelos mensageiros dos devas: `,
       );
       return {
         text,
