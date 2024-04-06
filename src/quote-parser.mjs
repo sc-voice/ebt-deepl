@@ -543,8 +543,9 @@ export default class QuoteParser {
   }
 
   #checkQuoteLevel(text='', startLevel=0) {
-    const msg = 'QuoteParser.checkQuoteLevel()';
+    const msg = `qp-${this.lang}.#checkQuoteLevel()`;
     const dbg = DBG.QUOTE;
+    const dbgv = dbg && DBG.VERBOSE;
     let endLevel = startLevel;
     let syncLevel = startLevel;
     let levelError = 0;
@@ -552,22 +553,28 @@ export default class QuoteParser {
     let parts = text.split(rexSplit);
     let error;
 
+    if (parts.length === 1) {
+      dbg && console.log(msg, `[1]no-quotes${startLevel}`, 
+        text.substring(0,50), '...');
+    }
     for (let i=1; !error && i<parts.length; i+=2) {
       let part = parts[i]; // parts with odd indices are quotes
       let context = [parts[i-1], part, parts[i+1]];
 
       if (part === openQuotes[endLevel]) { // sync ok
         endLevel++;
-        dbg && console.log(msg, `[2]open${endLevel}`, context);
+        dbg && console.log(msg, `[2]open${endLevel}`, 
+          context.join('|'));
       } else if (part === closeQuotes[endLevel-1]) {
         if (this.isApostrophe(context)) {
-          dbg && console.log(msg, `[3]apos`, context);
+          dbgv && console.log(msg, `[3]apos`, context.join('|'));
         } else {
-          dbg && console.log(msg, `[4]close${endLevel}`, context);
+          dbg && console.log(msg, `[4]close${endLevel}`, 
+            context.join('|'));
           endLevel--;
         }
       } else if (this.isApostrophe(context)) {
-        dbg && console.log(msg, `[5]apos`, context);
+        dbgv && console.log(msg, `[5]apos`, context.join('|'));
       } else { // sync fail
         let emsg = `${msg} ERROR [${startLevel}?${text}]`;
         dbg && console.log(msg, `[6]SYNC?`, {startLevel, i, context, }); 
@@ -582,7 +589,7 @@ export default class QuoteParser {
   }
 
   syncQuoteLevel(text='', startLevel=0) {
-    const msg = 'QuoteParser.syncQuoteLevel()';
+    const msg = `qp-${this.lang}.syncQuoteLevel()`;
     const dbg = DBG.QUOTE;
     let { maxLevel } = this;
     let check  = this.#checkQuoteLevel(text, startLevel);

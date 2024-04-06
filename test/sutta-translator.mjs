@@ -562,6 +562,7 @@ const {
     const dbg = 0;
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
+      QuoteParser.LQ1,
       QuoteParser.testcaseQuotesEN({
         lang: 'mind/PT',
         rQuote:QuoteParser.RQ1,
@@ -571,14 +572,16 @@ const {
     let st = await st_en_pt();
     let dstTexts = await st.translateTexts(srcTexts);
     should.deepEqual(dstTexts, [
+      `${QuoteParser.LDGUIL} `,
       `Ouça e aplique bem a sua mente/PT, eu falarei.» `,
     ]);
     dbg && console.log(msg, dstTexts);
   });
-  it("translateTexts() testcaseDonationEN PT", async()=>{
+  it("TESTTESTtranslateTexts() testcaseDonationEN PT", async()=>{
     const msg = 'test.SuttaTranslator@658';
     //DeepLAdapter.setMockApi(false);
     let srcTexts = [ 
+      QuoteParser.LQ1,
       QuoteParser.testcaseDonationEN({
         lang: 'religious-PT',
         rQuote:QuoteParser.RQ1,
@@ -587,6 +590,7 @@ const {
     let st = await st_en_pt();
     let dstTexts = await st.translateTexts(srcTexts);
     should.deepEqual(dstTexts, [
+      `${QuoteParser.LDGUIL} `,
       `Estas são duas pessoas no mundo que são dignas de um donativo religioso-PT, e é aí que deve dar um presente.» `
     ]);
   });
@@ -642,7 +646,7 @@ const {
     ]);
     dbg && console.log(msg, dstTexts);
   });
-  it("TESTTESTtranslateTexts() testcaseSickEN  PT", async()=>{
+  it("translateTexts() testcaseSickEN  PT", async()=>{
     const msg = "test.SuttaTranslator@690";
     //DBG.SUTTA_XLT = true;
     //DBG.MOCK_XLT = true;

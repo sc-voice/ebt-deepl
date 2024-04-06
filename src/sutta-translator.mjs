@@ -459,7 +459,7 @@ export default class SuttaTranslator {
 
     let level;
     return xltTexts.map((xltText,i)=>{
-      let check = qpPost.syncQuoteLevel(xltText);
+      let check = qpPost.syncQuoteLevel(xltText, level);
       level = check.startLevel;
       let quoteText = qpPost.convertQuotes(xltText, qpDst, level);
       let outText = SuttaTranslator
