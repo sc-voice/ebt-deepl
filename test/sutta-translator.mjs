@@ -705,10 +705,9 @@ const {
         `body, speech, and mind${RQ3}?${RQ2}`,
     ]);
   });
-  it("TESTTESTtranslateTexts() testcaseDonationEN PT", async()=>{
+  it("translateTexts() testcaseDonationEN PT", async()=>{
     const msg = 'test.SuttaTranslator@658';
     //DeepLAdapter.setMockApi(false);
-    DBG.QUOTE = true; // TODO
     let srcTexts = [ 
       QuoteParser.LDQUOT,
       'when warned by the gods’ messengers: ',
