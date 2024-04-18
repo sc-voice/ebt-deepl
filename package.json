@@ -26,8 +26,8 @@
     "merkle-json": "^2.6.0",
     "mocha": "^10.0.0",
     "npm": "^10.5.2",
-    "scv-bilara": "^3.150.61",
-    "scv-esm": "^1.104.99",
+    "scv-bilara": "^3.150.62",
+    "scv-esm": "^1.104.100",
     "should": "^13.2.3"
   },
   "scripts": {
