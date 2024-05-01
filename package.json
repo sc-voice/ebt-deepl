@@ -25,9 +25,9 @@
     "memo-again": "^0.8.0",
     "merkle-json": "^2.6.0",
     "mocha": "^10.0.0",
-    "npm": "^10.6.0",
-    "scv-bilara": "^3.152.3",
-    "scv-esm": "^1.104.137",
+    "npm": "^10.7.0",
+    "scv-bilara": "^3.152.4",
+    "scv-esm": "^1.104.138",
     "should": "^13.2.3"
   },
   "scripts": {
