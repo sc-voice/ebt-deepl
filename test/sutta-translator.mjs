@@ -161,7 +161,7 @@ const {
     should(dstRef).properties({ 
       sutta_uid, lang: 'pt', author: DEEPL });
     should(dstSegs['an3.94:0.3']).equal(
-      'Primavera ',
+      'Outono ',
     );
   });
   it("translate() an5.44", async()=>{

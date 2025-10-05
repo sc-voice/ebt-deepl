@@ -197,6 +197,9 @@ class MockTranslator {
           `se mortifican.`,
         ].join('')
       ).replace(
+        'autumn',
+        'Outono',
+      ).replace(
         'springtime',
         'Primavera',
       ).replace(
